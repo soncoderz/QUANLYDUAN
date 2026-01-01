@@ -114,7 +114,7 @@ export default function AdminDashboard() {
                         Tổng quan hệ thống
                     </h1>
                     <p className="text-slate-400 mt-1">
-                        Chào mừng bạn đến với bảng điều khiển quản trị
+                        Chào mừng bạn đến với bảng điều khiển quản trị viên
                     </p>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-slate-400">
