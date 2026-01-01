@@ -28,7 +28,7 @@ npm run dev     # Chạy server tại http://localhost:5000
 ```bash
 cd client
 npm install
-npm run dev     # Chạy tại http://localhost:5173
+npm run dev     # Chạy tại http://localhost:3000
 ```
 
 ## 🔐 Tài khoản Demo

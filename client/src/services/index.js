@@ -18,6 +18,9 @@ export const authService = {
     logout: async () => {
         try {
             await api.post('/auth/logout');
+        } catch (error) {
+            // Ignore 401 errors - token may be expired but we still want to logout locally
+            console.log('Logout API call failed (token may be expired), proceeding with local logout');
         } finally {
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');

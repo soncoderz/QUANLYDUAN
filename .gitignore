@@ -13,3 +13,4 @@ dist/
 .vscode/
 .kiro/specs/
 server/logs/
+.agent/artifacts/

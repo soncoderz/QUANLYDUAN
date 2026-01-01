@@ -27,9 +27,14 @@ export default function Layout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const handleLogout = async () => {
-        await logout();
-        success('Hẹn gặp lại bạn!', 'Đăng xuất thành công');
-        navigate('/login');
+        try {
+            await logout();
+            success('Hẹn gặp lại bạn!', 'Đăng xuất thành công');
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            navigate('/login');
+        }
     };
 
     const navigation = [
