@@ -1,0 +1,441 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useToast } from '../../context/ToastContext';
+import {
+    reportService,
+    appointmentService,
+    reminderService
+} from '../../services';
+import {
+    Calendar,
+    Pill,
+    Activity,
+    Clock,
+    TrendingUp,
+    ArrowRight,
+    CheckCircle,
+    Building2,
+    Stethoscope,
+    Bell,
+    ChevronRight,
+    Plus,
+    FileText,
+    BarChart3
+} from 'lucide-react';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+} from 'recharts';
+
+export default function Dashboard() {
+    const [loading, setLoading] = useState(true);
+    const [dashboardData, setDashboardData] = useState(null);
+    const [upcomingAppointments, setUpcomingAppointments] = useState([]);
+    const [todayReminders, setTodayReminders] = useState([]);
+    const { success, error: showError } = useToast();
+
+    useEffect(() => {
+        fetchDashboardData();
+    }, []);
+
+    const fetchDashboardData = async () => {
+        try {
+            const [dashboardRes, appointmentsRes, remindersRes] = await Promise.all([
+                reportService.getDashboardOverview(),
+                appointmentService.getUpcomingAppointments(),
+                reminderService.getTodayReminders(),
+            ]);
+
+            if (dashboardRes.success) {
+                setDashboardData(dashboardRes.data);
+            }
+            if (appointmentsRes.success) {
+                setUpcomingAppointments(appointmentsRes.data.slice(0, 3));
+            }
+            if (remindersRes.success) {
+                setTodayReminders(remindersRes.data.slice(0, 4));
+            }
+        } catch (error) {
+            console.error('Error fetching dashboard:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleMarkReminder = async (reminderId) => {
+        try {
+            await reminderService.markReminderTaken(reminderId);
+            success('Đã ghi nhận uống thuốc!');
+            fetchDashboardData();
+        } catch (error) {
+            showError('Không thể cập nhật');
+        }
+    };
+
+    const stats = dashboardData?.stats || {};
+    const chartData = dashboardData?.appointmentsByMonth || [];
+
+    if (loading) {
+        return (
+            <div className="min-h-[60vh] flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-10 h-10 border-3 border-gray-200 border-t-blue-500 rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-gray-500">Đang tải dữ liệu...</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="max-w-7xl mx-auto space-y-6" style={{ animation: 'fadeIn 0.4s ease-out forwards' }}>
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                        Xin chào! 👋
+                    </h1>
+                    <p className="text-gray-500 mt-1">
+                        Theo dõi sức khỏe của bạn tại đây
+                    </p>
+                </div>
+                <Link
+                    to="/booking"
+                    className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-[15px] bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/35 hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5 transition-all duration-300"
+                >
+                    <Plus className="w-5 h-5" />
+                    Đặt lịch khám
+                </Link>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                {/* Total Appointments */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-blue-400 before:to-blue-600 before:rounded-t-2xl">
+                    <div className="flex items-start justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-500 mb-1">Lịch khám sắp tới</p>
+                            <p className="text-3xl sm:text-4xl font-bold text-gray-900">
+                                {stats.upcomingAppointments || 0}
+                            </p>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/15 to-blue-500/5 flex items-center justify-center text-blue-600">
+                            <Calendar className="w-6 h-6" />
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                        <Link
+                            to="/appointments"
+                            className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                        >
+                            Xem tất cả <ChevronRight className="w-4 h-4" />
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Active Medications */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-teal-400 before:to-teal-600 before:rounded-t-2xl">
+                    <div className="flex items-start justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-500 mb-1">Thuốc đang dùng</p>
+                            <p className="text-3xl sm:text-4xl font-bold text-gray-900">
+                                {stats.activeMedications || 0}
+                            </p>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500/15 to-teal-500/5 flex items-center justify-center text-teal-600">
+                            <Pill className="w-6 h-6" />
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                        <Link
+                            to="/medications"
+                            className="text-sm font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                        >
+                            Quản lý thuốc <ChevronRight className="w-4 h-4" />
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Adherence Rate */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-emerald-400 before:to-emerald-500 before:rounded-t-2xl">
+                    <div className="flex items-start justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-500 mb-1">Tuân thủ uống thuốc</p>
+                            <p className="text-3xl sm:text-4xl font-bold text-gray-900">
+                                {stats.adherenceRate || 0}%
+                            </p>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 flex items-center justify-center text-emerald-500">
+                            <TrendingUp className="w-6 h-6" />
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-500"
+                                style={{ width: `${stats.adherenceRate || 0}%` }}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Today Reminders */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-amber-400 before:to-amber-500 before:rounded-t-2xl">
+                    <div className="flex items-start justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-500 mb-1">Nhắc nhở hôm nay</p>
+                            <p className="text-3xl sm:text-4xl font-bold text-gray-900">
+                                {todayReminders.length}
+                            </p>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/15 to-amber-500/5 flex items-center justify-center text-amber-500">
+                            <Bell className="w-6 h-6" />
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                        <p className="text-sm text-gray-500">
+                            {todayReminders.filter(r => r.taken).length} đã hoàn thành
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid lg:grid-cols-3 gap-6">
+                {/* Appointments Chart */}
+                <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all p-6">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 className="text-lg font-semibold text-gray-900">Thống kê lịch khám</h2>
+                            <p className="text-sm text-gray-500">6 tháng gần nhất</p>
+                        </div>
+                        <Link
+                            to="/reports"
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                        >
+                            Xem báo cáo
+                        </Link>
+                    </div>
+
+                    {chartData.length > 0 ? (
+                        <div className="h-64">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chartData}>
+                                    <defs>
+                                        <linearGradient id="colorAppointments" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#0077e6" stopOpacity={0.2} />
+                                            <stop offset="95%" stopColor="#0077e6" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                                    <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#64748b' }} />
+                                    <YAxis tick={{ fontSize: 12, fill: '#64748b' }} />
+                                    <Tooltip
+                                        contentStyle={{
+                                            borderRadius: '12px',
+                                            border: 'none',
+                                            boxShadow: '0 10px 40px rgba(0,0,0,0.1)'
+                                        }}
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="count"
+                                        stroke="#0077e6"
+                                        strokeWidth={3}
+                                        fill="url(#colorAppointments)"
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+                    ) : (
+                        <div className="h-64 flex items-center justify-center text-gray-400">
+                            Chưa có dữ liệu thống kê
+                        </div>
+                    )}
+                </div>
+
+                {/* Today's Reminders */}
+                <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all p-6">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 className="text-lg font-semibold text-gray-900">Nhắc uống thuốc</h2>
+                            <p className="text-sm text-gray-500">Hôm nay</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                            <Pill className="w-5 h-5 text-amber-600" />
+                        </div>
+                    </div>
+
+                    {todayReminders.length > 0 ? (
+                        <div className="space-y-3">
+                            {todayReminders.map((reminder) => (
+                                <div
+                                    key={reminder._id}
+                                    className={`flex items-center gap-3 p-4 rounded-xl transition-all ${reminder.taken
+                                        ? 'bg-green-50 border border-green-100'
+                                        : 'bg-gray-50 hover:bg-gray-100'
+                                        }`}
+                                >
+                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${reminder.taken ? 'bg-green-500' : 'bg-amber-500'
+                                        }`}>
+                                        {reminder.taken ? (
+                                            <CheckCircle className="w-5 h-5 text-white" />
+                                        ) : (
+                                            <Clock className="w-5 h-5 text-white" />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className={`font-medium truncate ${reminder.taken ? 'text-green-700' : 'text-gray-900'}`}>
+                                            {reminder.medicationId?.name}
+                                        </p>
+                                        <p className="text-sm text-gray-500">{reminder.reminderTime}</p>
+                                    </div>
+                                    {!reminder.taken && (
+                                        <button
+                                            onClick={() => handleMarkReminder(reminder._id)}
+                                            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-400 to-emerald-500 text-white shadow-md shadow-emerald-500/30 hover:-translate-y-0.5 transition-all"
+                                        >
+                                            Uống
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-8">
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-100 flex items-center justify-center">
+                                <CheckCircle className="w-8 h-8 text-gray-400" />
+                            </div>
+                            <p className="text-gray-500">Không có nhắc nhở hôm nay</p>
+                        </div>
+                    )}
+
+                    <Link
+                        to="/medications"
+                        className="w-full mt-4 inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl font-semibold text-sm bg-white text-gray-700 border-2 border-gray-200 hover:bg-gray-50 hover:border-blue-300 hover:text-blue-600 transition-all"
+                    >
+                        Xem tất cả thuốc
+                    </Link>
+                </div>
+            </div>
+
+            {/* Upcoming Appointments */}
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all p-6">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-900">Lịch khám sắp tới</h2>
+                        <p className="text-sm text-gray-500">Các cuộc hẹn đã xác nhận</p>
+                    </div>
+                    <Link
+                        to="/appointments"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                    >
+                        Xem tất cả <ArrowRight className="w-4 h-4 ml-1" />
+                    </Link>
+                </div>
+
+                {upcomingAppointments.length > 0 ? (
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {upcomingAppointments.map((apt, index) => (
+                            <div
+                                key={apt._id}
+                                className="p-5 rounded-2xl bg-gradient-to-br from-gray-50 to-blue-50 border border-blue-100 hover:shadow-lg transition-all"
+                                style={{ animation: `fadeIn 0.4s ease-out ${index * 0.1}s forwards`, opacity: 0 }}
+                            >
+                                <div className="flex items-start gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                                        <Stethoscope className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-semibold text-gray-900 truncate">
+                                            {apt.doctorId?.fullName || 'Bác sĩ'}
+                                        </p>
+                                        <p className="text-sm text-gray-500 truncate">
+                                            {apt.clinicId?.name}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="mt-4 pt-4 border-t border-blue-100">
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <Calendar className="w-4 h-4 text-blue-500" />
+                                        <span className="font-medium text-gray-900">
+                                            {new Date(apt.appointmentDate).toLocaleDateString('vi-VN', {
+                                                weekday: 'short',
+                                                day: 'numeric',
+                                                month: 'short'
+                                            })}
+                                        </span>
+                                        <span className="text-gray-500">lúc</span>
+                                        <Clock className="w-4 h-4 text-blue-500" />
+                                        <span className="font-medium text-gray-900">{apt.timeSlot}</span>
+                                    </div>
+                                </div>
+                                <div className="mt-3">
+                                    <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold ${apt.status === 'confirmed'
+                                            ? 'bg-blue-100 text-blue-800'
+                                            : apt.status === 'scheduled'
+                                                ? 'bg-amber-100 text-amber-800'
+                                                : apt.status === 'completed'
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : apt.status === 'cancelled'
+                                                        ? 'bg-red-100 text-red-800'
+                                                        : 'bg-gray-100 text-gray-800'
+                                        }`}>
+                                        {apt.status === 'confirmed' ? 'Đã xác nhận' :
+                                            apt.status === 'scheduled' ? 'Chờ xác nhận' :
+                                                apt.status === 'completed' ? 'Đã hoàn thành' :
+                                                    apt.status === 'cancelled' ? 'Đã hủy' : apt.status}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-12">
+                        <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gray-100 flex items-center justify-center">
+                            <Calendar className="w-10 h-10 text-gray-400" />
+                        </div>
+                        <h3 className="font-semibold text-gray-900 mb-2">Chưa có lịch khám</h3>
+                        <p className="text-gray-500 mb-6">Đặt lịch khám ngay để chăm sóc sức khỏe</p>
+                        <Link
+                            to="/booking"
+                            className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-[15px] bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/35 hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5 transition-all duration-300"
+                        >
+                            <Plus className="w-5 h-5" />
+                            Đặt lịch ngay
+                        </Link>
+                    </div>
+                )}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                    { to: '/clinics', icon: Building2, title: 'Phòng khám', desc: 'Tìm kiếm phòng khám', color: 'from-blue-500 to-blue-600' },
+                    { to: '/records', icon: FileText, title: 'Hồ sơ bệnh án', desc: 'Xem lịch sử khám', color: 'from-purple-500 to-purple-600' },
+                    { to: '/health', icon: Activity, title: 'Chỉ số sức khỏe', desc: 'Theo dõi sức khỏe', color: 'from-green-500 to-green-600' },
+                    { to: '/reports', icon: BarChart3, title: 'Báo cáo', desc: 'Phân tích dữ liệu', color: 'from-amber-500 to-amber-600' },
+                ].map((item, index) => (
+                    <Link
+                        key={item.to}
+                        to={item.to}
+                        className="bg-white rounded-2xl shadow-lg p-5 group hover:scale-105 transition-transform"
+                        style={{ animation: `fadeIn 0.4s ease-out ${index * 0.1}s forwards`, opacity: 0 }}
+                    >
+                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg mb-4`}>
+                            <item.icon className="w-6 h-6 text-white" />
+                        </div>
+                        <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                            {item.title}
+                        </h3>
+                        <p className="text-sm text-gray-500 mt-1">{item.desc}</p>
+                    </Link>
+                ))}
+            </div>
+        </div>
+    );
+}
