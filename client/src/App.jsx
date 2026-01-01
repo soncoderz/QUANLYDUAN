@@ -8,6 +8,7 @@ import Register from './pages/auth/Register';
 
 // Layout
 import Layout from './components/Layout';
+import AdminLayout from './components/AdminLayout';
 
 // Patient Pages
 import Dashboard from './pages/patient/Dashboard';
@@ -19,6 +20,16 @@ import Medications from './pages/patient/Medications';
 import HealthMetrics from './pages/patient/HealthMetrics';
 import Reports from './pages/patient/Reports';
 import Settings from './pages/patient/Settings';
+
+// Admin Pages
+import {
+  AdminDashboard,
+  UserManagement,
+  DoctorManagement,
+  ClinicManagement,
+  AppointmentManagement,
+  SystemReports
+} from './pages/admin';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -39,9 +50,32 @@ const ProtectedRoute = ({ children }) => {
   return <Layout>{children}</Layout>;
 };
 
+// Admin Protected Route Component
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role !== 'clinic_admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <AdminLayout>{children}</AdminLayout>;
+};
+
 // Public Route Component (redirect if logged in)
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
@@ -52,10 +86,37 @@ const PublicRoute = ({ children }) => {
   }
 
   if (isAuthenticated) {
+    // Redirect based on role
+    if (user?.role === 'clinic_admin') {
+      return <Navigate to="/admin" replace />;
+    }
     return <Navigate to="/dashboard" replace />;
   }
 
   return children;
+};
+
+// Root Redirect based on role
+const RootRedirect = () => {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="spinner" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role === 'clinic_admin') {
+    return <Navigate to="/admin" replace />;
+  }
+
+  return <Navigate to="/dashboard" replace />;
 };
 
 function AppRoutes() {
@@ -79,7 +140,57 @@ function AppRoutes() {
         }
       />
 
-      {/* Protected Routes */}
+      {/* Admin Routes */}
+      <Route
+        path="/admin"
+        element={
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <AdminRoute>
+            <UserManagement />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/doctors"
+        element={
+          <AdminRoute>
+            <DoctorManagement />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/clinics"
+        element={
+          <AdminRoute>
+            <ClinicManagement />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/appointments"
+        element={
+          <AdminRoute>
+            <AppointmentManagement />
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/reports"
+        element={
+          <AdminRoute>
+            <SystemReports />
+          </AdminRoute>
+        }
+      />
+
+      {/* Protected Patient Routes */}
       <Route
         path="/dashboard"
         element={
@@ -161,9 +272,9 @@ function AppRoutes() {
         }
       />
 
-      {/* Default Route */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      {/* Default Route - Role based redirect */}
+      <Route path="/" element={<RootRedirect />} />
+      <Route path="*" element={<RootRedirect />} />
     </Routes>
   );
 }
@@ -181,3 +292,4 @@ function App() {
 }
 
 export default App;
+

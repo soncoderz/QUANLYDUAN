@@ -15,7 +15,9 @@ const {
     medicationRoutes,
     reminderRoutes,
     healthMetricRoutes,
-    reportRoutes
+    reportRoutes,
+    adminRoutes,
+    uploadRoutes
 } = require('./routes');
 
 // Initialize app
@@ -46,6 +48,8 @@ app.use('/api/medications', medicationRoutes);
 app.use('/api/reminders', reminderRoutes);
 app.use('/api/health-metrics', healthMetricRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
