@@ -52,6 +52,7 @@ export default function Layout({ children }) {
 
     const userName = profile?.fullName || user?.email?.split('@')[0] || 'User';
     const userInitial = userName.charAt(0).toUpperCase();
+    const avatarUrl = profile?.avatar;
 
     return (
         <div className="min-h-screen flex bg-gradient-to-br from-sky-50 via-blue-50 to-emerald-50">
@@ -71,9 +72,17 @@ export default function Layout({ children }) {
                 {/* User Info */}
                 <div className="px-4 py-4 border-b border-gray-100">
                     <div className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-blue-50 to-teal-50">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center font-semibold text-lg text-white shrink-0 shadow-md">
-                            {userInitial}
-                        </div>
+                        {avatarUrl ? (
+                            <img
+                                src={avatarUrl}
+                                alt={userName}
+                                className="w-12 h-12 rounded-2xl object-cover shrink-0 shadow-md border border-white/40"
+                            />
+                        ) : (
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center font-semibold text-lg text-white shrink-0 shadow-md">
+                                {userInitial}
+                            </div>
+                        )}
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-gray-900 truncate">
                                 {userName}
@@ -167,9 +176,17 @@ export default function Layout({ children }) {
                             <Bell className="w-5 h-5 text-gray-700" />
                             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                         </button>
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center text-white font-semibold text-sm">
-                            {userInitial}
-                        </div>
+                        {avatarUrl ? (
+                            <img
+                                src={avatarUrl}
+                                alt={userName}
+                                className="w-9 h-9 rounded-xl object-cover border border-white/60"
+                            />
+                        ) : (
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center text-white font-semibold text-sm">
+                                {userInitial}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -207,9 +224,17 @@ export default function Layout({ children }) {
                         {/* Mobile User Info */}
                         <div className="px-4 py-4 border-b border-gray-100">
                             <div className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-blue-50 to-teal-50">
-                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center font-semibold text-lg text-white">
-                                    {userInitial}
-                                </div>
+                                {avatarUrl ? (
+                                    <img
+                                        src={avatarUrl}
+                                        alt={userName}
+                                        className="w-12 h-12 rounded-2xl object-cover border border-white/40"
+                                    />
+                                ) : (
+                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center font-semibold text-lg text-white">
+                                        {userInitial}
+                                    </div>
+                                )}
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
                                     <p className="text-xs text-gray-500 capitalize">

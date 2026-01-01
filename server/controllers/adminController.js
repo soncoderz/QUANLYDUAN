@@ -147,12 +147,24 @@ const getUsers = async (req, res) => {
             .skip((page - 1) * limit)
             .limit(parseInt(limit));
 
-        // Get profiles for patients
-        const userIds = users.filter(u => u.role === 'patient').map(u => u._id);
-        const profiles = await PatientProfile.find({ userId: { $in: userIds } });
+        // Get profiles for patients and doctors so we can show avatars/names
+        const patientIds = users.filter(u => u.role === 'patient').map(u => u._id);
+        const doctorIds = users.filter(u => u.role === 'doctor').map(u => u._id);
+
+        const [patientProfiles, doctorProfiles] = await Promise.all([
+            PatientProfile.find({ userId: { $in: patientIds } }),
+            Doctor.find({ userId: { $in: doctorIds } }).select('userId fullName avatar')
+        ]);
+
         const profileMap = {};
-        profiles.forEach(p => {
+        patientProfiles.forEach(p => {
             profileMap[p.userId.toString()] = p;
+        });
+        doctorProfiles.forEach(d => {
+            profileMap[d.userId.toString()] = {
+                fullName: d.fullName,
+                avatar: d.avatar
+            };
         });
 
         const usersWithProfiles = users.map(user => ({
@@ -242,7 +254,8 @@ const createUser = async (req, res) => {
         if (user.role === 'patient') {
             await PatientProfile.create({
                 userId: user._id,
-                fullName: fullName || email.split('@')[0]
+                fullName: fullName || email.split('@')[0],
+                avatar: req.body.avatar || ''
             });
         }
 
@@ -291,12 +304,18 @@ const updateUser = async (req, res) => {
         await user.save();
 
         // Update profile if patient
-        if (fullName && user.role === 'patient') {
-            await PatientProfile.findOneAndUpdate(
-                { userId: user._id },
-                { fullName },
-                { new: true }
-            );
+        if (user.role === 'patient') {
+            const updateData = {};
+            if (fullName) updateData.fullName = fullName;
+            if (req.body.avatar) updateData.avatar = req.body.avatar;
+
+            if (Object.keys(updateData).length > 0) {
+                await PatientProfile.findOneAndUpdate(
+                    { userId: user._id },
+                    updateData,
+                    { new: true }
+                );
+            }
         }
 
         res.json({
@@ -458,8 +477,16 @@ const createDoctor = async (req, res) => {
         const {
             email, password, phone,
             fullName, specialty, clinicId,
-            licenseNumber, experience, education, consultationFee, description
+            licenseNumber, experience, education, consultationFee, description,
+            workingDays, startTime, endTime, slotDuration
         } = req.body;
+
+        if (!specialty || !specialty.trim()) {
+            return res.status(400).json({
+                success: false,
+                error: 'Specialty is required for doctors'
+            });
+        }
 
         // Check if user exists
         const existingUser = await User.findOne({ email });
@@ -479,7 +506,7 @@ const createDoctor = async (req, res) => {
         });
 
         // Create doctor profile
-        const doctor = await Doctor.create({
+        const doctorData = {
             userId: user._id,
             clinicId,
             fullName,
@@ -488,8 +515,16 @@ const createDoctor = async (req, res) => {
             experience: experience || 0,
             education,
             description,
-            consultationFee: consultationFee || 0
-        });
+            consultationFee: consultationFee || 0,
+            avatar: req.body.avatar || ''
+        };
+
+        if (Array.isArray(workingDays) && workingDays.length) doctorData.workingDays = workingDays;
+        if (startTime) doctorData.startTime = startTime;
+        if (endTime) doctorData.endTime = endTime;
+        if (slotDuration) doctorData.slotDuration = slotDuration;
+
+        const doctor = await Doctor.create(doctorData);
 
         res.status(201).json({
             success: true,
@@ -512,15 +547,31 @@ const updateDoctor = async (req, res) => {
     try {
         const {
             fullName, specialty, clinicId,
-            licenseNumber, experience, education, consultationFee, description, isAvailable
+            licenseNumber, experience, education, consultationFee, description, isAvailable,
+            workingDays, startTime, endTime, slotDuration
         } = req.body;
+
+        if (!specialty || !specialty.trim()) {
+            return res.status(400).json({
+                success: false,
+                error: 'Specialty is required for doctors'
+            });
+        }
+
+        const updateData = {
+            fullName, specialty, clinicId,
+            licenseNumber, experience, education, consultationFee, description, isAvailable,
+            avatar: req.body.avatar
+        };
+
+        if (Array.isArray(workingDays) && workingDays.length) updateData.workingDays = workingDays;
+        if (startTime) updateData.startTime = startTime;
+        if (endTime) updateData.endTime = endTime;
+        if (slotDuration) updateData.slotDuration = slotDuration;
 
         const doctor = await Doctor.findByIdAndUpdate(
             req.params.id,
-            {
-                fullName, specialty, clinicId,
-                licenseNumber, experience, education, consultationFee, description, isAvailable
-            },
+            updateData,
             { new: true, runValidators: true }
         ).populate('clinicId', 'name');
 
@@ -711,6 +762,13 @@ const createClinic = async (req, res) => {
     try {
         const { name, address, phone, email, specialty, description, workingHours, image } = req.body;
 
+        if (!Array.isArray(specialty) || specialty.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Specialty list is required for clinics'
+            });
+        }
+
         const clinic = await Clinic.create({
             name,
             address,
@@ -741,6 +799,13 @@ const createClinic = async (req, res) => {
 // @access  Private/Admin
 const updateClinic = async (req, res) => {
     try {
+        if (req.body.specialty && (!Array.isArray(req.body.specialty) || req.body.specialty.length === 0)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Specialty list cannot be empty'
+            });
+        }
+
         const clinic = await Clinic.findByIdAndUpdate(
             req.params.id,
             req.body,

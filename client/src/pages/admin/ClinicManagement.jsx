@@ -311,6 +311,12 @@ function ClinicModal({ mode, clinic, onClose, onSuccess }) {
                 specialty: formData.specialty.split(',').map(s => s.trim()).filter(Boolean)
             };
 
+            if (data.specialty.length === 0) {
+                showError('Vui lòng nhập ít nhất một chuyên khoa');
+                setLoading(false);
+                return;
+            }
+
             if (mode === 'create') {
                 const response = await adminService.createClinic(data);
                 if (response.success) {
@@ -483,6 +489,7 @@ function ClinicModal({ mode, clinic, onClose, onSuccess }) {
                             onChange={(e) => setFormData(prev => ({ ...prev, specialty: e.target.value }))}
                             disabled={isViewMode}
                             className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
+                            required
                             placeholder="Tim mạch, Nội khoa, Nhi khoa"
                         />
                     </div>

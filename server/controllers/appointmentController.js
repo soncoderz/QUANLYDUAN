@@ -1,7 +1,7 @@
 const Appointment = require('../models/Appointment');
 const Doctor = require('../models/Doctor');
 const Clinic = require('../models/Clinic');
-const { paginate, paginateResponse } = require('../utils/helpers');
+const { paginate, paginateResponse, generateTimeSlots } = require('../utils/helpers');
 
 // @desc    Get appointments
 // @route   GET /api/appointments
@@ -122,6 +122,29 @@ const createAppointment = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 error: 'Doctor not found'
+            });
+        }
+
+        // Validate slot is within doctor's working schedule
+        const workingDays = (doctor.workingDays && doctor.workingDays.length > 0) ? doctor.workingDays : [1, 2, 3, 4, 5];
+        const appointmentDay = new Date(appointmentDate).getDay();
+        if (!workingDays.includes(appointmentDay)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Doctor is not available on this day'
+            });
+        }
+
+        const allowedSlots = generateTimeSlots(
+            doctor.startTime || '08:00',
+            doctor.endTime || '17:00',
+            doctor.slotDuration || 30
+        );
+
+        if (!allowedSlots.includes(timeSlot)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Time slot is outside the doctor schedule'
             });
         }
 
