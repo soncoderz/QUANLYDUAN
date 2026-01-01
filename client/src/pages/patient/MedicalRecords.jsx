@@ -10,7 +10,8 @@ import {
     Heart,
     Thermometer,
     Activity,
-    X
+    X,
+    Pill
 } from 'lucide-react';
 
 export default function MedicalRecords() {
@@ -241,6 +242,51 @@ export default function MedicalRecords() {
                                                     <p className="text-xs text-gray-400">kg</p>
                                                 </div>
                                             )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Prescriptions */}
+                                {selectedRecord.prescriptions && selectedRecord.prescriptions.length > 0 && (
+                                    <div>
+                                        <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                                            Đơn thuốc ({selectedRecord.prescriptions.length} loại)
+                                        </h4>
+                                        <div className="space-y-3">
+                                            {selectedRecord.prescriptions.map((med, idx) => (
+                                                <div key={idx} className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-100">
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                                            <Pill className="w-5 h-5 text-purple-600" />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className="font-semibold text-gray-900">{med.name}</p>
+                                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                                {med.dosage && (
+                                                                    <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                        💊 {med.dosage}
+                                                                    </span>
+                                                                )}
+                                                                {med.frequency && (
+                                                                    <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                        🕐 {med.frequency}
+                                                                    </span>
+                                                                )}
+                                                                {med.duration && (
+                                                                    <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                        📅 {med.duration}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            {med.instructions && (
+                                                                <p className="text-sm text-gray-500 mt-2 italic">
+                                                                    ℹ️ {med.instructions}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
                                 )}
