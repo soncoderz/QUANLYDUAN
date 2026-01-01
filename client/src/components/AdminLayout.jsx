@@ -12,7 +12,6 @@ import {
     Menu,
     X,
     Shield,
-    Bell,
     ChevronRight
 } from 'lucide-react';
 import { useState } from 'react';
@@ -84,10 +83,6 @@ export default function AdminLayout({ children }) {
                                 Quản trị viên
                             </p>
                         </div>
-                        <button className="p-2 rounded-xl hover:bg-slate-600/50 transition-colors relative">
-                            <Bell className="w-5 h-5 text-slate-400" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
                     </div>
                 </div>
 
@@ -151,10 +146,6 @@ export default function AdminLayout({ children }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="p-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 transition-colors relative">
-                            <Bell className="w-5 h-5 text-white" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
                             {userInitial}
                         </div>
