@@ -461,7 +461,7 @@ export default function Booking() {
 
                     {/* Reason */}
                     <div className="bg-white rounded-2xl shadow-lg p-6">
-                        <h3 className="font-semibold text-gray-900 mb-4">Lý do khám (tùy chọn)</h3>
+                        <h3 className="font-semibold text-gray-900 mb-4">Lý do khám</h3>
                         <textarea
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
