@@ -35,7 +35,7 @@ const getProfile = async (req, res) => {
 // @access  Private
 const updateProfile = async (req, res) => {
     try {
-        const { fullName, dateOfBirth, gender, bloodType, allergies, emergencyContact, emergencyPhone, address, phone } = req.body;
+        const { fullName, dateOfBirth, gender, bloodType, allergies, emergencyContact, emergencyPhone, address, phone, avatar } = req.body;
 
         // Update user phone if provided
         if (phone) {
@@ -46,18 +46,20 @@ const updateProfile = async (req, res) => {
         let profile = await PatientProfile.findOne({ userId: req.user._id });
 
         if (profile) {
+            const updateData = {};
+            if (fullName) updateData.fullName = fullName;
+            if (dateOfBirth) updateData.dateOfBirth = dateOfBirth;
+            if (gender) updateData.gender = gender;
+            if (bloodType) updateData.bloodType = bloodType;
+            if (allergies) updateData.allergies = allergies;
+            if (emergencyContact) updateData.emergencyContact = emergencyContact;
+            if (emergencyPhone) updateData.emergencyPhone = emergencyPhone;
+            if (address) updateData.address = address;
+            if (avatar) updateData.avatar = avatar;
+
             profile = await PatientProfile.findOneAndUpdate(
                 { userId: req.user._id },
-                {
-                    fullName: fullName || profile.fullName,
-                    dateOfBirth: dateOfBirth || profile.dateOfBirth,
-                    gender: gender || profile.gender,
-                    bloodType: bloodType || profile.bloodType,
-                    allergies: allergies || profile.allergies,
-                    emergencyContact: emergencyContact || profile.emergencyContact,
-                    emergencyPhone: emergencyPhone || profile.emergencyPhone,
-                    address: address || profile.address
-                },
+                updateData,
                 { new: true }
             ).populate('userId', 'email phone role');
         } else {
@@ -70,7 +72,8 @@ const updateProfile = async (req, res) => {
                 allergies,
                 emergencyContact,
                 emergencyPhone,
-                address
+                address,
+                avatar
             });
             profile = await PatientProfile.findById(profile._id).populate('userId', 'email phone role');
         }
