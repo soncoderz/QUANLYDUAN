@@ -147,8 +147,7 @@ const getAvailableSlots = async (req, res) => {
             });
         }
 
-        // Get all time slots
-        const allSlots = generateTimeSlots(8, 17, 30);
+        const dayOfWeek = new Date(date).getDay();
 
         // Get booked appointments for the date
         const startOfDay = new Date(date);
@@ -173,19 +172,41 @@ const getAvailableSlots = async (req, res) => {
         }));
 
         // Get doctors for this clinic
-        let doctors = await Doctor.find({ clinicId: req.params.id, isAvailable: true }).select('fullName specialty');
+        let doctors = await Doctor.find({ clinicId: req.params.id, isAvailable: true })
+            .select('fullName specialty workingDays startTime endTime slotDuration');
 
         if (doctorId) {
             doctors = doctors.filter(d => d._id.toString() === doctorId);
         }
 
         // Calculate available slots per doctor
+        const defaultDays = [1, 2, 3, 4, 5];
         const availableSlots = doctors.map(doctor => {
             const doctorBookedSlots = bookedSlots
                 .filter(slot => slot.doctorId === doctor._id.toString())
                 .map(slot => slot.time);
 
-            const slots = allSlots.map(time => ({
+            const workingDays = (doctor.workingDays && doctor.workingDays.length > 0) ? doctor.workingDays : defaultDays;
+            // If doctor doesn't work this day, return empty slots to indicate unavailable
+            if (!workingDays.includes(dayOfWeek)) {
+                return {
+                    doctor: {
+                        id: doctor._id,
+                        fullName: doctor.fullName,
+                        specialty: doctor.specialty
+                    },
+                    slots: []
+                };
+            }
+
+            const slotDuration = doctor.slotDuration || 30;
+            const slotsForDoctor = generateTimeSlots(
+                doctor.startTime || '08:00',
+                doctor.endTime || '17:00',
+                slotDuration
+            );
+
+            const slots = slotsForDoctor.map(time => ({
                 time,
                 available: !doctorBookedSlots.includes(time)
             }));
