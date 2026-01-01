@@ -392,12 +392,17 @@ export default function Booking() {
                     {/* Appointment Summary */}
                     <div className="bg-white rounded-2xl shadow-lg p-6 bg-gradient-to-br from-blue-50 to-teal-50 border border-blue-100">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
-                                <Stethoscope className="w-8 h-8 text-white" />
+                            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                                {clinic?.image ? (
+                                    <img src={clinic.image} alt={clinic.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <Stethoscope className="w-8 h-8 text-white" />
+                                )}
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-gray-900">{selectedDoctor?.fullName}</h3>
                                 <p className="text-gray-500">{selectedDoctor?.specialty}</p>
+                                <p className="text-sm text-gray-400 line-clamp-1 mt-1">{clinic?.name}</p>
                             </div>
                         </div>
 

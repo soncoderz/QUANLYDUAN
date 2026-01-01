@@ -204,19 +204,39 @@ export default function Clinics() {
                             className="bg-white rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all overflow-hidden group"
                             style={{ animation: `fadeIn 0.4s ease-out ${index * 0.05}s forwards`, opacity: 0 }}
                         >
-                            {/* Image Placeholder */}
-                            <div className="h-40 bg-gradient-to-br from-blue-400 to-teal-400 relative">
-                                <div className="absolute inset-0 bg-black/20" />
-                                <div className="absolute top-4 right-4">
-                                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/90 text-amber-600 text-sm font-semibold">
-                                        <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                                        {clinic.rating || 4.5}
-                                    </span>
+                            {/* Image */}
+                            {clinic.image ? (
+                                <div className="h-40 relative">
+                                    <img
+                                        src={clinic.image}
+                                        alt={clinic.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                    <div className="absolute top-4 right-4">
+                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/90 text-amber-600 text-sm font-semibold">
+                                            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                            {clinic.rating || 4.5}
+                                        </span>
+                                    </div>
+                                    <div className="absolute bottom-4 left-4 right-4">
+                                        <h3 className="text-lg font-bold text-white line-clamp-1">{clinic.name}</h3>
+                                    </div>
                                 </div>
-                                <div className="absolute bottom-4 left-4 right-4">
-                                    <h3 className="text-lg font-bold text-white line-clamp-1">{clinic.name}</h3>
+                            ) : (
+                                <div className="h-40 bg-gradient-to-br from-blue-400 to-teal-400 relative">
+                                    <div className="absolute inset-0 bg-black/20" />
+                                    <div className="absolute top-4 right-4">
+                                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/90 text-amber-600 text-sm font-semibold">
+                                            <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                                            {clinic.rating || 4.5}
+                                        </span>
+                                    </div>
+                                    <div className="absolute bottom-4 left-4 right-4">
+                                        <h3 className="text-lg font-bold text-white line-clamp-1">{clinic.name}</h3>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* Content */}
                             <div className="p-5">
