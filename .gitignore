@@ -14,3 +14,4 @@ dist/
 .kiro/specs/
 server/logs/
 .agent/artifacts/
+docs/
