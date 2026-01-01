@@ -74,12 +74,21 @@ export default function Booking() {
 
     const fetchAvailableSlots = async () => {
         try {
-            const response = await clinicService.getAvailableSlots(clinicId, {
-                date: selectedDate,
-                doctorId: selectedDoctor._id,
-            });
+            const response = await clinicService.getAvailableSlots(
+                clinicId,
+                selectedDate,
+                selectedDoctor._id
+            );
             if (response.success) {
-                setAvailableSlots(response.data || []);
+                const slotsByDoctor = response.data?.availableSlots || [];
+                const matchedDoctor = slotsByDoctor.find(
+                    (d) => d.doctor?.id === selectedDoctor._id
+                ) || slotsByDoctor[0];
+
+                const slots = matchedDoctor?.slots
+                    ?.filter((s) => s.available)
+                    ?.map((s) => s.time) || [];
+                setAvailableSlots(slots);
             }
         } catch (error) {
             console.error('Error fetching slots:', error);
@@ -89,12 +98,15 @@ export default function Booking() {
     const handleDoctorSelect = (doctor) => {
         setSelectedDoctor(doctor);
         setSelectedSlot('');
+        setSelectedDate('');
+        setAvailableSlots([]);
         info(`Đã chọn ${doctor.fullName}`);
     };
 
     const handleDateSelect = (date) => {
         setSelectedDate(date);
         setSelectedSlot('');
+        setAvailableSlots([]);
     };
 
     const handleSubmit = async () => {
@@ -130,6 +142,7 @@ export default function Booking() {
         const days = [];
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        const allowedDays = (selectedDoctor?.workingDays || [1, 2, 3, 4, 5]).map((d) => Number(d));
 
         // Previous month days
         for (let i = 0; i < startDay; i++) {
@@ -141,12 +154,12 @@ export default function Booking() {
             const date = new Date(year, month, i);
             const dateStr = date.toISOString().split('T')[0];
             const isPast = date < today;
-            const isWeekend = date.getDay() === 0;
+            const isAllowedDay = allowedDays.includes(date.getDay());
 
             days.push({
                 date: dateStr,
                 day: i,
-                disabled: isPast || isWeekend,
+                disabled: isPast || !isAllowedDay,
                 isToday: date.getTime() === today.getTime(),
                 isSelected: dateStr === selectedDate,
             });
@@ -392,12 +405,17 @@ export default function Booking() {
                     {/* Appointment Summary */}
                     <div className="bg-white rounded-2xl shadow-lg p-6 bg-gradient-to-br from-blue-50 to-teal-50 border border-blue-100">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
-                                <Stethoscope className="w-8 h-8 text-white" />
+                            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
+                                {clinic?.image ? (
+                                    <img src={clinic.image} alt={clinic.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <Stethoscope className="w-8 h-8 text-white" />
+                                )}
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-gray-900">{selectedDoctor?.fullName}</h3>
                                 <p className="text-gray-500">{selectedDoctor?.specialty}</p>
+                                <p className="text-sm text-gray-400 line-clamp-1 mt-1">{clinic?.name}</p>
                             </div>
                         </div>
 
