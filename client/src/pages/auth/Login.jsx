@@ -21,7 +21,13 @@ export default function Login() {
             const response = await login(email, password);
             if (response.success) {
                 success('Chào mừng bạn quay trở lại!', 'Đăng nhập thành công');
-                navigate('/dashboard');
+                // Redirect based on role
+                const userRole = response.data?.user?.role;
+                if (userRole === 'clinic_admin') {
+                    navigate('/admin');
+                } else {
+                    navigate('/dashboard');
+                }
             } else {
                 showError(response.error || 'Đăng nhập thất bại');
             }

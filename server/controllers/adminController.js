@@ -242,7 +242,8 @@ const createUser = async (req, res) => {
         if (user.role === 'patient') {
             await PatientProfile.create({
                 userId: user._id,
-                fullName: fullName || email.split('@')[0]
+                fullName: fullName || email.split('@')[0],
+                avatar: req.body.avatar || ''
             });
         }
 
@@ -291,12 +292,18 @@ const updateUser = async (req, res) => {
         await user.save();
 
         // Update profile if patient
-        if (fullName && user.role === 'patient') {
-            await PatientProfile.findOneAndUpdate(
-                { userId: user._id },
-                { fullName },
-                { new: true }
-            );
+        if (user.role === 'patient') {
+            const updateData = {};
+            if (fullName) updateData.fullName = fullName;
+            if (req.body.avatar) updateData.avatar = req.body.avatar;
+
+            if (Object.keys(updateData).length > 0) {
+                await PatientProfile.findOneAndUpdate(
+                    { userId: user._id },
+                    updateData,
+                    { new: true }
+                );
+            }
         }
 
         res.json({
@@ -488,7 +495,8 @@ const createDoctor = async (req, res) => {
             experience: experience || 0,
             education,
             description,
-            consultationFee: consultationFee || 0
+            consultationFee: consultationFee || 0,
+            avatar: req.body.avatar || ''
         });
 
         res.status(201).json({
@@ -519,7 +527,8 @@ const updateDoctor = async (req, res) => {
             req.params.id,
             {
                 fullName, specialty, clinicId,
-                licenseNumber, experience, education, consultationFee, description, isAvailable
+                licenseNumber, experience, education, consultationFee, description, isAvailable,
+                avatar: req.body.avatar
             },
             { new: true, runValidators: true }
         ).populate('clinicId', 'name');
