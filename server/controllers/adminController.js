@@ -4,6 +4,8 @@ const Clinic = require('../models/Clinic');
 const Appointment = require('../models/Appointment');
 const PatientProfile = require('../models/PatientProfile');
 const MedicalRecord = require('../models/MedicalRecord');
+const Medication = require('../models/Medication');
+const HealthMetric = require('../models/HealthMetric');
 
 // ==================== DASHBOARD ====================
 
@@ -995,12 +997,28 @@ const getAppointmentById = async (req, res) => {
         // Get medical records for this appointment
         const records = await MedicalRecord.find({ appointmentId: appointment._id });
 
+        // Medications for this appointment
+        const medications = await Medication.find({ appointmentId: appointment._id }).sort({ createdAt: -1 });
+
+        // Latest health metrics per type
+        const metricTypes = ['weight', 'blood_pressure', 'glucose', 'heart_rate', 'temperature', 'oxygen_saturation'];
+        const healthMetrics = {};
+        for (const type of metricTypes) {
+            const metric = await HealthMetric.findOne({ patientId: appointment.patientId._id, metricType: type })
+                .sort({ measuredAt: -1 });
+            if (metric) {
+                healthMetrics[type] = metric;
+            }
+        }
+
         res.json({
             success: true,
             data: {
                 appointment,
                 patientProfile: profile,
-                medicalRecords: records
+                medicalRecords: records,
+                medications,
+                healthMetrics
             }
         });
     } catch (error) {

@@ -1,6 +1,9 @@
 const Appointment = require('../models/Appointment');
 const Doctor = require('../models/Doctor');
 const Clinic = require('../models/Clinic');
+const Medication = require('../models/Medication');
+const HealthMetric = require('../models/HealthMetric');
+const PatientProfile = require('../models/PatientProfile');
 const { paginate, paginateResponse, generateTimeSlots } = require('../utils/helpers');
 
 // @desc    Get appointments
@@ -85,9 +88,29 @@ const getAppointmentById = async (req, res) => {
             });
         }
 
+        // Medications linked to this appointment
+        const medications = await Medication.find({ appointmentId: appointment._id }).sort({ createdAt: -1 });
+
+        // Patient profile and latest health metrics
+        const profile = await PatientProfile.findOne({ userId: appointment.patientId._id });
+        const metricTypes = ['weight', 'blood_pressure', 'glucose', 'heart_rate', 'temperature', 'oxygen_saturation'];
+        const healthMetrics = {};
+        for (const type of metricTypes) {
+            const metric = await HealthMetric.findOne({ patientId: appointment.patientId._id, metricType: type })
+                .sort({ measuredAt: -1 });
+            if (metric) {
+                healthMetrics[type] = metric;
+            }
+        }
+
         res.json({
             success: true,
-            data: appointment
+            data: {
+                appointment,
+                patientProfile: profile,
+                medications,
+                healthMetrics
+            }
         });
     } catch (error) {
         console.error('Get appointment by id error:', error);
