@@ -171,9 +171,17 @@ export default function DoctorDashboard() {
                             dashboardData.todayAppointments.map((apt) => (
                                 <div key={apt._id} className="p-4 hover:bg-slate-700/30 transition-colors">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center border border-teal-500/30">
-                                            <User className="w-5 h-5 text-teal-400" />
-                                        </div>
+                                        {apt.patientProfile?.avatar ? (
+                                            <img
+                                                src={apt.patientProfile.avatar}
+                                                alt={apt.patientProfile.fullName || 'Bệnh nhân'}
+                                                className="w-12 h-12 rounded-xl object-cover border border-teal-500/30"
+                                            />
+                                        ) : (
+                                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center border border-teal-500/30">
+                                                <User className="w-5 h-5 text-teal-400" />
+                                            </div>
+                                        )}
                                         <div className="flex-1 min-w-0">
                                             <p className="font-medium text-white truncate">
                                                 {apt.patientProfile?.fullName || apt.patientId?.email || 'Bệnh nhân'}
@@ -221,9 +229,17 @@ export default function DoctorDashboard() {
                             dashboardData.pendingAppointments.map((apt) => (
                                 <div key={apt._id} className="p-4 hover:bg-slate-700/30 transition-colors">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/30">
-                                            <User className="w-5 h-5 text-amber-400" />
-                                        </div>
+                                        {apt.patientProfile?.avatar ? (
+                                            <img
+                                                src={apt.patientProfile.avatar}
+                                                alt={apt.patientProfile.fullName || 'Bệnh nhân'}
+                                                className="w-12 h-12 rounded-xl object-cover border border-amber-500/30"
+                                            />
+                                        ) : (
+                                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center border border-amber-500/30">
+                                                <User className="w-5 h-5 text-amber-400" />
+                                            </div>
+                                        )}
                                         <div className="flex-1 min-w-0">
                                             <p className="font-medium text-white truncate">
                                                 {apt.patientProfile?.fullName || apt.patientId?.email || 'Bệnh nhân'}

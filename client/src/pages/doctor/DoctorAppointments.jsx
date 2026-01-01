@@ -199,9 +199,17 @@ export default function DoctorAppointments() {
                                 }}
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center border border-teal-500/30">
-                                        <User className="w-6 h-6 text-teal-400" />
-                                    </div>
+                                    {apt.patientProfile?.avatar ? (
+                                        <img
+                                            src={apt.patientProfile.avatar}
+                                            alt={apt.patientProfile.fullName || 'Bệnh nhân'}
+                                            className="w-14 h-14 rounded-xl object-cover border border-teal-500/30"
+                                        />
+                                    ) : (
+                                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center border border-teal-500/30">
+                                            <User className="w-6 h-6 text-teal-400" />
+                                        </div>
+                                    )}
                                     <div className="flex-1 min-w-0">
                                         <p className="font-semibold text-white">
                                             {apt.patientProfile?.fullName || apt.patientId?.email || 'Bệnh nhân'}
@@ -265,9 +273,17 @@ export default function DoctorAppointments() {
                         <div className="p-5 space-y-4">
                             {/* Patient Info */}
                             <div className="flex items-center gap-4 p-4 bg-slate-700/50 rounded-xl">
-                                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center border border-teal-500/30">
-                                    <User className="w-6 h-6 text-teal-400" />
-                                </div>
+                                {selectedAppointment.patientProfile?.avatar ? (
+                                    <img
+                                        src={selectedAppointment.patientProfile.avatar}
+                                        alt={selectedAppointment.patientProfile.fullName || 'Bệnh nhân'}
+                                        className="w-14 h-14 rounded-xl object-cover border border-teal-500/30"
+                                    />
+                                ) : (
+                                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center border border-teal-500/30">
+                                        <User className="w-6 h-6 text-teal-400" />
+                                    </div>
+                                )}
                                 <div>
                                     <p className="font-semibold text-white">
                                         {selectedAppointment.patientProfile?.fullName || 'Bệnh nhân'}

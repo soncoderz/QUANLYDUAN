@@ -239,9 +239,17 @@ export default function AppointmentManagement() {
                                         <tr key={apt._id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
                                             <td className="py-4 px-6">
                                                 <div className="flex items-center gap-3">
+                                                {apt.patientProfile?.avatar ? (
+                                                    <img
+                                                        src={apt.patientProfile.avatar}
+                                                        alt={apt.patientProfile.fullName || 'Bệnh nhân'}
+                                                        className="w-10 h-10 rounded-xl object-cover border border-slate-700/70"
+                                                    />
+                                                ) : (
                                                     <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 font-semibold">
                                                         {apt.patientProfile?.fullName?.charAt(0) || apt.patientId?.email?.charAt(0) || 'P'}
                                                     </div>
+                                                )}
                                                     <div>
                                                         <p className="text-white font-medium">
                                                             {apt.patientProfile?.fullName || apt.patientId?.email?.split('@')[0] || 'N/A'}
@@ -252,7 +260,15 @@ export default function AppointmentManagement() {
                                             </td>
                                             <td className="py-4 px-6">
                                                 <div className="flex items-center gap-2">
-                                                    <Stethoscope className="w-4 h-4 text-teal-400" />
+                                                    {apt.doctorId?.avatar ? (
+                                                        <img
+                                                            src={apt.doctorId.avatar}
+                                                            alt={apt.doctorId.fullName || 'Bác sĩ'}
+                                                            className="w-8 h-8 rounded-xl object-cover border border-slate-700/70"
+                                                        />
+                                                    ) : (
+                                                        <Stethoscope className="w-4 h-4 text-teal-400" />
+                                                    )}
                                                     <span className="text-slate-300">{apt.doctorId?.fullName || 'N/A'}</span>
                                                 </div>
                                             </td>

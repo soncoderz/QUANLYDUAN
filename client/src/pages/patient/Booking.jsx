@@ -74,12 +74,21 @@ export default function Booking() {
 
     const fetchAvailableSlots = async () => {
         try {
-            const response = await clinicService.getAvailableSlots(clinicId, {
-                date: selectedDate,
-                doctorId: selectedDoctor._id,
-            });
+            const response = await clinicService.getAvailableSlots(
+                clinicId,
+                selectedDate,
+                selectedDoctor._id
+            );
             if (response.success) {
-                setAvailableSlots(response.data || []);
+                const slotsByDoctor = response.data?.availableSlots || [];
+                const matchedDoctor = slotsByDoctor.find(
+                    (d) => d.doctor?.id === selectedDoctor._id
+                ) || slotsByDoctor[0];
+
+                const slots = matchedDoctor?.slots
+                    ?.filter((s) => s.available)
+                    ?.map((s) => s.time) || [];
+                setAvailableSlots(slots);
             }
         } catch (error) {
             console.error('Error fetching slots:', error);
@@ -89,12 +98,15 @@ export default function Booking() {
     const handleDoctorSelect = (doctor) => {
         setSelectedDoctor(doctor);
         setSelectedSlot('');
+        setSelectedDate('');
+        setAvailableSlots([]);
         info(`Đã chọn ${doctor.fullName}`);
     };
 
     const handleDateSelect = (date) => {
         setSelectedDate(date);
         setSelectedSlot('');
+        setAvailableSlots([]);
     };
 
     const handleSubmit = async () => {
@@ -130,6 +142,7 @@ export default function Booking() {
         const days = [];
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        const allowedDays = (selectedDoctor?.workingDays || [1, 2, 3, 4, 5]).map((d) => Number(d));
 
         // Previous month days
         for (let i = 0; i < startDay; i++) {
@@ -141,12 +154,12 @@ export default function Booking() {
             const date = new Date(year, month, i);
             const dateStr = date.toISOString().split('T')[0];
             const isPast = date < today;
-            const isWeekend = date.getDay() === 0;
+            const isAllowedDay = allowedDays.includes(date.getDay());
 
             days.push({
                 date: dateStr,
                 day: i,
-                disabled: isPast || isWeekend,
+                disabled: isPast || !isAllowedDay,
                 isToday: date.getTime() === today.getTime(),
                 isSelected: dateStr === selectedDate,
             });
