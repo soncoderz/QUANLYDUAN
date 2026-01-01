@@ -25,6 +25,8 @@ export default function Login() {
                 const userRole = response.data?.user?.role;
                 if (userRole === 'clinic_admin') {
                     navigate('/admin');
+                } else if (userRole === 'doctor') {
+                    navigate('/doctor');
                 } else {
                     navigate('/dashboard');
                 }
