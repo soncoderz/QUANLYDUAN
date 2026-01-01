@@ -43,6 +43,23 @@ const doctorSchema = new mongoose.Schema({
     isAvailable: {
         type: Boolean,
         default: true
+    },
+    // Weekly schedule (days: 0-6, 0=Sunday)
+    workingDays: {
+        type: [Number],
+        default: [1, 2, 3, 4, 5]
+    },
+    startTime: {
+        type: String,
+        default: '08:00'
+    },
+    endTime: {
+        type: String,
+        default: '17:00'
+    },
+    slotDuration: {
+        type: Number,
+        default: 30
     }
 }, {
     timestamps: true
