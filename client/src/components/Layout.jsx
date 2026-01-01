@@ -14,7 +14,6 @@ import {
     Menu,
     X,
     Heart,
-    Bell,
     ChevronRight
 } from 'lucide-react';
 import { useState } from 'react';
@@ -92,10 +91,6 @@ export default function Layout({ children }) {
                                 {user?.role === 'patient' ? 'Bệnh nhân' : user?.role === 'doctor' ? 'Bác sĩ' : 'Quản trị'}
                             </p>
                         </div>
-                        <button className="p-2 rounded-xl hover:bg-white/80 transition-colors relative">
-                            <Bell className="w-5 h-5 text-gray-500" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
                     </div>
                 </div>
 
@@ -172,10 +167,6 @@ export default function Layout({ children }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors relative">
-                            <Bell className="w-5 h-5 text-gray-700" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
                         {avatarUrl ? (
                             <img
                                 src={avatarUrl}

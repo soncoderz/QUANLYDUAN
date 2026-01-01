@@ -113,6 +113,24 @@ const getDoctorDashboard = async (req, res) => {
             .sort({ appointmentDate: 1 })
             .limit(10);
 
+        // Fetch patient profiles for avatars/names
+        const patientIds = [
+            ...todayAppointments.map(a => a.patientId?._id).filter(Boolean),
+            ...pendingAppointments.map(a => a.patientId?._id).filter(Boolean)
+        ];
+        const profiles = await PatientProfile.find({ userId: { $in: patientIds } });
+        const profileMap = {};
+        profiles.forEach(p => {
+            profileMap[p.userId.toString()] = p;
+        });
+
+        const withProfile = (arr) => arr.map(a => ({
+            ...a.toObject(),
+            patientProfile: profileMap[a.patientId?._id?.toString()] || null
+        }));
+        const todayAppointmentsWithProfile = withProfile(todayAppointments);
+        const pendingAppointmentsWithProfile = withProfile(pendingAppointments);
+
         // Get stats
         const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
         const [totalThisMonth, completedThisMonth, totalPatients] = await Promise.all([
@@ -138,8 +156,8 @@ const getDoctorDashboard = async (req, res) => {
                     avatar: doctor.avatar,
                     clinic: doctor.clinicId
                 },
-                todayAppointments,
-                pendingAppointments,
+                todayAppointments: todayAppointmentsWithProfile,
+                pendingAppointments: pendingAppointmentsWithProfile,
                 stats: {
                     todayCount: todayAppointments.length,
                     pendingCount: pendingAppointments.length,

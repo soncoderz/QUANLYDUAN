@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -9,8 +9,7 @@ import {
     LogOut,
     Menu,
     X,
-    Stethoscope,
-    Bell
+    Stethoscope
 } from 'lucide-react';
 
 const menuItems = [
@@ -22,9 +21,24 @@ const menuItems = [
 
 export default function DoctorLayout({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [doctorInfo, setDoctorInfo] = useState(null);
     const { user, profile, logout } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const loadDoctor = async () => {
+            try {
+                const res = await api.get('/doctors/dashboard');
+                if (res.data?.success) {
+                    setDoctorInfo(res.data.data?.doctor);
+                }
+            } catch (err) {
+                console.error('Load doctor info failed', err);
+            }
+        };
+        loadDoctor();
+    }, []);
 
     const handleLogout = () => {
         logout();
@@ -62,20 +76,24 @@ export default function DoctorLayout({ children }) {
                 {/* Doctor Info */}
                 <div className="p-4 border-b border-slate-700/50">
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center text-lg font-bold text-teal-400 border border-teal-500/30">
-                            {profile?.fullName?.charAt(0)?.toUpperCase() || 'D'}
-                        </div>
+                        {doctorInfo?.avatar || profile?.avatar ? (
+                            <img
+                                src={doctorInfo?.avatar || profile?.avatar}
+                                alt={doctorInfo?.fullName || profile?.fullName || 'Doctor'}
+                                className="w-12 h-12 rounded-xl object-cover border border-teal-500/40"
+                            />
+                        ) : (
+                            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 flex items-center justify-center text-lg font-bold text-teal-400 border border-teal-500/30">
+                                {(doctorInfo?.fullName || profile?.fullName || 'D').charAt(0).toUpperCase()}
+                            </div>
+                        )}
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-white truncate">{profile?.fullName || user?.email}</p>
+                            <p className="text-sm font-semibold text-white truncate">{doctorInfo?.fullName || profile?.fullName || user?.email}</p>
                             <p className="text-xs text-emerald-400 flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
                                 Bác sĩ
                             </p>
                         </div>
-                        <button className="relative p-2 rounded-lg hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors">
-                            <Bell className="w-5 h-5" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
-                        </button>
                     </div>
                 </div>
 
