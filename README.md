@@ -1,6 +1,6 @@
 # 🏥 Healthcare Booking System
 
-Hệ thống đặt lịch khám bệnh hoàn chỉnh với quản lý hồ sơ sức khỏe và nhắc nhở uống thuốc.
+Hệ thống đặt lịch khám bệnh hoàn chỉnh với quản lý hồ sơ sức khỏe .
 
 ## 📌 Tổng quan
 
