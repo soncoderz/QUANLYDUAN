@@ -4,6 +4,8 @@ const Clinic = require('../models/Clinic');
 const Appointment = require('../models/Appointment');
 const PatientProfile = require('../models/PatientProfile');
 const MedicalRecord = require('../models/MedicalRecord');
+const Medication = require('../models/Medication');
+const HealthMetric = require('../models/HealthMetric');
 
 // ==================== DASHBOARD ====================
 
@@ -81,12 +83,12 @@ const getDashboardStats = async (req, res) => {
         const recentActivity = [
             ...recentUsers.map(user => ({
                 type: 'user_registered',
-                message: `User ${user.email} registered`,
+                message: `Nguoi dung ${user.email} vua dang ky`,
                 timestamp: user.createdAt
             })),
             ...recentAppointments.map(apt => ({
                 type: 'appointment_created',
-                message: `Appointment ${apt.status} - ${apt.doctorId?.fullName || 'Unknown Doctor'}`,
+                message: `Lich kham ${apt.status} - ${apt.doctorId?.fullName || 'Khong ro bac si'}`,
                 timestamp: apt.createdAt
             }))
         ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 10);
@@ -115,7 +117,7 @@ const getDashboardStats = async (req, res) => {
         console.error('Dashboard stats error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching dashboard stats'
+            error: 'Co loi he thong khi lay thong ke bang dieu khien'
         });
     }
 };
@@ -188,7 +190,7 @@ const getUsers = async (req, res) => {
         console.error('Get users error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching users'
+            error: 'Co loi he thong khi lay danh sach nguoi dung'
         });
     }
 };
@@ -202,7 +204,7 @@ const getUserById = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                error: 'User not found'
+                error: 'Khong tim thay nguoi dung'
             });
         }
 
@@ -221,7 +223,7 @@ const getUserById = async (req, res) => {
         console.error('Get user by ID error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching user'
+            error: 'Co loi he thong khi lay thong tin nguoi dung'
         });
     }
 };
@@ -238,7 +240,7 @@ const createUser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({
                 success: false,
-                error: 'User already exists with this email'
+                error: 'Email nay da duoc dang ky'
             });
         }
 
@@ -270,13 +272,13 @@ const createUser = async (req, res) => {
                     isActive: user.isActive
                 }
             },
-            message: 'User created successfully'
+            message: 'Tao nguoi dung thanh cong'
         });
     } catch (error) {
         console.error('Create user error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error creating user'
+            error: 'Co loi he thong khi tao nguoi dung'
         });
     }
 };
@@ -292,7 +294,7 @@ const updateUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                error: 'User not found'
+                error: 'Khong tim thay nguoi dung'
             });
         }
 
@@ -321,13 +323,13 @@ const updateUser = async (req, res) => {
         res.json({
             success: true,
             data: { user },
-            message: 'User updated successfully'
+            message: 'Cap nhat nguoi dung thanh cong'
         });
     } catch (error) {
         console.error('Update user error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error updating user'
+            error: 'Co loi he thong khi cap nhat nguoi dung'
         });
     }
 };
@@ -341,7 +343,7 @@ const deleteUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                error: 'User not found'
+                error: 'Khong tim thay nguoi dung'
             });
         }
 
@@ -351,13 +353,13 @@ const deleteUser = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'User deactivated successfully'
+            message: 'Vo hieu hoa nguoi dung thanh cong'
         });
     } catch (error) {
         console.error('Delete user error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error deleting user'
+            error: 'Co loi he thong khi vo hieu hoa nguoi dung'
         });
     }
 };
@@ -377,20 +379,20 @@ const toggleUserStatus = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                error: 'User not found'
+                error: 'Khong tim thay nguoi dung'
             });
         }
 
         res.json({
             success: true,
             data: { user },
-            message: `User ${isActive ? 'activated' : 'deactivated'} successfully`
+            message: `Nguoi dung ${isActive ? 'da duoc kich hoat' : 'da bi vo hieu hoa'}`
         });
     } catch (error) {
         console.error('Toggle user status error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error updating user status'
+            error: 'Co loi he thong khi cap nhat trang thai nguoi dung'
         });
     }
 };
@@ -435,7 +437,7 @@ const getDoctors = async (req, res) => {
         console.error('Get doctors error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching doctors'
+            error: 'Co loi he thong khi lay danh sach bac si'
         });
     }
 };
@@ -452,7 +454,7 @@ const getDoctorById = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor not found'
+                error: 'Khong tim thay bac si'
             });
         }
 
@@ -464,7 +466,7 @@ const getDoctorById = async (req, res) => {
         console.error('Get doctor by ID error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching doctor'
+            error: 'Co loi he thong khi lay thong tin bac si'
         });
     }
 };
@@ -484,7 +486,7 @@ const createDoctor = async (req, res) => {
         if (!specialty || !specialty.trim()) {
             return res.status(400).json({
                 success: false,
-                error: 'Specialty is required for doctors'
+                error: 'Vui long nhap chuyen khoa cho bac si'
             });
         }
 
@@ -493,7 +495,7 @@ const createDoctor = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({
                 success: false,
-                error: 'User already exists with this email'
+                error: 'Email nay da duoc dang ky'
             });
         }
 
@@ -529,13 +531,13 @@ const createDoctor = async (req, res) => {
         res.status(201).json({
             success: true,
             data: { doctor },
-            message: 'Doctor created successfully'
+            message: 'Tao bac si thanh cong'
         });
     } catch (error) {
         console.error('Create doctor error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error creating doctor'
+            error: 'Co loi he thong khi tao bac si'
         });
     }
 };
@@ -554,7 +556,7 @@ const updateDoctor = async (req, res) => {
         if (!specialty || !specialty.trim()) {
             return res.status(400).json({
                 success: false,
-                error: 'Specialty is required for doctors'
+                error: 'Vui long nhap chuyen khoa cho bac si'
             });
         }
 
@@ -578,20 +580,20 @@ const updateDoctor = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor not found'
+                error: 'Khong tim thay bac si'
             });
         }
 
         res.json({
             success: true,
             data: { doctor },
-            message: 'Doctor updated successfully'
+            message: 'Cap nhat bac si thanh cong'
         });
     } catch (error) {
         console.error('Update doctor error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error updating doctor'
+            error: 'Co loi he thong khi cap nhat bac si'
         });
     }
 };
@@ -605,7 +607,7 @@ const deleteDoctor = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor not found'
+                error: 'Khong tim thay bac si'
             });
         }
 
@@ -618,13 +620,13 @@ const deleteDoctor = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Doctor deactivated successfully'
+            message: 'Vo hieu hoa bac si thanh cong'
         });
     } catch (error) {
         console.error('Delete doctor error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error deleting doctor'
+            error: 'Co loi he thong khi vo hieu hoa bac si'
         });
     }
 };
@@ -644,20 +646,20 @@ const toggleDoctorAvailability = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor not found'
+                error: 'Khong tim thay bac si'
             });
         }
 
         res.json({
             success: true,
             data: { doctor },
-            message: `Doctor ${isAvailable ? 'enabled' : 'disabled'} successfully`
+            message: `Bac si ${isAvailable ? 'da duoc kich hoat lich' : 'tam dung nhan lich'}`
         });
     } catch (error) {
         console.error('Toggle doctor availability error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error updating doctor availability'
+            error: 'Co loi he thong khi cap nhat trang thai bac si'
         });
     }
 };
@@ -720,7 +722,7 @@ const getClinics = async (req, res) => {
         console.error('Get clinics error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching clinics'
+            error: 'Co loi he thong khi lay danh sach phong kham'
         });
     }
 };
@@ -734,7 +736,7 @@ const getClinicById = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
@@ -750,7 +752,7 @@ const getClinicById = async (req, res) => {
         console.error('Get clinic by ID error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching clinic'
+            error: 'Co loi he thong khi lay thong tin phong kham'
         });
     }
 };
@@ -765,7 +767,7 @@ const createClinic = async (req, res) => {
         if (!Array.isArray(specialty) || specialty.length === 0) {
             return res.status(400).json({
                 success: false,
-                error: 'Specialty list is required for clinics'
+                error: 'Vui long nhap danh sach chuyen khoa cho phong kham'
             });
         }
 
@@ -783,13 +785,13 @@ const createClinic = async (req, res) => {
         res.status(201).json({
             success: true,
             data: { clinic },
-            message: 'Clinic created successfully'
+            message: 'Tao phong kham thanh cong'
         });
     } catch (error) {
         console.error('Create clinic error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error creating clinic'
+            error: 'Co loi he thong khi tao phong kham'
         });
     }
 };
@@ -802,7 +804,7 @@ const updateClinic = async (req, res) => {
         if (req.body.specialty && (!Array.isArray(req.body.specialty) || req.body.specialty.length === 0)) {
             return res.status(400).json({
                 success: false,
-                error: 'Specialty list cannot be empty'
+                error: 'Danh sach chuyen khoa khong duoc de trong'
             });
         }
 
@@ -815,20 +817,20 @@ const updateClinic = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
         res.json({
             success: true,
             data: { clinic },
-            message: 'Clinic updated successfully'
+            message: 'Cap nhat phong kham thanh cong'
         });
     } catch (error) {
         console.error('Update clinic error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error updating clinic'
+            error: 'Co loi he thong khi cap nhat phong kham'
         });
     }
 };
@@ -847,19 +849,19 @@ const deleteClinic = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
         res.json({
             success: true,
-            message: 'Clinic deactivated successfully'
+            message: 'Vo hieu hoa phong kham thanh cong'
         });
     } catch (error) {
         console.error('Delete clinic error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error deleting clinic'
+            error: 'Co loi he thong khi vo hieu hoa phong kham'
         });
     }
 };
@@ -879,20 +881,20 @@ const toggleClinicStatus = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
         res.json({
             success: true,
             data: { clinic },
-            message: `Clinic ${isActive ? 'activated' : 'deactivated'} successfully`
+            message: `Phong kham ${isActive ? 'da duoc kich hoat' : 'da bi vo hieu hoa'}`
         });
     } catch (error) {
         console.error('Toggle clinic status error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error updating clinic status'
+            error: 'Co loi he thong khi cap nhat trang thai phong kham'
         });
     }
 };
@@ -965,7 +967,7 @@ const getAppointments = async (req, res) => {
         console.error('Get appointments error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching appointments'
+            error: 'Co loi he thong khi lay danh sach lich kham'
         });
     }
 };
@@ -985,7 +987,7 @@ const getAppointmentById = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({
                 success: false,
-                error: 'Appointment not found'
+                error: 'Khong tim thay lich kham'
             });
         }
 
@@ -995,19 +997,35 @@ const getAppointmentById = async (req, res) => {
         // Get medical records for this appointment
         const records = await MedicalRecord.find({ appointmentId: appointment._id });
 
+        // Medications for this appointment
+        const medications = await Medication.find({ appointmentId: appointment._id }).sort({ createdAt: -1 });
+
+        // Latest health metrics per type
+        const metricTypes = ['weight', 'blood_pressure', 'glucose', 'heart_rate', 'temperature', 'oxygen_saturation'];
+        const healthMetrics = {};
+        for (const type of metricTypes) {
+            const metric = await HealthMetric.findOne({ patientId: appointment.patientId._id, metricType: type })
+                .sort({ measuredAt: -1 });
+            if (metric) {
+                healthMetrics[type] = metric;
+            }
+        }
+
         res.json({
             success: true,
             data: {
                 appointment,
                 patientProfile: profile,
-                medicalRecords: records
+                medicalRecords: records,
+                medications,
+                healthMetrics
             }
         });
     } catch (error) {
         console.error('Get appointment by ID error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching appointment'
+            error: 'Co loi he thong khi lay thong tin lich kham'
         });
     }
 };
@@ -1023,7 +1041,7 @@ const updateAppointmentStatus = async (req, res) => {
         if (!validStatuses.includes(status)) {
             return res.status(400).json({
                 success: false,
-                error: 'Invalid status'
+                error: 'Trang thai khong hop le'
             });
         }
 
@@ -1036,20 +1054,20 @@ const updateAppointmentStatus = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({
                 success: false,
-                error: 'Appointment not found'
+                error: 'Khong tim thay lich kham'
             });
         }
 
         res.json({
             success: true,
             data: { appointment },
-            message: `Appointment ${status} successfully`
+            message: 'Cap nhat trang thai lich kham thanh cong'
         });
     } catch (error) {
         console.error('Update appointment status error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error updating appointment status'
+            error: 'Co loi he thong khi cap nhat trang thai lich kham'
         });
     }
 };
@@ -1125,7 +1143,7 @@ const getOverviewReport = async (req, res) => {
         console.error('Get overview report error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching report'
+            error: 'Co loi he thong khi lay bao cao tong quan'
         });
     }
 };
@@ -1184,7 +1202,7 @@ const getAppointmentReport = async (req, res) => {
         console.error('Get appointment report error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error fetching appointment report'
+            error: 'Co loi he thong khi lay bao cao lich kham'
         });
     }
 };

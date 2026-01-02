@@ -14,7 +14,7 @@ const register = async (req, res) => {
         if (userExists) {
             return res.status(400).json({
                 success: false,
-                error: 'User already exists with this email'
+                error: 'Email nay da duoc dang ky'
             });
         }
 
@@ -54,13 +54,13 @@ const register = async (req, res) => {
                 accessToken,
                 refreshToken
             },
-            message: 'Registration successful'
+            message: 'Dang ky thanh cong'
         });
     } catch (error) {
         console.error('Register error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error during registration'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -77,7 +77,7 @@ const login = async (req, res) => {
         if (!user) {
             return res.status(401).json({
                 success: false,
-                error: 'Invalid credentials'
+                error: 'Email hoac mat khau khong dung'
             });
         }
 
@@ -85,7 +85,7 @@ const login = async (req, res) => {
         if (!user.isActive) {
             return res.status(401).json({
                 success: false,
-                error: 'Account is deactivated'
+                error: 'Tai khoan da bi khoa, vui long lien he ho tro'
             });
         }
 
@@ -94,7 +94,7 @@ const login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                error: 'Invalid credentials'
+                error: 'Email hoac mat khau khong dung'
             });
         }
 
@@ -118,13 +118,13 @@ const login = async (req, res) => {
                 accessToken,
                 refreshToken
             },
-            message: 'Login successful'
+            message: 'Dang nhap thanh cong'
         });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error during login'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -139,13 +139,13 @@ const logout = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Logout successful'
+            message: 'Dang xuat thanh cong'
         });
     } catch (error) {
         console.error('Logout error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error during logout'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -160,7 +160,7 @@ const refreshAccessToken = async (req, res) => {
         if (!refreshToken) {
             return res.status(401).json({
                 success: false,
-                error: 'Refresh token is required'
+                error: 'Can co refresh token'
             });
         }
 
@@ -169,7 +169,7 @@ const refreshAccessToken = async (req, res) => {
         if (!decoded) {
             return res.status(401).json({
                 success: false,
-                error: 'Invalid or expired refresh token'
+                error: 'Refresh token khong hop le hoac da het han'
             });
         }
 
@@ -178,7 +178,7 @@ const refreshAccessToken = async (req, res) => {
         if (!user || user.refreshToken !== refreshToken) {
             return res.status(401).json({
                 success: false,
-                error: 'Invalid refresh token'
+                error: 'Refresh token khong hop le'
             });
         }
 
@@ -188,13 +188,13 @@ const refreshAccessToken = async (req, res) => {
         res.json({
             success: true,
             data: { accessToken },
-            message: 'Token refreshed successfully'
+            message: 'Lay token moi thanh cong'
         });
     } catch (error) {
         console.error('Refresh token error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error during token refresh'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -210,7 +210,7 @@ const forgotPassword = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                error: 'User not found with this email'
+                error: 'Khong tim thay tai khoan voi email nay'
             });
         }
 
@@ -226,14 +226,14 @@ const forgotPassword = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Password reset email sent (check console in dev mode)',
+            message: 'Da gui huong dan reset mat khau (chi hien thong bao trong che do dev)',
             data: { resetToken } // Remove in production
         });
     } catch (error) {
         console.error('Forgot password error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error during password reset request'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -253,7 +253,7 @@ const resetPassword = async (req, res) => {
         if (!user) {
             return res.status(400).json({
                 success: false,
-                error: 'Invalid or expired reset token'
+                error: 'Ma reset khong hop le hoac da het han'
             });
         }
 
@@ -265,13 +265,13 @@ const resetPassword = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Password reset successful'
+            message: 'Doi mat khau thanh cong'
         });
     } catch (error) {
         console.error('Reset password error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error during password reset'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -299,7 +299,7 @@ const getMe = async (req, res) => {
         console.error('Get me error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };

@@ -43,7 +43,7 @@ const getMedications = async (req, res) => {
         console.error('Get medications error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -59,7 +59,7 @@ const getMedicationById = async (req, res) => {
         if (!medication) {
             return res.status(404).json({
                 success: false,
-                error: 'Medication not found'
+                error: 'Khong tim thay thuoc'
             });
         }
 
@@ -67,7 +67,7 @@ const getMedicationById = async (req, res) => {
         if (medication.patientId.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized'
+                error: 'Khong co quyen truy cap'
             });
         }
 
@@ -84,7 +84,7 @@ const getMedicationById = async (req, res) => {
         console.error('Get medication by id error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -110,13 +110,13 @@ const createMedication = async (req, res) => {
         res.status(201).json({
             success: true,
             data: medication,
-            message: 'Medication added successfully'
+            message: 'Them thuoc thanh cong'
         });
     } catch (error) {
         console.error('Create medication error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -131,7 +131,7 @@ const updateMedication = async (req, res) => {
         if (!medication) {
             return res.status(404).json({
                 success: false,
-                error: 'Medication not found'
+                error: 'Khong tim thay thuoc'
             });
         }
 
@@ -139,7 +139,7 @@ const updateMedication = async (req, res) => {
         if (medication.patientId.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized'
+                error: 'Khong co quyen truy cap'
             });
         }
 
@@ -152,13 +152,13 @@ const updateMedication = async (req, res) => {
         res.json({
             success: true,
             data: medication,
-            message: 'Medication updated successfully'
+            message: 'Cap nhat thuoc thanh cong'
         });
     } catch (error) {
         console.error('Update medication error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -173,7 +173,7 @@ const deleteMedication = async (req, res) => {
         if (!medication) {
             return res.status(404).json({
                 success: false,
-                error: 'Medication not found'
+                error: 'Khong tim thay thuoc'
             });
         }
 
@@ -181,7 +181,7 @@ const deleteMedication = async (req, res) => {
         if (medication.patientId.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized'
+                error: 'Khong co quyen truy cap'
             });
         }
 
@@ -191,13 +191,13 @@ const deleteMedication = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Medication deleted successfully'
+            message: 'Xoa thuoc thanh cong'
         });
     } catch (error) {
         console.error('Delete medication error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -212,7 +212,7 @@ const createReminder = async (req, res) => {
         if (!medication) {
             return res.status(404).json({
                 success: false,
-                error: 'Medication not found'
+                error: 'Khong tim thay thuoc'
             });
         }
 
@@ -220,7 +220,7 @@ const createReminder = async (req, res) => {
         if (medication.patientId.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized'
+                error: 'Khong co quyen truy cap'
             });
         }
 
@@ -237,13 +237,13 @@ const createReminder = async (req, res) => {
         res.status(201).json({
             success: true,
             data: reminder,
-            message: 'Reminder created successfully'
+            message: 'Tao nhac nho thanh cong'
         });
     } catch (error) {
         console.error('Create reminder error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -258,7 +258,7 @@ const updateReminder = async (req, res) => {
         if (!reminder) {
             return res.status(404).json({
                 success: false,
-                error: 'Reminder not found'
+                error: 'Khong tim thay nhac nho'
             });
         }
 
@@ -266,7 +266,7 @@ const updateReminder = async (req, res) => {
         if (reminder.patientId.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized'
+                error: 'Khong co quyen truy cap'
             });
         }
 
@@ -279,13 +279,13 @@ const updateReminder = async (req, res) => {
         res.json({
             success: true,
             data: reminder,
-            message: 'Reminder updated successfully'
+            message: 'Cap nhat nhac nho thanh cong'
         });
     } catch (error) {
         console.error('Update reminder error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -300,7 +300,7 @@ const markReminderTaken = async (req, res) => {
         if (!reminder) {
             return res.status(404).json({
                 success: false,
-                error: 'Reminder not found'
+                error: 'Khong tim thay nhac nho'
             });
         }
 
@@ -308,7 +308,7 @@ const markReminderTaken = async (req, res) => {
         if (reminder.patientId.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized'
+                error: 'Khong co quyen truy cap'
             });
         }
 
@@ -324,13 +324,13 @@ const markReminderTaken = async (req, res) => {
         res.json({
             success: true,
             data: reminder,
-            message: 'Marked as taken'
+            message: 'Da danh dau da dung thuoc'
         });
     } catch (error) {
         console.error('Mark reminder taken error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -360,7 +360,7 @@ const getTodayReminders = async (req, res) => {
         console.error('Get today reminders error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };

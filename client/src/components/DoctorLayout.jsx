@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import {
     LayoutDashboard,
     Calendar,
@@ -13,10 +14,10 @@ import {
 } from 'lucide-react';
 
 const menuItems = [
-    { path: '/doctor', icon: LayoutDashboard, label: 'Tổng quan' },
-    { path: '/doctor/appointments', icon: Calendar, label: 'Lịch hẹn' },
-    { path: '/doctor/patients', icon: Users, label: 'Bệnh nhân' },
-    { path: '/doctor/settings', icon: Settings, label: 'Cài đặt' }
+    { path: '/doctor', icon: LayoutDashboard, label: 'Tong quan' },
+    { path: '/doctor/appointments', icon: Calendar, label: 'Lich hen' },
+    { path: '/doctor/patients', icon: Users, label: 'Benh nhan' },
+    { path: '/doctor/settings', icon: Settings, label: 'Cai dat' }
 ];
 
 export default function DoctorLayout({ children }) {
@@ -91,7 +92,7 @@ export default function DoctorLayout({ children }) {
                             <p className="text-sm font-semibold text-white truncate">{doctorInfo?.fullName || profile?.fullName || user?.email}</p>
                             <p className="text-xs text-emerald-400 flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
-                                Bác sĩ
+                                Bac si
                             </p>
                         </div>
                     </div>
@@ -99,7 +100,7 @@ export default function DoctorLayout({ children }) {
 
                 {/* Navigation */}
                 <nav className="p-4 space-y-1.5 flex-1 overflow-y-auto">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-3">Menu chính</p>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-3">Menu chinh</p>
                     {menuItems.map((item) => {
                         const isActive = location.pathname === item.path;
                         return (
@@ -126,7 +127,7 @@ export default function DoctorLayout({ children }) {
                         className="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10 transition-all"
                     >
                         <LogOut className="w-5 h-5" />
-                        Đăng xuất
+                        Dang xuat
                     </button>
                 </div>
             </aside>

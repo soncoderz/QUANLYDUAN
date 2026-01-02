@@ -6,7 +6,6 @@ import {
     Calendar,
     Building2,
     FileText,
-    Pill,
     Activity,
     BarChart3,
     Settings,
@@ -28,7 +27,7 @@ export default function Layout({ children }) {
     const handleLogout = async () => {
         try {
             await logout();
-            success('Hẹn gặp lại bạn!', 'Đăng xuất thành công');
+            success('Hen gap lai ban!', 'Dang xuat thanh cong');
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
@@ -37,14 +36,13 @@ export default function Layout({ children }) {
     };
 
     const navigation = [
-        { name: 'Tổng quan', href: '/dashboard', icon: Home, color: 'text-blue-600 bg-blue-100' },
-        { name: 'Đặt lịch khám', href: '/booking', icon: Calendar, color: 'text-teal-600 bg-teal-100' },
-        { name: 'Phòng khám', href: '/clinics', icon: Building2, color: 'text-indigo-600 bg-indigo-100' },
-        { name: 'Lịch khám của tôi', href: '/appointments', icon: Calendar, color: 'text-orange-600 bg-orange-100' },
-        { name: 'Hồ sơ bệnh án', href: '/records', icon: FileText, color: 'text-purple-600 bg-purple-100' },
-        { name: 'Tủ thuốc', href: '/medications', icon: Pill, color: 'text-pink-600 bg-pink-100' },
-        { name: 'Chỉ số sức khỏe', href: '/health', icon: Activity, color: 'text-green-600 bg-green-100' },
-        { name: 'Báo cáo', href: '/reports', icon: BarChart3, color: 'text-amber-600 bg-amber-100' },
+        { name: 'Tong quan', href: '/dashboard', icon: Home, color: 'text-blue-600 bg-blue-100' },
+        { name: 'Dat lich kham', href: '/booking', icon: Calendar, color: 'text-teal-600 bg-teal-100' },
+        { name: 'Phong kham', href: '/clinics', icon: Building2, color: 'text-indigo-600 bg-indigo-100' },
+        { name: 'Lich kham cua toi', href: '/appointments', icon: Calendar, color: 'text-orange-600 bg-orange-100' },
+        { name: 'Ho so benh an', href: '/records', icon: FileText, color: 'text-purple-600 bg-purple-100' },
+        { name: 'Chi so suc khoe', href: '/health', icon: Activity, color: 'text-green-600 bg-green-100' },
+        { name: 'Bao cao', href: '/reports', icon: BarChart3, color: 'text-amber-600 bg-amber-100' },
     ];
 
     const isActive = (href) => location.pathname === href || location.pathname.startsWith(href + '/');
@@ -88,7 +86,7 @@ export default function Layout({ children }) {
                             </p>
                             <p className="text-xs text-gray-500 capitalize flex items-center gap-1">
                                 <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                                {user?.role === 'patient' ? 'Bệnh nhân' : user?.role === 'doctor' ? 'Bác sĩ' : 'Quản trị'}
+                                {user?.role === 'patient' ? 'Benh nhan' : user?.role === 'doctor' ? 'Bac si' : 'Quan tri'}
                             </p>
                         </div>
                     </div>
@@ -97,7 +95,7 @@ export default function Layout({ children }) {
                 {/* Navigation */}
                 <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto">
                     <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                        Menu chính
+                        Menu chinh
                     </p>
                     {navigation.map((item) => (
                         <Link
@@ -134,7 +132,7 @@ export default function Layout({ children }) {
                         <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
                             <Settings className="w-5 h-5 text-gray-600" />
                         </div>
-                        <span>Cài đặt</span>
+                        <span>Cai dat</span>
                     </Link>
 
                     <button
@@ -144,7 +142,7 @@ export default function Layout({ children }) {
                         <div className="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center">
                             <LogOut className="w-5 h-5 text-red-600" />
                         </div>
-                        <span>Đăng xuất</span>
+                        <span>Dang xuat</span>
                     </button>
                 </div>
             </aside>
@@ -229,7 +227,7 @@ export default function Layout({ children }) {
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
                                     <p className="text-xs text-gray-500 capitalize">
-                                        {user?.role === 'patient' ? 'Bệnh nhân' : user?.role === 'doctor' ? 'Bác sĩ' : 'Quản trị'}
+                                        {user?.role === 'patient' ? 'Benh nhan' : user?.role === 'doctor' ? 'Bac si' : 'Quan tri'}
                                     </p>
                                 </div>
                             </div>
@@ -266,7 +264,7 @@ export default function Layout({ children }) {
                                 <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
                                     <Settings className="w-5 h-5" />
                                 </div>
-                                <span>Cài đặt</span>
+                                <span>Cai dat</span>
                             </Link>
                             <button
                                 onClick={() => {
@@ -278,7 +276,7 @@ export default function Layout({ children }) {
                                 <div className="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center">
                                     <LogOut className="w-5 h-5" />
                                 </div>
-                                <span>Đăng xuất</span>
+                                <span>Dang xuat</span>
                             </button>
                         </div>
                     </aside>

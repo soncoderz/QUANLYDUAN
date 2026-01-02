@@ -90,7 +90,7 @@ const getMedicationAdherenceReport = async (req, res) => {
         console.error('Get medication adherence report error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -188,7 +188,7 @@ const getMetricTrendsReport = async (req, res) => {
         console.error('Get metric trends report error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -283,7 +283,7 @@ const getAppointmentsReport = async (req, res) => {
         console.error('Get appointments report error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -405,7 +405,7 @@ const getDashboardOverview = async (req, res) => {
         console.error('Get dashboard overview error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };

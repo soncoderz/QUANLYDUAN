@@ -17,7 +17,6 @@ import Clinics from './pages/patient/Clinics';
 import Booking from './pages/patient/Booking';
 import Appointments from './pages/patient/Appointments';
 import MedicalRecords from './pages/patient/MedicalRecords';
-import Medications from './pages/patient/Medications';
 import HealthMetrics from './pages/patient/HealthMetrics';
 import Reports from './pages/patient/Reports';
 import Settings from './pages/patient/Settings';
@@ -37,7 +36,8 @@ import {
   DoctorDashboard,
   DoctorAppointments,
   DoctorPatients,
-  DoctorSettings
+  DoctorSettings,
+  DoctorRecordForm
 } from './pages/doctor';
 
 // Protected Route Component
@@ -259,6 +259,14 @@ function AppRoutes() {
           </DoctorRoute>
         }
       />
+      <Route
+        path="/doctor/record/:appointmentId?"
+        element={
+          <DoctorRoute>
+            <DoctorRecordForm />
+          </DoctorRoute>
+        }
+      />
 
       {/* Protected Patient Routes */}
       <Route
@@ -306,14 +314,6 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <MedicalRecords />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/medications"
-        element={
-          <ProtectedRoute>
-            <Medications />
           </ProtectedRoute>
         }
       />

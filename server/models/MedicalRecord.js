@@ -41,6 +41,16 @@ const medicalRecordSchema = new mongoose.Schema({
         date: Date,
         notes: String
     }],
+    prescriptions: [{
+        name: {
+            type: String,
+            required: true
+        },
+        dosage: String,         // "2 viên", "5ml"
+        frequency: String,      // "1 lần/ngày", "2 lần/ngày"
+        duration: String,       // "7 ngày", "14 ngày"
+        instructions: String    // "Uống sau ăn", "Trước khi ngủ"
+    }],
     recordDate: {
         type: Date,
         default: Date.now

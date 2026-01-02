@@ -1,6 +1,9 @@
 const Appointment = require('../models/Appointment');
 const Doctor = require('../models/Doctor');
 const Clinic = require('../models/Clinic');
+const Medication = require('../models/Medication');
+const HealthMetric = require('../models/HealthMetric');
+const PatientProfile = require('../models/PatientProfile');
 const { paginate, paginateResponse, generateTimeSlots } = require('../utils/helpers');
 
 // @desc    Get appointments
@@ -40,7 +43,7 @@ const getAppointments = async (req, res) => {
             Appointment.find(query)
                 .populate('patientId', 'email phone')
                 .populate('clinicId', 'name address phone')
-                .populate('doctorId', 'fullName specialty')
+                .populate('doctorId', 'fullName specialty avatar')
                 .skip(skip)
                 .limit(limitNum)
                 .sort({ appointmentDate: -1 }),
@@ -55,7 +58,7 @@ const getAppointments = async (req, res) => {
         console.error('Get appointments error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -68,12 +71,12 @@ const getAppointmentById = async (req, res) => {
         const appointment = await Appointment.findById(req.params.id)
             .populate('patientId', 'email phone')
             .populate('clinicId', 'name address phone')
-            .populate('doctorId', 'fullName specialty consultationFee');
+            .populate('doctorId', 'fullName specialty consultationFee avatar');
 
         if (!appointment) {
             return res.status(404).json({
                 success: false,
-                error: 'Appointment not found'
+                error: 'Khong tim thay lich kham'
             });
         }
 
@@ -81,19 +84,39 @@ const getAppointmentById = async (req, res) => {
         if (req.user.role === 'patient' && appointment.patientId._id.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized to view this appointment'
+                error: 'Ban khong co quyen xem lich kham nay'
             });
+        }
+
+        // Medications linked to this appointment
+        const medications = await Medication.find({ appointmentId: appointment._id }).sort({ createdAt: -1 });
+
+        // Patient profile and latest health metrics
+        const profile = await PatientProfile.findOne({ userId: appointment.patientId._id });
+        const metricTypes = ['weight', 'blood_pressure', 'glucose', 'heart_rate', 'temperature', 'oxygen_saturation'];
+        const healthMetrics = {};
+        for (const type of metricTypes) {
+            const metric = await HealthMetric.findOne({ patientId: appointment.patientId._id, metricType: type })
+                .sort({ measuredAt: -1 });
+            if (metric) {
+                healthMetrics[type] = metric;
+            }
         }
 
         res.json({
             success: true,
-            data: appointment
+            data: {
+                appointment,
+                patientProfile: profile,
+                medications,
+                healthMetrics
+            }
         });
     } catch (error) {
         console.error('Get appointment by id error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -114,14 +137,14 @@ const createAppointment = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor not found'
+                error: 'Khong tim thay bac si'
             });
         }
 
@@ -131,7 +154,7 @@ const createAppointment = async (req, res) => {
         if (!workingDays.includes(appointmentDay)) {
             return res.status(400).json({
                 success: false,
-                error: 'Doctor is not available on this day'
+                error: 'Bac si khong lam viec ngay nay'
             });
         }
 
@@ -144,7 +167,7 @@ const createAppointment = async (req, res) => {
         if (!allowedSlots.includes(timeSlot)) {
             return res.status(400).json({
                 success: false,
-                error: 'Time slot is outside the doctor schedule'
+                error: 'Khung gio khong nam trong lich lam viec cua bac si'
             });
         }
 
@@ -162,7 +185,7 @@ const createAppointment = async (req, res) => {
         if (existingAppointment) {
             return res.status(400).json({
                 success: false,
-                error: 'This time slot is already booked'
+                error: 'Khung gio nay da duoc dat'
             });
         }
 
@@ -180,18 +203,18 @@ const createAppointment = async (req, res) => {
         const populatedAppointment = await Appointment.findById(appointment._id)
             .populate('patientId', 'email phone')
             .populate('clinicId', 'name address phone')
-            .populate('doctorId', 'fullName specialty');
+            .populate('doctorId', 'fullName specialty avatar');
 
         res.status(201).json({
             success: true,
             data: populatedAppointment,
-            message: 'Appointment booked successfully'
+            message: 'Dat lich thanh cong'
         });
     } catch (error) {
         console.error('Create appointment error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -206,7 +229,7 @@ const updateAppointment = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({
                 success: false,
-                error: 'Appointment not found'
+                error: 'Khong tim thay lich kham'
             });
         }
 
@@ -214,7 +237,7 @@ const updateAppointment = async (req, res) => {
         if (req.user.role === 'patient' && appointment.patientId.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized to update this appointment'
+                error: 'Ban khong co quyen cap nhat lich kham nay'
             });
         }
 
@@ -235,18 +258,18 @@ const updateAppointment = async (req, res) => {
         )
             .populate('patientId', 'email phone')
             .populate('clinicId', 'name address phone')
-            .populate('doctorId', 'fullName specialty');
+            .populate('doctorId', 'fullName specialty avatar');
 
         res.json({
             success: true,
             data: appointment,
-            message: 'Appointment updated successfully'
+            message: 'Cap nhat lich kham thanh cong'
         });
     } catch (error) {
         console.error('Update appointment error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -261,7 +284,7 @@ const cancelAppointment = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({
                 success: false,
-                error: 'Appointment not found'
+                error: 'Khong tim thay lich kham'
             });
         }
 
@@ -269,7 +292,7 @@ const cancelAppointment = async (req, res) => {
         if (req.user.role === 'patient' && appointment.patientId.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized to cancel this appointment'
+                error: 'Ban khong co quyen huy lich kham nay'
             });
         }
 
@@ -277,7 +300,7 @@ const cancelAppointment = async (req, res) => {
         if (['completed', 'cancelled'].includes(appointment.status)) {
             return res.status(400).json({
                 success: false,
-                error: 'Cannot cancel this appointment'
+                error: 'Khong the huy lich kham nay'
             });
         }
 
@@ -288,13 +311,13 @@ const cancelAppointment = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Appointment cancelled successfully'
+            message: 'Huy lich kham thanh cong'
         });
     } catch (error) {
         console.error('Cancel appointment error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -322,7 +345,7 @@ const getUpcomingAppointments = async (req, res) => {
         const appointments = await Appointment.find(query)
             .populate('patientId', 'email phone')
             .populate('clinicId', 'name address phone')
-            .populate('doctorId', 'fullName specialty')
+            .populate('doctorId', 'fullName specialty avatar')
             .sort({ appointmentDate: 1 })
             .limit(10);
 
@@ -334,7 +357,7 @@ const getUpcomingAppointments = async (req, res) => {
         console.error('Get upcoming appointments error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -349,14 +372,14 @@ const confirmAppointment = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({
                 success: false,
-                error: 'Appointment not found'
+                error: 'Khong tim thay lich kham'
             });
         }
 
         if (appointment.status !== 'scheduled') {
             return res.status(400).json({
                 success: false,
-                error: 'Appointment cannot be confirmed'
+                error: 'Khong the xac nhan lich kham nay'
             });
         }
 
@@ -367,7 +390,7 @@ const confirmAppointment = async (req, res) => {
         const populatedAppointment = await Appointment.findById(appointment._id)
             .populate('patientId', 'email phone')
             .populate('clinicId', 'name address phone')
-            .populate('doctorId', 'fullName specialty');
+            .populate('doctorId', 'fullName specialty avatar');
 
         // Log notification (in production, send email/push)
         console.log(`Appointment ${appointment._id} confirmed. Notify patient.`);
@@ -375,13 +398,13 @@ const confirmAppointment = async (req, res) => {
         res.json({
             success: true,
             data: populatedAppointment,
-            message: 'Appointment confirmed successfully'
+            message: 'Xac nhan lich kham thanh cong'
         });
     } catch (error) {
         console.error('Confirm appointment error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -396,14 +419,14 @@ const completeAppointment = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({
                 success: false,
-                error: 'Appointment not found'
+                error: 'Khong tim thay lich kham'
             });
         }
 
         if (!['confirmed', 'in_progress'].includes(appointment.status)) {
             return res.status(400).json({
                 success: false,
-                error: 'Appointment cannot be completed'
+                error: 'Khong the hoan tat lich kham nay'
             });
         }
 
@@ -415,13 +438,13 @@ const completeAppointment = async (req, res) => {
         res.json({
             success: true,
             data: appointment,
-            message: 'Appointment completed successfully'
+            message: 'Hoan tat lich kham thanh cong'
         });
     } catch (error) {
         console.error('Complete appointment error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };

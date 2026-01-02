@@ -23,6 +23,7 @@ export default function Appointments() {
     const [filter, setFilter] = useState('all');
     const [showCancelModal, setShowCancelModal] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [detailModal, setDetailModal] = useState(false);
     const [cancelling, setCancelling] = useState(false);
     const { success, error: showError } = useToast();
 
@@ -56,6 +57,24 @@ export default function Appointments() {
     const handleCancelClick = (apt) => {
         setSelectedAppointment(apt);
         setShowCancelModal(true);
+    };
+
+    const handleViewDetails = async (apt) => {
+        try {
+            const res = await appointmentService.getAppointmentById(apt._id);
+            if (res.success) {
+                const detail = res.data?.appointment ? {
+                    ...res.data.appointment,
+                    patientProfile: res.data.patientProfile,
+                    medications: res.data.medications,
+                    healthMetrics: res.data.healthMetrics
+                } : res.data;
+                setSelectedAppointment(detail || apt);
+                setDetailModal(true);
+            }
+        } catch (error) {
+            showError('Không thể tải chi tiết lịch hẹn');
+        }
     };
 
     const handleCancelConfirm = async () => {
@@ -167,9 +186,23 @@ export default function Appointments() {
                                 <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                                     {/* Doctor Avatar */}
                                     <div className="flex items-center sm:items-start gap-4 flex-1">
-                                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200 flex-shrink-0">
-                                            <Stethoscope className="w-7 h-7 text-white" />
-                                        </div>
+                                        {apt.doctorId?.avatar ? (
+                                            <img
+                                                src={apt.doctorId.avatar}
+                                                alt={apt.doctorId?.fullName || 'Bac si'}
+                                                className="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-blue-200 flex-shrink-0 border-2 border-white"
+                                            />
+                                        ) : (
+                                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200 flex-shrink-0">
+                                                {apt.doctorId?.fullName ? (
+                                                    <span className="text-white text-xl font-bold">
+                                                        {apt.doctorId.fullName.charAt(0).toUpperCase()}
+                                                    </span>
+                                                ) : (
+                                                    <Stethoscope className="w-7 h-7 text-white" />
+                                                )}
+                                            </div>
+                                        )}
 
                                         <div className="flex-1 min-w-0">
                                             <h3 className="font-semibold text-gray-900 text-lg">
@@ -203,6 +236,13 @@ export default function Appointments() {
                                             {statusConfig.label}
                                         </span>
 
+                                        <button
+                                            onClick={() => handleViewDetails(apt)}
+                                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
+                                        >
+                                            <ChevronRight className="w-4 h-4" />
+                                            Xem chi tiết
+                                        </button>
                                         {canCancel(apt.status) && (
                                             <button
                                                 onClick={() => handleCancelClick(apt)}
@@ -303,6 +343,96 @@ export default function Appointments() {
                                 )}
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Detail Modal */}
+            {detailModal && selectedAppointment && (
+                <div
+                    className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4"
+                    onClick={() => setDetailModal(false)}
+                    style={{ animation: 'fadeIn 0.2s ease-out' }}
+                >
+                    <div
+                        className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6"
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ animation: 'scaleIn 0.3s ease-out' }}
+                    >
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xl font-semibold text-gray-900">Chi tiết lịch hẹn</h3>
+                            <button onClick={() => setDetailModal(false)} className="p-2 rounded-lg hover:bg-gray-100">
+                                <X className="w-5 h-5 text-gray-500" />
+                            </button>
+                        </div>
+
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-sm text-gray-500">Bác sĩ</p>
+                                <p className="font-semibold text-gray-900">{selectedAppointment.doctorId?.fullName}</p>
+                                <p className="text-sm text-gray-500">{selectedAppointment.doctorId?.specialty}</p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Phòng khám</p>
+                                <p className="font-semibold text-gray-900">{selectedAppointment.clinicId?.name}</p>
+                                <p className="text-sm text-gray-500">{selectedAppointment.clinicId?.address}</p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Ngày hẹn</p>
+                                <p className="font-semibold text-gray-900">{formatDate(selectedAppointment.appointmentDate)}</p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Giờ hẹn</p>
+                                <p className="font-semibold text-gray-900">{selectedAppointment.timeSlot}</p>
+                            </div>
+                        </div>
+
+                        {selectedAppointment.reason && (
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-500">Lý do khám</p>
+                                <p className="text-gray-800">{selectedAppointment.reason}</p>
+                            </div>
+                        )}
+
+                        {/* Medications */}
+                        {selectedAppointment.medications?.length > 0 && (
+                            <div className="mt-6">
+                                <p className="text-sm font-semibold text-gray-900 mb-2">Đơn thuốc</p>
+                                <div className="space-y-2">
+                                    {selectedAppointment.medications.map(med => (
+                                        <div key={med._id} className="p-3 rounded-xl bg-gray-50 border border-gray-200">
+                                            <p className="text-gray-900 font-semibold">{med.name}</p>
+                                            {med.dosage && <p className="text-sm text-gray-700">{med.dosage}</p>}
+                                            {med.frequency && <p className="text-sm text-gray-500">{med.frequency}</p>}
+                                            {med.instructions && <p className="text-xs text-gray-500 mt-1">{med.instructions}</p>}
+                                            <p className="text-xs text-gray-400 mt-1">
+                                                {med.startDate ? new Date(med.startDate).toLocaleDateString('vi-VN') : ''}{med.endDate ? ` - ${new Date(med.endDate).toLocaleDateString('vi-VN')}` : ''}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Health Metrics */}
+                        {selectedAppointment.healthMetrics && Object.keys(selectedAppointment.healthMetrics).length > 0 && (
+                            <div className="mt-6">
+                                <p className="text-sm font-semibold text-gray-900 mb-2">Chỉ số sức khỏe (mới nhất)</p>
+                                <div className="grid sm:grid-cols-2 gap-3">
+                                    {Object.entries(selectedAppointment.healthMetrics).map(([key, metric]) => (
+                                        <div key={key} className="p-3 rounded-xl bg-gray-50 border border-gray-200">
+                                            <p className="text-sm text-gray-600 capitalize">{key.replace('_', ' ')}</p>
+                                            <p className="text-gray-900 font-semibold">
+                                                {metric.value}{metric.unit ? ` ${metric.unit}` : ''}{metric.secondaryValue ? ` / ${metric.secondaryValue}` : ''}
+                                            </p>
+                                            <p className="text-xs text-gray-400">
+                                                {metric.measuredAt ? new Date(metric.measuredAt).toLocaleString('vi-VN') : ''}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

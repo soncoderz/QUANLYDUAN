@@ -2,6 +2,7 @@ const Doctor = require('../models/Doctor');
 const Appointment = require('../models/Appointment');
 const PatientProfile = require('../models/PatientProfile');
 const MedicalRecord = require('../models/MedicalRecord');
+const Medication = require('../models/Medication');
 const { paginate, paginateResponse } = require('../utils/helpers');
 
 // @desc    Get all doctors
@@ -40,7 +41,7 @@ const getDoctors = async (req, res) => {
         console.error('Get doctors error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -57,7 +58,7 @@ const getDoctorById = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor not found'
+                error: 'Khong tim thay bac si'
             });
         }
 
@@ -69,7 +70,7 @@ const getDoctorById = async (req, res) => {
         console.error('Get doctor by id error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -85,7 +86,7 @@ const getDoctorDashboard = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -171,7 +172,7 @@ const getDoctorDashboard = async (req, res) => {
         console.error('Get doctor dashboard error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -185,7 +186,7 @@ const getMyAppointments = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -241,7 +242,7 @@ const getMyAppointments = async (req, res) => {
         console.error('Get my appointments error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -251,13 +252,13 @@ const getMyAppointments = async (req, res) => {
 // @access  Private (Doctor)
 const updateAppointmentStatus = async (req, res) => {
     try {
-        const { status, notes } = req.body;
+        const { status, notes, medications } = req.body;
         const validStatuses = ['confirmed', 'completed', 'cancelled', 'no_show'];
 
         if (!validStatuses.includes(status)) {
             return res.status(400).json({
                 success: false,
-                error: 'Invalid status'
+                error: 'Trang thai khong hop le'
             });
         }
 
@@ -265,7 +266,7 @@ const updateAppointmentStatus = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -277,24 +278,50 @@ const updateAppointmentStatus = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({
                 success: false,
-                error: 'Appointment not found'
+                error: 'Khong tim thay lich kham'
             });
+        }
+
+        // If completing, require medications
+        if (status === 'completed') {
+            if (!Array.isArray(medications) || medications.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Can nhap don thuoc khi hoan tat lich kham'
+                });
+            }
         }
 
         appointment.status = status;
         if (notes) appointment.notes = notes;
         await appointment.save();
 
+        if (status === 'completed' && Array.isArray(medications) && medications.length > 0) {
+            const medDocs = medications.map(med => ({
+                patientId: appointment.patientId,
+                appointmentId: appointment._id,
+                prescribedBy: doctor._id,
+                name: med.name,
+                dosage: med.dosage,
+                frequency: med.frequency,
+                instructions: med.instructions,
+                startDate: med.startDate || appointment.appointmentDate,
+                endDate: med.endDate || null,
+                isActive: true
+            }));
+            await Medication.insertMany(medDocs);
+        }
+
         res.json({
             success: true,
             data: appointment,
-            message: 'Appointment status updated successfully'
+            message: 'Cap nhat trang thai lich kham thanh cong'
         });
     } catch (error) {
         console.error('Update appointment status error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -308,7 +335,7 @@ const getMyPatients = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -354,7 +381,7 @@ const getMyPatients = async (req, res) => {
         console.error('Get my patients error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -368,7 +395,7 @@ const getPatientDetails = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -381,7 +408,7 @@ const getPatientDetails = async (req, res) => {
         if (!hasAppointment) {
             return res.status(403).json({
                 success: false,
-                error: 'You do not have access to this patient'
+                error: 'Ban khong co quyen truy cap benh nhan nay'
             });
         }
 
@@ -391,7 +418,7 @@ const getPatientDetails = async (req, res) => {
         if (!patient) {
             return res.status(404).json({
                 success: false,
-                error: 'Patient not found'
+                error: 'Khong tim thay benh nhan'
             });
         }
 
@@ -422,7 +449,7 @@ const getPatientDetails = async (req, res) => {
         console.error('Get patient details error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -438,7 +465,7 @@ const updateDoctorProfile = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -455,13 +482,80 @@ const updateDoctorProfile = async (req, res) => {
         res.json({
             success: true,
             data: doctor,
-            message: 'Profile updated successfully'
+            message: 'Cap nhat ho so bac si thanh cong'
         });
     } catch (error) {
         console.error('Update doctor profile error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
+        });
+    }
+};
+
+// @desc    Create medical record with prescriptions
+// @route   POST /api/doctors/records
+// @access  Private (Doctor)
+const createMedicalRecord = async (req, res) => {
+    try {
+        const {
+            patientId,
+            appointmentId,
+            diagnosis,
+            symptoms,
+            treatment,
+            doctorNotes,
+            vitalSigns,
+            prescriptions
+        } = req.body;
+
+        const doctor = await Doctor.findOne({ userId: req.user._id });
+        if (!doctor) {
+            return res.status(404).json({
+                success: false,
+                error: 'Khong tim thay ho so bac si'
+            });
+        }
+
+        // Validate required fields
+        if (!patientId || !diagnosis) {
+            return res.status(400).json({
+                success: false,
+                error: 'Can co ma benh nhan va chan doan'
+            });
+        }
+
+        // Create the medical record
+        const medicalRecord = await MedicalRecord.create({
+            patientId,
+            appointmentId,
+            doctorId: doctor._id,
+            diagnosis,
+            symptoms: symptoms || '',
+            treatment: treatment || '',
+            doctorNotes: doctorNotes || '',
+            vitalSigns: vitalSigns || {},
+            prescriptions: prescriptions || [],
+            recordDate: new Date()
+        });
+
+        // If appointment provided, mark it as completed
+        if (appointmentId) {
+            await Appointment.findByIdAndUpdate(appointmentId, {
+                status: 'completed'
+            });
+        }
+
+        res.status(201).json({
+            success: true,
+            data: medicalRecord,
+            message: 'Tao ho so benh an thanh cong'
+        });
+    } catch (error) {
+        console.error('Create medical record error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -474,6 +568,6 @@ module.exports = {
     updateAppointmentStatus,
     getMyPatients,
     getPatientDetails,
-    updateDoctorProfile
+    updateDoctorProfile,
+    createMedicalRecord
 };
-

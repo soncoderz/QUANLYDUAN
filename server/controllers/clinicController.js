@@ -40,7 +40,7 @@ const getClinics = async (req, res) => {
         console.error('Get clinics error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -55,7 +55,7 @@ const getClinicById = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
@@ -73,7 +73,7 @@ const getClinicById = async (req, res) => {
         console.error('Get clinic by id error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -120,7 +120,7 @@ const searchClinics = async (req, res) => {
         console.error('Search clinics error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -137,7 +137,7 @@ const getAvailableSlots = async (req, res) => {
         if (!dateStr) {
             return res.status(400).json({
                 success: false,
-                error: 'Date is required'
+                error: 'Vui long cung cap ngay'
             });
         }
 
@@ -145,7 +145,7 @@ const getAvailableSlots = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
@@ -238,7 +238,7 @@ const getAvailableSlots = async (req, res) => {
         console.error('Get available slots error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -253,13 +253,13 @@ const createClinic = async (req, res) => {
         res.status(201).json({
             success: true,
             data: clinic,
-            message: 'Clinic created successfully'
+            message: 'Tao phong kham thanh cong'
         });
     } catch (error) {
         console.error('Create clinic error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -278,20 +278,20 @@ const updateClinic = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
         res.json({
             success: true,
             data: clinic,
-            message: 'Clinic updated successfully'
+            message: 'Cap nhat phong kham thanh cong'
         });
     } catch (error) {
         console.error('Update clinic error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
