@@ -131,8 +131,10 @@ const searchClinics = async (req, res) => {
 const getAvailableSlots = async (req, res) => {
     try {
         const { date, doctorId } = req.query;
+        const dateStr = typeof date === 'string' ? date : date?.date;
+        const doctorIdParam = doctorId || date?.doctorId;
 
-        if (!date) {
+        if (!dateStr) {
             return res.status(400).json({
                 success: false,
                 error: 'Date is required'
@@ -147,13 +149,12 @@ const getAvailableSlots = async (req, res) => {
             });
         }
 
-        // Get all time slots
-        const allSlots = generateTimeSlots(8, 17, 30);
+        const dayOfWeek = new Date(dateStr).getDay();
 
         // Get booked appointments for the date
-        const startOfDay = new Date(date);
+        const startOfDay = new Date(dateStr);
         startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date(date);
+        const endOfDay = new Date(dateStr);
         endOfDay.setHours(23, 59, 59, 999);
 
         let appointmentQuery = {
@@ -162,8 +163,8 @@ const getAvailableSlots = async (req, res) => {
             status: { $nin: ['cancelled'] }
         };
 
-        if (doctorId) {
-            appointmentQuery.doctorId = doctorId;
+        if (doctorIdParam) {
+            appointmentQuery.doctorId = doctorIdParam;
         }
 
         const bookedAppointments = await Appointment.find(appointmentQuery).select('timeSlot doctorId');
@@ -173,19 +174,41 @@ const getAvailableSlots = async (req, res) => {
         }));
 
         // Get doctors for this clinic
-        let doctors = await Doctor.find({ clinicId: req.params.id, isAvailable: true }).select('fullName specialty');
+        let doctors = await Doctor.find({ clinicId: req.params.id, isAvailable: true })
+            .select('fullName specialty workingDays startTime endTime slotDuration');
 
-        if (doctorId) {
-            doctors = doctors.filter(d => d._id.toString() === doctorId);
+        if (doctorIdParam) {
+            doctors = doctors.filter(d => d._id.toString() === doctorIdParam);
         }
 
         // Calculate available slots per doctor
+        const defaultDays = [1, 2, 3, 4, 5];
         const availableSlots = doctors.map(doctor => {
             const doctorBookedSlots = bookedSlots
                 .filter(slot => slot.doctorId === doctor._id.toString())
                 .map(slot => slot.time);
 
-            const slots = allSlots.map(time => ({
+            const workingDays = (doctor.workingDays && doctor.workingDays.length > 0) ? doctor.workingDays : defaultDays;
+            // If doctor doesn't work this day, return empty slots to indicate unavailable
+            if (!workingDays.includes(dayOfWeek)) {
+                return {
+                    doctor: {
+                        id: doctor._id,
+                        fullName: doctor.fullName,
+                        specialty: doctor.specialty
+                    },
+                    slots: []
+                };
+            }
+
+            const slotDuration = doctor.slotDuration || 30;
+            const slotsForDoctor = generateTimeSlots(
+                doctor.startTime || '08:00',
+                doctor.endTime || '17:00',
+                slotDuration
+            );
+
+            const slots = slotsForDoctor.map(time => ({
                 time,
                 available: !doctorBookedSlots.includes(time)
             }));

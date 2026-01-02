@@ -9,6 +9,7 @@ import Register from './pages/auth/Register';
 // Layout
 import Layout from './components/Layout';
 import AdminLayout from './components/AdminLayout';
+import DoctorLayout from './components/DoctorLayout';
 
 // Patient Pages
 import Dashboard from './pages/patient/Dashboard';
@@ -16,7 +17,6 @@ import Clinics from './pages/patient/Clinics';
 import Booking from './pages/patient/Booking';
 import Appointments from './pages/patient/Appointments';
 import MedicalRecords from './pages/patient/MedicalRecords';
-import Medications from './pages/patient/Medications';
 import HealthMetrics from './pages/patient/HealthMetrics';
 import Reports from './pages/patient/Reports';
 import Settings from './pages/patient/Settings';
@@ -30,6 +30,15 @@ import {
   AppointmentManagement,
   SystemReports
 } from './pages/admin';
+
+// Doctor Pages
+import {
+  DoctorDashboard,
+  DoctorAppointments,
+  DoctorPatients,
+  DoctorSettings,
+  DoctorRecordForm
+} from './pages/doctor';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -73,6 +82,29 @@ const AdminRoute = ({ children }) => {
   return <AdminLayout>{children}</AdminLayout>;
 };
 
+// Doctor Protected Route Component
+const DoctorRoute = ({ children }) => {
+  const { isAuthenticated, loading, user } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user?.role !== 'doctor') {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <DoctorLayout>{children}</DoctorLayout>;
+};
+
 // Public Route Component (redirect if logged in)
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading, user } = useAuth();
@@ -114,6 +146,10 @@ const RootRedirect = () => {
 
   if (user?.role === 'clinic_admin') {
     return <Navigate to="/admin" replace />;
+  }
+
+  if (user?.role === 'doctor') {
+    return <Navigate to="/doctor" replace />;
   }
 
   return <Navigate to="/dashboard" replace />;
@@ -190,6 +226,48 @@ function AppRoutes() {
         }
       />
 
+      {/* Doctor Routes */}
+      <Route
+        path="/doctor"
+        element={
+          <DoctorRoute>
+            <DoctorDashboard />
+          </DoctorRoute>
+        }
+      />
+      <Route
+        path="/doctor/appointments"
+        element={
+          <DoctorRoute>
+            <DoctorAppointments />
+          </DoctorRoute>
+        }
+      />
+      <Route
+        path="/doctor/patients"
+        element={
+          <DoctorRoute>
+            <DoctorPatients />
+          </DoctorRoute>
+        }
+      />
+      <Route
+        path="/doctor/settings"
+        element={
+          <DoctorRoute>
+            <DoctorSettings />
+          </DoctorRoute>
+        }
+      />
+      <Route
+        path="/doctor/record/:appointmentId?"
+        element={
+          <DoctorRoute>
+            <DoctorRecordForm />
+          </DoctorRoute>
+        }
+      />
+
       {/* Protected Patient Routes */}
       <Route
         path="/dashboard"
@@ -236,14 +314,6 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <MedicalRecords />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/medications"
-        element={
-          <ProtectedRoute>
-            <Medications />
           </ProtectedRoute>
         }
       />

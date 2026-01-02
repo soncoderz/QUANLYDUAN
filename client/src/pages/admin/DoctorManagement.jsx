@@ -197,19 +197,32 @@ export default function DoctorManagement() {
                                     </td>
                                 </tr>
                             ) : (
-                                doctors.map((doctor) => (
-                                    <tr key={doctor._id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-                                        <td className="py-4 px-6">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-semibold">
-                                                    {doctor.fullName?.charAt(0) || 'D'}
+                                doctors.map((doctor) => {
+                                    const displayName = doctor.fullName;
+                                    const avatar = doctor.avatar;
+                                    const initial = displayName?.charAt(0) || 'D';
+
+                                    return (
+                                        <tr key={doctor._id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
+                                            <td className="py-4 px-6">
+                                                <div className="flex items-center gap-3">
+                                                    {avatar ? (
+                                                        <img
+                                                            src={avatar}
+                                                            alt={displayName}
+                                                            className="w-10 h-10 rounded-xl object-cover border border-slate-700/70"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-semibold">
+                                                            {initial}
+                                                        </div>
+                                                    )}
+                                                    <div>
+                                                        <p className="text-white font-medium">{displayName}</p>
+                                                        <p className="text-slate-400 text-sm">{doctor.userId?.email || '-'}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="text-white font-medium">{doctor.fullName}</p>
-                                                    <p className="text-slate-400 text-sm">{doctor.userId?.email || '-'}</p>
-                                                </div>
-                                            </div>
-                                        </td>
+                                            </td>
                                         <td className="py-4 px-6">
                                             <span className="px-2 py-1 rounded-lg text-xs font-medium bg-teal-500/20 text-teal-400">
                                                 {doctor.specialty || '-'}
@@ -272,7 +285,8 @@ export default function DoctorManagement() {
                                             )}
                                         </td>
                                     </tr>
-                                ))
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>
@@ -336,23 +350,52 @@ function DoctorModal({ mode, doctor, clinics, onClose, onSuccess }) {
         education: doctor?.education || '',
         consultationFee: doctor?.consultationFee || 0,
         description: doctor?.description || '',
-        avatar: doctor?.avatar || ''
+        avatar: doctor?.avatar || '',
+        workingDays: doctor?.workingDays || [1, 2, 3, 4, 5],
+        startTime: doctor?.startTime || '08:00',
+        endTime: doctor?.endTime || '17:00',
+        slotDuration: doctor?.slotDuration || 30
     });
     const [loading, setLoading] = useState(false);
     const { success, error: showError } = useToast();
+    const daysOfWeek = [
+        { value: 1, label: 'T2' },
+        { value: 2, label: 'T3' },
+        { value: 3, label: 'T4' },
+        { value: 4, label: 'T5' },
+        { value: 5, label: 'T6' },
+        { value: 6, label: 'T7' },
+        { value: 0, label: 'CN' },
+    ];
+
+    const toggleWorkingDay = (day) => {
+        setFormData(prev => {
+            const exists = prev.workingDays.includes(day);
+            return {
+                ...prev,
+                workingDays: exists ? prev.workingDays.filter(d => d !== day) : [...prev.workingDays, day]
+            };
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+        const payload = {
+            ...formData,
+            specialty: formData.specialty?.trim() || '',
+            workingDays: (formData.workingDays || []).map(Number),
+            slotDuration: Number(formData.slotDuration) || 30
+        };
         try {
             if (mode === 'create') {
-                const response = await adminService.createDoctor(formData);
+                const response = await adminService.createDoctor(payload);
                 if (response.success) {
                     success('Tạo bác sĩ thành công');
                     onSuccess();
                 }
             } else if (mode === 'edit') {
-                const response = await adminService.updateDoctor(doctor._id, formData);
+                const response = await adminService.updateDoctor(doctor._id, payload);
                 if (response.success) {
                     success('Cập nhật bác sĩ thành công');
                     onSuccess();
@@ -502,6 +545,7 @@ function DoctorModal({ mode, doctor, clinics, onClose, onSuccess }) {
                                     onChange={(e) => setFormData(prev => ({ ...prev, specialty: e.target.value }))}
                                     disabled={isViewMode}
                                     className="w-full pl-10 pr-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-50"
+                                    required
                                 />
                             </div>
                         </div>
@@ -548,6 +592,65 @@ function DoctorModal({ mode, doctor, clinics, onClose, onSuccess }) {
                                     className="w-full pl-10 pr-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-50"
                                 />
                             </div>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-2">Ngày làm việc</label>
+                            <div className="flex flex-wrap gap-2">
+                                {daysOfWeek.map(day => (
+                                    <button
+                                        key={day.value}
+                                        type="button"
+                                        onClick={() => toggleWorkingDay(day.value)}
+                                        disabled={isViewMode}
+                                        className={`px-3 py-2 rounded-lg text-sm font-semibold border ${
+                                            formData.workingDays.includes(day.value)
+                                                ? 'bg-teal-500/20 text-teal-300 border-teal-500/40'
+                                                : 'bg-slate-700/50 text-slate-300 border-slate-600'
+                                        } ${isViewMode ? 'opacity-60 cursor-not-allowed' : 'hover:border-teal-500/60'}`}
+                                    >
+                                        {day.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Bắt đầu</label>
+                                <input
+                                    type="time"
+                                    value={formData.startTime}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, startTime: e.target.value }))}
+                                    disabled={isViewMode}
+                                    className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Kết thúc</label>
+                                <input
+                                    type="time"
+                                    value={formData.endTime}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, endTime: e.target.value }))}
+                                    disabled={isViewMode}
+                                    className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-50"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-2">Thời lượng mỗi slot (phút)</label>
+                            <select
+                                value={formData.slotDuration}
+                                onChange={(e) => setFormData(prev => ({ ...prev, slotDuration: parseInt(e.target.value) || 30 }))}
+                                disabled={isViewMode}
+                                className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-teal-500 disabled:opacity-50"
+                            >
+                                {[15, 20, 30, 45, 60].map(opt => (
+                                    <option key={opt} value={opt}>{opt} phút</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
                     <div>

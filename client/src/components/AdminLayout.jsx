@@ -8,12 +8,10 @@ import {
     Building2,
     Calendar,
     BarChart3,
-    Settings,
     LogOut,
     Menu,
     X,
     Shield,
-    Bell,
     ChevronRight
 } from 'lucide-react';
 import { useState } from 'react';
@@ -85,10 +83,6 @@ export default function AdminLayout({ children }) {
                                 Quản trị viên
                             </p>
                         </div>
-                        <button className="p-2 rounded-xl hover:bg-slate-600/50 transition-colors relative">
-                            <Bell className="w-5 h-5 text-slate-400" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
                     </div>
                 </div>
 
@@ -122,19 +116,6 @@ export default function AdminLayout({ children }) {
 
                 {/* Bottom Actions */}
                 <div className="p-4 border-t border-slate-700/50 space-y-2">
-                    <Link
-                        to="/admin/settings"
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${isActive('/admin/settings')
-                            ? 'bg-slate-700 text-white'
-                            : 'text-slate-300 hover:bg-slate-700/50'
-                            }`}
-                    >
-                        <div className="w-9 h-9 rounded-xl bg-slate-600 flex items-center justify-center">
-                            <Settings className="w-5 h-5 text-slate-300" />
-                        </div>
-                        <span>Cài đặt</span>
-                    </Link>
-
                     <button
                         onClick={handleLogout}
                         className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-all"
@@ -165,10 +146,6 @@ export default function AdminLayout({ children }) {
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button className="p-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 transition-colors relative">
-                            <Bell className="w-5 h-5 text-white" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                        </button>
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
                             {userInitial}
                         </div>
@@ -242,16 +219,6 @@ export default function AdminLayout({ children }) {
 
                         {/* Mobile Bottom Actions */}
                         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-700 bg-slate-800 space-y-2">
-                            <Link
-                                to="/admin/settings"
-                                onClick={() => setSidebarOpen(false)}
-                                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-700/50"
-                            >
-                                <div className="w-9 h-9 rounded-xl bg-slate-600 flex items-center justify-center">
-                                    <Settings className="w-5 h-5" />
-                                </div>
-                                <span>Cài đặt</span>
-                            </Link>
                             <button
                                 onClick={() => {
                                     handleLogout();

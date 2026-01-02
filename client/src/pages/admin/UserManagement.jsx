@@ -223,68 +223,82 @@ export default function UserManagement() {
                                     </td>
                                 </tr>
                             ) : (
-                                users.map((user) => (
-                                    <tr key={user._id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
-                                        <td className="py-4 px-6">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold">
-                                                    {user.email.charAt(0).toUpperCase()}
+                                users.map((user) => {
+                                    const displayName = user.profile?.fullName || user.email.split('@')[0];
+                                    const avatar = user.profile?.avatar;
+                                    const initial = displayName?.charAt(0)?.toUpperCase() || user.email.charAt(0).toUpperCase();
+
+                                    return (
+                                        <tr key={user._id} className="border-b border-slate-700/30 hover:bg-slate-700/20 transition-colors">
+                                            <td className="py-4 px-6">
+                                                <div className="flex items-center gap-3">
+                                                    {avatar ? (
+                                                        <img
+                                                            src={avatar}
+                                                            alt={displayName}
+                                                            className="w-10 h-10 rounded-xl object-cover border border-slate-700/70"
+                                                        />
+                                                    ) : (
+                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                                                            {initial}
+                                                        </div>
+                                                    )}
+                                                    <div>
+                                                        <p className="text-white font-medium">{displayName}</p>
+                                                        <p className="text-slate-400 text-sm">{user.email}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="text-white font-medium">{user.profile?.fullName || user.email.split('@')[0]}</p>
-                                                    <p className="text-slate-400 text-sm">{user.email}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="py-4 px-6 text-slate-300">{user.phone || '-'}</td>
-                                        <td className="py-4 px-6">{getRoleBadge(user.role)}</td>
-                                        <td className="py-4 px-6">{getStatusBadge(user.isActive)}</td>
-                                        <td className="py-4 px-6 text-slate-400 text-sm">
-                                            {new Date(user.createdAt).toLocaleDateString('vi-VN')}
-                                        </td>
-                                        <td className="py-4 px-6 text-right relative">
-                                            <button
-                                                onClick={() => setActionMenuOpen(actionMenuOpen === user._id ? null : user._id)}
-                                                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
-                                            >
-                                                <MoreVertical className="w-5 h-5 text-slate-400" />
-                                            </button>
-                                            {actionMenuOpen === user._id && (
-                                                <div className="absolute right-6 top-full mt-1 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-xl z-10 py-2">
-                                                    <button
-                                                        onClick={() => handleViewUser(user)}
-                                                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-700/50 text-left"
-                                                    >
-                                                        <Eye className="w-4 h-4" /> Xem chi tiết
-                                                    </button>
-                                                    <button
-                                                        onClick={() => openEditModal(user)}
-                                                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-700/50 text-left"
-                                                    >
-                                                        <Edit className="w-4 h-4" /> Chỉnh sửa
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleToggleStatus(user)}
-                                                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-700/50 text-left"
-                                                    >
-                                                        {user.isActive ? (
-                                                            <><UserX className="w-4 h-4" /> Vô hiệu hóa</>
-                                                        ) : (
-                                                            <><UserCheck className="w-4 h-4" /> Kích hoạt</>
-                                                        )}
-                                                    </button>
-                                                    <hr className="my-2 border-slate-700" />
-                                                    <button
-                                                        onClick={() => handleDelete(user)}
-                                                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 text-left"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" /> Xóa
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))
+                                            </td>
+                                            <td className="py-4 px-6 text-slate-300">{user.phone || '-'}</td>
+                                            <td className="py-4 px-6">{getRoleBadge(user.role)}</td>
+                                            <td className="py-4 px-6">{getStatusBadge(user.isActive)}</td>
+                                            <td className="py-4 px-6 text-slate-400 text-sm">
+                                                {new Date(user.createdAt).toLocaleDateString('vi-VN')}
+                                            </td>
+                                            <td className="py-4 px-6 text-right relative">
+                                                <button
+                                                    onClick={() => setActionMenuOpen(actionMenuOpen === user._id ? null : user._id)}
+                                                    className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                                                >
+                                                    <MoreVertical className="w-5 h-5 text-slate-400" />
+                                                </button>
+                                                {actionMenuOpen === user._id && (
+                                                    <div className="absolute right-6 top-full mt-1 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-xl z-10 py-2">
+                                                        <button
+                                                            onClick={() => handleViewUser(user)}
+                                                            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-700/50 text-left"
+                                                        >
+                                                            <Eye className="w-4 h-4" /> Xem chi tiết
+                                                        </button>
+                                                        <button
+                                                            onClick={() => openEditModal(user)}
+                                                            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-700/50 text-left"
+                                                        >
+                                                            <Edit className="w-4 h-4" /> Chỉnh sửa
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleToggleStatus(user)}
+                                                            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:bg-slate-700/50 text-left"
+                                                        >
+                                                            {user.isActive ? (
+                                                                <><UserX className="w-4 h-4" /> Vô hiệu hóa</>
+                                                            ) : (
+                                                                <><UserCheck className="w-4 h-4" /> Kích hoạt</>
+                                                            )}
+                                                        </button>
+                                                        <hr className="my-2 border-slate-700" />
+                                                        <button
+                                                            onClick={() => handleDelete(user)}
+                                                            className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 text-left"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" /> Xóa
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>
