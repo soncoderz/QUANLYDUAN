@@ -37,7 +37,7 @@ const getHealthMetrics = async (req, res) => {
         console.error('Get health metrics error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -62,13 +62,13 @@ const createHealthMetric = async (req, res) => {
         res.status(201).json({
             success: true,
             data: metric,
-            message: 'Health metric recorded successfully'
+            message: 'Luu chi so suc khoe thanh cong'
         });
     } catch (error) {
         console.error('Create health metric error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -178,7 +178,7 @@ const getHealthMetricTrends = async (req, res) => {
         console.error('Get health metric trends error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -215,7 +215,7 @@ const getLatestMetrics = async (req, res) => {
         console.error('Get latest metrics error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };

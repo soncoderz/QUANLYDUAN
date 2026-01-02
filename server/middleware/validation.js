@@ -54,7 +54,8 @@ const schemas = {
         emergencyContact: Joi.string().allow(''),
         emergencyPhone: Joi.string().allow(''),
         address: Joi.string().allow(''),
-        phone: Joi.string().allow('')
+        phone: Joi.string().allow(''),
+        avatar: Joi.string().uri().allow('')
     }),
 
     createAppointment: Joi.object({

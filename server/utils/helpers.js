@@ -33,15 +33,25 @@ const formatDate = (date) => {
     return new Date(date).toISOString().split('T')[0];
 };
 
-// Generate time slots for a day
-const generateTimeSlots = (startHour = 8, endHour = 17, intervalMinutes = 30) => {
+// Generate time slots for a day (accepts hour numbers or "HH:MM" strings)
+const generateTimeSlots = (start = 8, end = 17, intervalMinutes = 30) => {
+    const toMinutes = (val) => {
+        if (typeof val === 'string') {
+            const [h = '0', m = '0'] = val.split(':');
+            return parseInt(h) * 60 + parseInt(m);
+        }
+        return parseInt(val) * 60;
+    };
+
+    const startMinutes = toMinutes(start);
+    const endMinutes = toMinutes(end);
     const slots = [];
 
-    for (let hour = startHour; hour < endHour; hour++) {
-        for (let minute = 0; minute < 60; minute += intervalMinutes) {
-            const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-            slots.push(timeStr);
-        }
+    for (let m = startMinutes; m < endMinutes; m += intervalMinutes) {
+        const hours = Math.floor(m / 60);
+        const minutes = m % 60;
+        const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        slots.push(timeStr);
     }
 
     return slots;

@@ -25,7 +25,7 @@ const getProfile = async (req, res) => {
         console.error('Get profile error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -35,7 +35,7 @@ const getProfile = async (req, res) => {
 // @access  Private
 const updateProfile = async (req, res) => {
     try {
-        const { fullName, dateOfBirth, gender, bloodType, allergies, emergencyContact, emergencyPhone, address, phone } = req.body;
+        const { fullName, dateOfBirth, gender, bloodType, allergies, emergencyContact, emergencyPhone, address, phone, avatar } = req.body;
 
         // Update user phone if provided
         if (phone) {
@@ -46,18 +46,20 @@ const updateProfile = async (req, res) => {
         let profile = await PatientProfile.findOne({ userId: req.user._id });
 
         if (profile) {
+            const updateData = {};
+            if (fullName) updateData.fullName = fullName;
+            if (dateOfBirth) updateData.dateOfBirth = dateOfBirth;
+            if (gender) updateData.gender = gender;
+            if (bloodType) updateData.bloodType = bloodType;
+            if (allergies) updateData.allergies = allergies;
+            if (emergencyContact) updateData.emergencyContact = emergencyContact;
+            if (emergencyPhone) updateData.emergencyPhone = emergencyPhone;
+            if (address) updateData.address = address;
+            if (avatar) updateData.avatar = avatar;
+
             profile = await PatientProfile.findOneAndUpdate(
                 { userId: req.user._id },
-                {
-                    fullName: fullName || profile.fullName,
-                    dateOfBirth: dateOfBirth || profile.dateOfBirth,
-                    gender: gender || profile.gender,
-                    bloodType: bloodType || profile.bloodType,
-                    allergies: allergies || profile.allergies,
-                    emergencyContact: emergencyContact || profile.emergencyContact,
-                    emergencyPhone: emergencyPhone || profile.emergencyPhone,
-                    address: address || profile.address
-                },
+                updateData,
                 { new: true }
             ).populate('userId', 'email phone role');
         } else {
@@ -70,7 +72,8 @@ const updateProfile = async (req, res) => {
                 allergies,
                 emergencyContact,
                 emergencyPhone,
-                address
+                address,
+                avatar
             });
             profile = await PatientProfile.findById(profile._id).populate('userId', 'email phone role');
         }
@@ -78,13 +81,13 @@ const updateProfile = async (req, res) => {
         res.json({
             success: true,
             data: profile,
-            message: 'Profile updated successfully'
+            message: 'Cap nhat ho so thanh cong'
         });
     } catch (error) {
         console.error('Update profile error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -101,7 +104,7 @@ const uploadAvatar = async (req, res) => {
         if (!avatarUrl) {
             return res.status(400).json({
                 success: false,
-                error: 'Avatar URL is required'
+                error: 'Vui long cung cap link anh dai dien'
             });
         }
 
@@ -114,20 +117,20 @@ const uploadAvatar = async (req, res) => {
         if (!profile) {
             return res.status(404).json({
                 success: false,
-                error: 'Profile not found'
+                error: 'Khong tim thay ho so'
             });
         }
 
         res.json({
             success: true,
             data: profile,
-            message: 'Avatar updated successfully'
+            message: 'Cap nhat anh dai dien thanh cong'
         });
     } catch (error) {
         console.error('Upload avatar error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -142,7 +145,7 @@ const getProfileById = async (req, res) => {
         if (!profile) {
             return res.status(404).json({
                 success: false,
-                error: 'Profile not found'
+                error: 'Khong tim thay ho so'
             });
         }
 
@@ -154,7 +157,7 @@ const getProfileById = async (req, res) => {
         console.error('Get profile by id error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };

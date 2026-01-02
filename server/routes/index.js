@@ -8,6 +8,8 @@ const medicationRoutes = require('./medicationRoutes');
 const reminderRoutes = require('./reminderRoutes');
 const healthMetricRoutes = require('./healthMetricRoutes');
 const reportRoutes = require('./reportRoutes');
+const adminRoutes = require('./adminRoutes');
+const uploadRoutes = require('./uploadRoutes');
 
 module.exports = {
     authRoutes,
@@ -19,5 +21,8 @@ module.exports = {
     medicationRoutes,
     reminderRoutes,
     healthMetricRoutes,
-    reportRoutes
+    reportRoutes,
+    adminRoutes,
+    uploadRoutes
 };
+

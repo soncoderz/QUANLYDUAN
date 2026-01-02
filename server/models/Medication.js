@@ -40,6 +40,10 @@ const medicationSchema = new mongoose.Schema({
     prescribedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor'
+    },
+    appointmentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Appointment'
     }
 }, {
     timestamps: true
@@ -47,5 +51,6 @@ const medicationSchema = new mongoose.Schema({
 
 // Index for querying medications
 medicationSchema.index({ patientId: 1, isActive: 1 });
+medicationSchema.index({ appointmentId: 1 });
 
 module.exports = mongoose.model('Medication', medicationSchema);

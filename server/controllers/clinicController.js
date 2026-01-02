@@ -40,7 +40,7 @@ const getClinics = async (req, res) => {
         console.error('Get clinics error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -55,7 +55,7 @@ const getClinicById = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
@@ -73,7 +73,7 @@ const getClinicById = async (req, res) => {
         console.error('Get clinic by id error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -120,7 +120,7 @@ const searchClinics = async (req, res) => {
         console.error('Search clinics error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -131,11 +131,13 @@ const searchClinics = async (req, res) => {
 const getAvailableSlots = async (req, res) => {
     try {
         const { date, doctorId } = req.query;
+        const dateStr = typeof date === 'string' ? date : date?.date;
+        const doctorIdParam = doctorId || date?.doctorId;
 
-        if (!date) {
+        if (!dateStr) {
             return res.status(400).json({
                 success: false,
-                error: 'Date is required'
+                error: 'Vui long cung cap ngay'
             });
         }
 
@@ -143,17 +145,16 @@ const getAvailableSlots = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
-        // Get all time slots
-        const allSlots = generateTimeSlots(8, 17, 30);
+        const dayOfWeek = new Date(dateStr).getDay();
 
         // Get booked appointments for the date
-        const startOfDay = new Date(date);
+        const startOfDay = new Date(dateStr);
         startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date(date);
+        const endOfDay = new Date(dateStr);
         endOfDay.setHours(23, 59, 59, 999);
 
         let appointmentQuery = {
@@ -162,8 +163,8 @@ const getAvailableSlots = async (req, res) => {
             status: { $nin: ['cancelled'] }
         };
 
-        if (doctorId) {
-            appointmentQuery.doctorId = doctorId;
+        if (doctorIdParam) {
+            appointmentQuery.doctorId = doctorIdParam;
         }
 
         const bookedAppointments = await Appointment.find(appointmentQuery).select('timeSlot doctorId');
@@ -173,19 +174,41 @@ const getAvailableSlots = async (req, res) => {
         }));
 
         // Get doctors for this clinic
-        let doctors = await Doctor.find({ clinicId: req.params.id, isAvailable: true }).select('fullName specialty');
+        let doctors = await Doctor.find({ clinicId: req.params.id, isAvailable: true })
+            .select('fullName specialty workingDays startTime endTime slotDuration');
 
-        if (doctorId) {
-            doctors = doctors.filter(d => d._id.toString() === doctorId);
+        if (doctorIdParam) {
+            doctors = doctors.filter(d => d._id.toString() === doctorIdParam);
         }
 
         // Calculate available slots per doctor
+        const defaultDays = [1, 2, 3, 4, 5];
         const availableSlots = doctors.map(doctor => {
             const doctorBookedSlots = bookedSlots
                 .filter(slot => slot.doctorId === doctor._id.toString())
                 .map(slot => slot.time);
 
-            const slots = allSlots.map(time => ({
+            const workingDays = (doctor.workingDays && doctor.workingDays.length > 0) ? doctor.workingDays : defaultDays;
+            // If doctor doesn't work this day, return empty slots to indicate unavailable
+            if (!workingDays.includes(dayOfWeek)) {
+                return {
+                    doctor: {
+                        id: doctor._id,
+                        fullName: doctor.fullName,
+                        specialty: doctor.specialty
+                    },
+                    slots: []
+                };
+            }
+
+            const slotDuration = doctor.slotDuration || 30;
+            const slotsForDoctor = generateTimeSlots(
+                doctor.startTime || '08:00',
+                doctor.endTime || '17:00',
+                slotDuration
+            );
+
+            const slots = slotsForDoctor.map(time => ({
                 time,
                 available: !doctorBookedSlots.includes(time)
             }));
@@ -215,7 +238,7 @@ const getAvailableSlots = async (req, res) => {
         console.error('Get available slots error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -230,13 +253,13 @@ const createClinic = async (req, res) => {
         res.status(201).json({
             success: true,
             data: clinic,
-            message: 'Clinic created successfully'
+            message: 'Tao phong kham thanh cong'
         });
     } catch (error) {
         console.error('Create clinic error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -255,20 +278,20 @@ const updateClinic = async (req, res) => {
         if (!clinic) {
             return res.status(404).json({
                 success: false,
-                error: 'Clinic not found'
+                error: 'Khong tim thay phong kham'
             });
         }
 
         res.json({
             success: true,
             data: clinic,
-            message: 'Clinic updated successfully'
+            message: 'Cap nhat phong kham thanh cong'
         });
     } catch (error) {
         console.error('Update clinic error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };

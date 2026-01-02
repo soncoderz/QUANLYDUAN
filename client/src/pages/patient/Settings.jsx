@@ -91,12 +91,58 @@ export default function Settings() {
             <div className="bg-gradient-to-r from-blue-500 to-teal-500 rounded-2xl shadow-lg p-6 text-white">
                 <div className="flex items-center gap-5">
                     <div className="relative">
-                        <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-3xl font-bold shadow-lg">
-                            {formData.fullName?.charAt(0)?.toUpperCase() || 'U'}
-                        </div>
-                        <button className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-white shadow-lg flex items-center justify-center">
+                        {profile?.avatar ? (
+                            <img
+                                src={profile.avatar}
+                                alt="Avatar"
+                                className="w-20 h-20 rounded-2xl object-cover shadow-lg"
+                            />
+                        ) : (
+                            <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-3xl font-bold shadow-lg">
+                                {formData.fullName?.charAt(0)?.toUpperCase() || 'U'}
+                            </div>
+                        )}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            id="avatar-upload"
+                            onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+
+                                try {
+                                    const formDataUpload = new FormData();
+                                    formDataUpload.append('image', file);
+
+                                    const { default: api } = await import('../../services/api');
+                                    const response = await api.post('/upload/avatar', formDataUpload, {
+                                        headers: { 'Content-Type': 'multipart/form-data' }
+                                    });
+
+                                    if (response.data.success) {
+                                        // Update profile with new avatar
+                                        const updateResponse = await profileService.updateProfile({
+                                            avatar: response.data.data.url
+                                        });
+
+                                        if (updateResponse.success) {
+                                            success('Đã cập nhật ảnh đại diện!');
+                                            await checkAuth();
+                                        }
+                                    }
+                                } catch (err) {
+                                    console.error('Upload error:', err);
+                                    showError('Không thể upload ảnh');
+                                }
+                            }}
+                        />
+                        <label
+                            htmlFor="avatar-upload"
+                            className="absolute -bottom-2 -right-2 w-8 h-8 rounded-xl bg-white shadow-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors"
+                        >
                             <Camera className="w-4 h-4 text-blue-600" />
-                        </button>
+                        </label>
                     </div>
                     <div>
                         <h2 className="text-xl font-bold">{formData.fullName || 'Chưa cập nhật'}</h2>
