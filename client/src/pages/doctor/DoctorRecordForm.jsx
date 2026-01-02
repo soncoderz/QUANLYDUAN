@@ -361,7 +361,7 @@ export default function DoctorRecordForm() {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs text-slate-400 mb-1">Tan suat</label>
+                                            <label className="block text-xs text-slate-400 mb-1">Tần suất</label>
                                             <select
                                                 value={med.frequency}
                                                 onChange={(e) => updatePrescription(index, 'frequency', e.target.value)}
@@ -373,7 +373,7 @@ export default function DoctorRecordForm() {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs text-slate-400 mb-1">So ngay uong</label>
+                                            <label className="block text-xs text-slate-400 mb-1">Số ngày uống</label>
                                             <select
                                                 value={med.duration}
                                                 onChange={(e) => updatePrescription(index, 'duration', e.target.value)}
