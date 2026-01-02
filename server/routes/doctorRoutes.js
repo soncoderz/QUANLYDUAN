@@ -11,7 +11,7 @@ const {
     updateDoctorProfile,
     createMedicalRecord
 } = require('../controllers/doctorController');
-const { protect, authorize } = require('../middleware');
+const { protect, authorize, validate, schemas } = require('../middleware');
 
 // Public routes
 router.get('/', getDoctors);
@@ -22,8 +22,8 @@ router.get('/my-appointments', protect, authorize('doctor'), getMyAppointments);
 router.get('/my-patients', protect, authorize('doctor'), getMyPatients);
 router.get('/patients/:id', protect, authorize('doctor'), getPatientDetails);
 router.put('/profile', protect, authorize('doctor'), updateDoctorProfile);
-router.patch('/appointments/:id/status', protect, authorize('doctor'), updateAppointmentStatus);
-router.post('/records', protect, authorize('doctor'), createMedicalRecord);
+router.patch('/appointments/:id/status', protect, authorize('doctor'), validate(schemas.updateDoctorAppointmentStatus), updateAppointmentStatus);
+router.post('/records', protect, authorize('doctor'), validate(schemas.createMedicalRecord), createMedicalRecord);
 
 // Public route with param (must be last)
 router.get('/:id', getDoctorById);
