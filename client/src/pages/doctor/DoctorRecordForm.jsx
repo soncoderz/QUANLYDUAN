@@ -385,7 +385,7 @@ export default function DoctorRecordForm() {
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs text-slate-400 mb-1">Huong dan</label>
+                                            <label className="block text-xs text-slate-400 mb-1">Hướng dẫn</label>
                                             <select
                                                 value={med.instructions}
                                                 onChange={(e) => updatePrescription(index, 'instructions', e.target.value)}
@@ -414,7 +414,7 @@ export default function DoctorRecordForm() {
                     ) : (
                         <>
                             <Save className="w-5 h-5" />
-                            Luu ho so benh an
+                            Lưu hồ sơ bệnh án
                         </>
                     )}
                 </button>
