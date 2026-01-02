@@ -239,7 +239,7 @@ export default function DoctorManagement() {
                                             ) : (
                                                 <span className="flex items-center gap-1 text-red-400 text-sm">
                                                     <span className="w-2 h-2 rounded-full bg-red-400"></span>
-                                                    Nghỉ
+                                                    Nghỉ ngơi
                                                 </span>
                                             )}
                                         </td>
