@@ -48,7 +48,7 @@ const getMedicalRecords = async (req, res) => {
         console.error('Get medical records error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -66,7 +66,7 @@ const getMedicalRecordById = async (req, res) => {
         if (!record) {
             return res.status(404).json({
                 success: false,
-                error: 'Medical record not found'
+                error: 'Khong tim thay ho so benh an'
             });
         }
 
@@ -74,7 +74,7 @@ const getMedicalRecordById = async (req, res) => {
         if (req.user.role === 'patient' && record.patientId._id.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized to view this record'
+                error: 'Ban khong co quyen xem ho so nay'
             });
         }
 
@@ -86,7 +86,7 @@ const getMedicalRecordById = async (req, res) => {
         console.error('Get medical record by id error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -103,7 +103,7 @@ const createMedicalRecord = async (req, res) => {
         if (!doctor) {
             return res.status(403).json({
                 success: false,
-                error: 'Only doctors can create medical records'
+                error: 'Chi bac si moi duoc tao ho so benh an'
             });
         }
 
@@ -134,13 +134,13 @@ const createMedicalRecord = async (req, res) => {
         res.status(201).json({
             success: true,
             data: populatedRecord,
-            message: 'Medical record created successfully'
+            message: 'Tao ho so benh an thanh cong'
         });
     } catch (error) {
         console.error('Create medical record error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -155,7 +155,7 @@ const updateMedicalRecord = async (req, res) => {
         if (!record) {
             return res.status(404).json({
                 success: false,
-                error: 'Medical record not found'
+                error: 'Khong tim thay ho so benh an'
             });
         }
 
@@ -164,7 +164,7 @@ const updateMedicalRecord = async (req, res) => {
         if (!doctor || record.doctorId.toString() !== doctor._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized to update this record'
+                error: 'Ban khong co quyen cap nhat ho so nay'
             });
         }
 
@@ -180,13 +180,13 @@ const updateMedicalRecord = async (req, res) => {
         res.json({
             success: true,
             data: record,
-            message: 'Medical record updated successfully'
+            message: 'Cap nhat ho so benh an thanh cong'
         });
     } catch (error) {
         console.error('Update medical record error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -201,7 +201,7 @@ const deleteMedicalRecord = async (req, res) => {
         if (!record) {
             return res.status(404).json({
                 success: false,
-                error: 'Medical record not found'
+                error: 'Khong tim thay ho so benh an'
             });
         }
 
@@ -210,7 +210,7 @@ const deleteMedicalRecord = async (req, res) => {
         if (!doctor || record.doctorId.toString() !== doctor._id.toString()) {
             return res.status(403).json({
                 success: false,
-                error: 'Not authorized to delete this record'
+                error: 'Ban khong co quyen xoa ho so nay'
             });
         }
 
@@ -218,13 +218,13 @@ const deleteMedicalRecord = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Medical record deleted successfully'
+            message: 'Xoa ho so benh an thanh cong'
         });
     } catch (error) {
         console.error('Delete medical record error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };

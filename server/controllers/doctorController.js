@@ -41,7 +41,7 @@ const getDoctors = async (req, res) => {
         console.error('Get doctors error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -58,7 +58,7 @@ const getDoctorById = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor not found'
+                error: 'Khong tim thay bac si'
             });
         }
 
@@ -70,7 +70,7 @@ const getDoctorById = async (req, res) => {
         console.error('Get doctor by id error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -86,7 +86,7 @@ const getDoctorDashboard = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -172,7 +172,7 @@ const getDoctorDashboard = async (req, res) => {
         console.error('Get doctor dashboard error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -186,7 +186,7 @@ const getMyAppointments = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -242,7 +242,7 @@ const getMyAppointments = async (req, res) => {
         console.error('Get my appointments error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -258,7 +258,7 @@ const updateAppointmentStatus = async (req, res) => {
         if (!validStatuses.includes(status)) {
             return res.status(400).json({
                 success: false,
-                error: 'Invalid status'
+                error: 'Trang thai khong hop le'
             });
         }
 
@@ -266,7 +266,7 @@ const updateAppointmentStatus = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -278,7 +278,7 @@ const updateAppointmentStatus = async (req, res) => {
         if (!appointment) {
             return res.status(404).json({
                 success: false,
-                error: 'Appointment not found'
+                error: 'Khong tim thay lich kham'
             });
         }
 
@@ -287,7 +287,7 @@ const updateAppointmentStatus = async (req, res) => {
             if (!Array.isArray(medications) || medications.length === 0) {
                 return res.status(400).json({
                     success: false,
-                    error: 'Medications are required when completing an appointment'
+                    error: 'Can nhap don thuoc khi hoan tat lich kham'
                 });
             }
         }
@@ -315,13 +315,13 @@ const updateAppointmentStatus = async (req, res) => {
         res.json({
             success: true,
             data: appointment,
-            message: 'Appointment status updated successfully'
+            message: 'Cap nhat trang thai lich kham thanh cong'
         });
     } catch (error) {
         console.error('Update appointment status error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -335,7 +335,7 @@ const getMyPatients = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -381,7 +381,7 @@ const getMyPatients = async (req, res) => {
         console.error('Get my patients error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -395,7 +395,7 @@ const getPatientDetails = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -408,7 +408,7 @@ const getPatientDetails = async (req, res) => {
         if (!hasAppointment) {
             return res.status(403).json({
                 success: false,
-                error: 'You do not have access to this patient'
+                error: 'Ban khong co quyen truy cap benh nhan nay'
             });
         }
 
@@ -418,7 +418,7 @@ const getPatientDetails = async (req, res) => {
         if (!patient) {
             return res.status(404).json({
                 success: false,
-                error: 'Patient not found'
+                error: 'Khong tim thay benh nhan'
             });
         }
 
@@ -449,7 +449,7 @@ const getPatientDetails = async (req, res) => {
         console.error('Get patient details error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -465,7 +465,7 @@ const updateDoctorProfile = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -482,13 +482,13 @@ const updateDoctorProfile = async (req, res) => {
         res.json({
             success: true,
             data: doctor,
-            message: 'Profile updated successfully'
+            message: 'Cap nhat ho so bac si thanh cong'
         });
     } catch (error) {
         console.error('Update doctor profile error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -513,7 +513,7 @@ const createMedicalRecord = async (req, res) => {
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                error: 'Doctor profile not found'
+                error: 'Khong tim thay ho so bac si'
             });
         }
 
@@ -521,7 +521,7 @@ const createMedicalRecord = async (req, res) => {
         if (!patientId || !diagnosis) {
             return res.status(400).json({
                 success: false,
-                error: 'Patient ID and diagnosis are required'
+                error: 'Can co ma benh nhan va chan doan'
             });
         }
 
@@ -549,13 +549,13 @@ const createMedicalRecord = async (req, res) => {
         res.status(201).json({
             success: true,
             data: medicalRecord,
-            message: 'Medical record created successfully'
+            message: 'Tao ho so benh an thanh cong'
         });
     } catch (error) {
         console.error('Create medical record error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };

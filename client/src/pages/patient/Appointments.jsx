@@ -186,9 +186,23 @@ export default function Appointments() {
                                 <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                                     {/* Doctor Avatar */}
                                     <div className="flex items-center sm:items-start gap-4 flex-1">
-                                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200 flex-shrink-0">
-                                            <Stethoscope className="w-7 h-7 text-white" />
-                                        </div>
+                                        {apt.doctorId?.avatar ? (
+                                            <img
+                                                src={apt.doctorId.avatar}
+                                                alt={apt.doctorId?.fullName || 'Bac si'}
+                                                className="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-blue-200 flex-shrink-0 border-2 border-white"
+                                            />
+                                        ) : (
+                                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200 flex-shrink-0">
+                                                {apt.doctorId?.fullName ? (
+                                                    <span className="text-white text-xl font-bold">
+                                                        {apt.doctorId.fullName.charAt(0).toUpperCase()}
+                                                    </span>
+                                                ) : (
+                                                    <Stethoscope className="w-7 h-7 text-white" />
+                                                )}
+                                            </div>
+                                        )}
 
                                         <div className="flex-1 min-w-0">
                                             <h3 className="font-semibold text-gray-900 text-lg">
@@ -222,27 +236,27 @@ export default function Appointments() {
                                             {statusConfig.label}
                                         </span>
 
-                                <button
-                                    onClick={() => handleViewDetails(apt)}
-                                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
-                                >
-                                    <ChevronRight className="w-4 h-4" />
-                                    Xem chi tiết
-                                </button>
-                                {canCancel(apt.status) && (
-                                    <button
-                                        onClick={() => handleCancelClick(apt)}
-                                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
-                                    >
-                                        <X className="w-4 h-4" />
-                                        Hủy lịch
-                                    </button>
-                                )}
-                            </div>
-                        </div>
+                                        <button
+                                            onClick={() => handleViewDetails(apt)}
+                                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
+                                        >
+                                            <ChevronRight className="w-4 h-4" />
+                                            Xem chi tiết
+                                        </button>
+                                        {canCancel(apt.status) && (
+                                            <button
+                                                onClick={() => handleCancelClick(apt)}
+                                                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                                            >
+                                                <X className="w-4 h-4" />
+                                                Hủy lịch
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
 
-                        {/* Reason */}
-                        {apt.reason && (
+                                {/* Reason */}
+                                {apt.reason && (
                                     <div className="mt-4 pt-4 border-t border-gray-100">
                                         <p className="text-sm text-gray-600">
                                             <span className="font-medium text-gray-700">Lý do khám:</span> {apt.reason}

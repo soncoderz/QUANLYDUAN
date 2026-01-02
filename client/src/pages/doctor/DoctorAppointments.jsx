@@ -77,7 +77,7 @@ export default function DoctorAppointments() {
     const [pagination, setPagination] = useState({});
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [showModal, setShowModal] = useState(false);
-    const [medicationsInput, setMedicationsInput] = useState([{ name: MEDICINE_OPTIONS[0], dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
+    const [medicationsInput, setMedicationsInput] = useState([{ name: MEDICINE_OPTIONS[0], customName: '', isCustom: false, dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
     const { success, error: showError } = useToast();
 
     const [filters, setFilters] = useState({
@@ -136,7 +136,7 @@ export default function DoctorAppointments() {
                 success('Cap nhat trang thai thanh cong');
                 fetchAppointments();
                 setShowModal(false);
-                setMedicationsInput([{ name: MEDICINE_OPTIONS[0], dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
+                setMedicationsInput([{ name: MEDICINE_OPTIONS[0], customName: '', isCustom: false, dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
             }
         } catch (error) {
             showError(error.response?.data?.error || 'Khong the cap nhat trang thai');
@@ -144,7 +144,7 @@ export default function DoctorAppointments() {
     };
 
     const addMedication = () => {
-        setMedicationsInput([...medicationsInput, { name: MEDICINE_OPTIONS[0], dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
+        setMedicationsInput([...medicationsInput, { name: MEDICINE_OPTIONS[0], customName: '', isCustom: false, dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
     };
 
     const removeMedication = (index) => {
@@ -153,7 +153,17 @@ export default function DoctorAppointments() {
 
     const updateMedication = (index, field, value) => {
         const updated = [...medicationsInput];
-        updated[index] = { ...updated[index], [field]: value };
+        if (field === 'name') {
+            if (value === '__custom__') {
+                updated[index] = { ...updated[index], name: '', isCustom: true };
+            } else {
+                updated[index] = { ...updated[index], name: value, isCustom: false, customName: '' };
+            }
+        } else if (field === 'customName') {
+            updated[index] = { ...updated[index], name: value, customName: value };
+        } else {
+            updated[index] = { ...updated[index], [field]: value };
+        }
         setMedicationsInput(updated);
     };
 
@@ -444,14 +454,24 @@ export default function DoctorAppointments() {
                                                 <div>
                                                     <label className="block text-xs text-slate-400 mb-1">Ten thuoc *</label>
                                                     <select
-                                                        value={med.name}
+                                                        value={med.isCustom ? '__custom__' : med.name}
                                                         onChange={(e) => updateMedication(idx, 'name', e.target.value)}
                                                         className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:border-teal-500"
                                                     >
                                                         {MEDICINE_OPTIONS.map(opt => (
                                                             <option key={opt} value={opt}>{opt}</option>
                                                         ))}
+                                                        <option value="__custom__">-- Khac (nhap tay) --</option>
                                                     </select>
+                                                    {med.isCustom && (
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Nhap ten thuoc..."
+                                                            value={med.customName}
+                                                            onChange={(e) => updateMedication(idx, 'customName', e.target.value)}
+                                                            className="w-full mt-2 px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:border-teal-500"
+                                                        />
+                                                    )}
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>

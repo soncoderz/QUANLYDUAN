@@ -25,7 +25,7 @@ const getProfile = async (req, res) => {
         console.error('Get profile error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -81,13 +81,13 @@ const updateProfile = async (req, res) => {
         res.json({
             success: true,
             data: profile,
-            message: 'Profile updated successfully'
+            message: 'Cap nhat ho so thanh cong'
         });
     } catch (error) {
         console.error('Update profile error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -104,7 +104,7 @@ const uploadAvatar = async (req, res) => {
         if (!avatarUrl) {
             return res.status(400).json({
                 success: false,
-                error: 'Avatar URL is required'
+                error: 'Vui long cung cap link anh dai dien'
             });
         }
 
@@ -117,20 +117,20 @@ const uploadAvatar = async (req, res) => {
         if (!profile) {
             return res.status(404).json({
                 success: false,
-                error: 'Profile not found'
+                error: 'Khong tim thay ho so'
             });
         }
 
         res.json({
             success: true,
             data: profile,
-            message: 'Avatar updated successfully'
+            message: 'Cap nhat anh dai dien thanh cong'
         });
     } catch (error) {
         console.error('Upload avatar error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
@@ -145,7 +145,7 @@ const getProfileById = async (req, res) => {
         if (!profile) {
             return res.status(404).json({
                 success: false,
-                error: 'Profile not found'
+                error: 'Khong tim thay ho so'
             });
         }
 
@@ -157,7 +157,7 @@ const getProfileById = async (req, res) => {
         console.error('Get profile by id error:', error);
         res.status(500).json({
             success: false,
-            error: 'Server error'
+            error: 'Co loi he thong, vui long thu lai'
         });
     }
 };
