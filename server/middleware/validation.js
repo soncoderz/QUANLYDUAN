@@ -77,6 +77,25 @@ const schemas = {
         notes: Joi.string().allow('')
     }),
 
+    updateDoctorAppointmentStatus: Joi.object({
+        status: Joi.string().valid('confirmed', 'completed', 'cancelled', 'no_show').required(),
+        notes: Joi.string().allow(''),
+        medications: Joi.array().items(
+            Joi.object({
+                name: Joi.string().required(),
+                dosage: Joi.string().allow(''),
+                frequency: Joi.string().allow(''),
+                instructions: Joi.string().allow(''),
+                startDate: Joi.date(),
+                endDate: Joi.date()
+            })
+        ).when('status', {
+            is: 'completed',
+            then: Joi.array().min(1).required(),
+            otherwise: Joi.array()
+        })
+    }),
+
     createMedicalRecord: Joi.object({
         patientId: Joi.string().required(),
         appointmentId: Joi.string(),

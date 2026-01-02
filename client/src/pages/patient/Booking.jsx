@@ -92,6 +92,7 @@ export default function Booking() {
             }
         } catch (error) {
             console.error('Error fetching slots:', error);
+            showError('Khong the tai khung gio kham, vui long thu lai');
         }
     };
 
@@ -110,6 +111,15 @@ export default function Booking() {
     };
 
     const handleSubmit = async () => {
+        if (!selectedDoctor) {
+            showError('Vui long chon bac si truoc khi dat lich');
+            return;
+        }
+        if (!selectedDate || !selectedSlot) {
+            showError('Vui long chon ngay va khung gio kham');
+            return;
+        }
+
         setSubmitting(true);
         try {
             const response = await appointmentService.createAppointment({

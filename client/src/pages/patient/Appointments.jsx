@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { appointmentService } from '../../services';
 import { useToast } from '../../context/ToastContext';
 import { Link } from 'react-router-dom';
@@ -82,13 +82,13 @@ export default function Appointments() {
 
         setCancelling(true);
         try {
-            await appointmentService.deleteAppointment(selectedAppointment._id);
-            success('Lịch hẹn đã được hủy thành công');
+            await appointmentService.cancelAppointment(selectedAppointment._id);
+            success('Huy lich hen thanh cong');
             setShowCancelModal(false);
             setSelectedAppointment(null);
             fetchAppointments();
         } catch (error) {
-            showError(error.response?.data?.error || 'Không thể hủy lịch hẹn');
+            showError(error.response?.data?.error || 'Khong the huy lich hen');
         } finally {
             setCancelling(false);
         }
@@ -439,3 +439,4 @@ export default function Appointments() {
         </div>
     );
 }
+
