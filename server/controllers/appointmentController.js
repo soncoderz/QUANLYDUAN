@@ -88,6 +88,18 @@ const getAppointmentById = async (req, res) => {
             });
         }
 
+        // Doctors can only view their own appointments
+        if (req.user.role === 'doctor') {
+            const doctor = await Doctor.findOne({ userId: req.user._id }).select('_id');
+            const appointmentDoctorId = appointment.doctorId?._id?.toString() || appointment.doctorId?.toString();
+            if (!doctor || appointmentDoctorId !== doctor._id.toString()) {
+                return res.status(403).json({
+                    success: false,
+                    error: 'Ban khong co quyen xem lich kham nay'
+                });
+            }
+        }
+
         // Medications linked to this appointment
         const medications = await Medication.find({ appointmentId: appointment._id }).sort({ createdAt: -1 });
 
