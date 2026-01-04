@@ -16,6 +16,7 @@ import {
     ChevronRight
 } from 'lucide-react';
 import { useState } from 'react';
+import AIChatbot from './AIChatbot';
 
 export default function Layout({ children }) {
     const { user, profile, logout } = useAuth();
@@ -289,6 +290,9 @@ export default function Layout({ children }) {
                     {children}
                 </div>
             </main>
+
+            {/* AI Chatbot */}
+            <AIChatbot />
         </div>
     );
 }

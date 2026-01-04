@@ -10,6 +10,7 @@ const healthMetricRoutes = require('./healthMetricRoutes');
 const reportRoutes = require('./reportRoutes');
 const adminRoutes = require('./adminRoutes');
 const uploadRoutes = require('./uploadRoutes');
+const aiRoutes = require('./aiRoutes');
 
 module.exports = {
     authRoutes,
@@ -23,6 +24,7 @@ module.exports = {
     healthMetricRoutes,
     reportRoutes,
     adminRoutes,
-    uploadRoutes
+    uploadRoutes,
+    aiRoutes
 };
 

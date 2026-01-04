@@ -24,7 +24,8 @@ const {
     healthMetricRoutes,
     reportRoutes,
     adminRoutes,
-    uploadRoutes
+    uploadRoutes,
+    aiRoutes
 } = require('./routes');
 
 // Import cron jobs
@@ -70,6 +71,7 @@ app.use('/api/health-metrics', healthMetricRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
