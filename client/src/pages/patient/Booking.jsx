@@ -262,8 +262,12 @@ export default function Booking() {
                                         }`}
                                 >
                                     <div className="flex items-start gap-4">
-                                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
-                                            <Stethoscope className="w-7 h-7 text-white" />
+                                        <div className={`w-14 h-14 rounded-2xl shadow-lg shadow-blue-200 overflow-hidden ${doctor.avatar ? 'bg-white border border-blue-100' : 'bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center'}`}>
+                                            {doctor.avatar ? (
+                                                <img src={doctor.avatar} alt={doctor.fullName} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <Stethoscope className="w-7 h-7 text-white" />
+                                            )}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <h3 className="font-semibold text-gray-900">{doctor.fullName}</h3>
@@ -415,11 +419,13 @@ export default function Booking() {
                     {/* Appointment Summary */}
                     <div className="bg-white rounded-2xl shadow-lg p-6 bg-gradient-to-br from-blue-50 to-teal-50 border border-blue-100">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
-                                {clinic?.image ? (
+                            <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white border border-blue-100 flex items-center justify-center shadow-lg shadow-blue-200">
+                                {selectedDoctor?.avatar ? (
+                                    <img src={selectedDoctor.avatar} alt={selectedDoctor.fullName} className="w-full h-full object-cover" />
+                                ) : clinic?.image ? (
                                     <img src={clinic.image} alt={clinic.name} className="w-full h-full object-cover" />
                                 ) : (
-                                    <Stethoscope className="w-8 h-8 text-white" />
+                                    <Stethoscope className="w-8 h-8 text-blue-500" />
                                 )}
                             </div>
                             <div>
