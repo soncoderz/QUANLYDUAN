@@ -57,7 +57,7 @@ export default function Layout({ children }) {
             <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 bg-white border-r border-gray-100 shadow-lg shadow-gray-100/50">
                 {/* Logo */}
                 <div className="flex items-center gap-3 px-6 py-6 border-b border-gray-100">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center shadow-lg shadow-blue-200">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center">
                         <Heart className="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -76,7 +76,7 @@ export default function Layout({ children }) {
                                 className="w-12 h-12 rounded-2xl object-cover shrink-0 shadow-md border border-white/40"
                             />
                         ) : (
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center font-semibold text-lg text-white shrink-0 shadow-md">
+                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center font-semibold text-lg text-white shrink-0 shadow-md">
                                 {userInitial}
                             </div>
                         )}
@@ -102,7 +102,7 @@ export default function Layout({ children }) {
                             key={item.name}
                             to={item.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group ${isActive(item.href)
-                                ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-lg shadow-blue-200'
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-200'
                                 : 'text-gray-600 hover:bg-gray-50'
                                 }`}
                         >
@@ -158,7 +158,7 @@ export default function Layout({ children }) {
                             <Menu className="w-5 h-5 text-gray-700" />
                         </button>
                         <div className="flex items-center gap-2">
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center">
                                 <Heart className="w-5 h-5 text-white" />
                             </div>
                             <span className="font-bold text-gray-900">Healthcare</span>
@@ -172,7 +172,7 @@ export default function Layout({ children }) {
                                 className="w-9 h-9 rounded-xl object-cover border border-white/60"
                             />
                         ) : (
-                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center text-white font-semibold text-sm">
+                            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center text-white font-semibold text-sm">
                                 {userInitial}
                             </div>
                         )}
@@ -194,7 +194,7 @@ export default function Layout({ children }) {
                         {/* Mobile Sidebar Header */}
                         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
                             <div className="flex items-center gap-3">
-                                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center">
+                                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center">
                                     <Heart className="w-6 h-6 text-white" />
                                 </div>
                                 <div>
@@ -220,7 +220,7 @@ export default function Layout({ children }) {
                                         className="w-12 h-12 rounded-2xl object-cover border border-white/40"
                                     />
                                 ) : (
-                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center font-semibold text-lg text-white">
+                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center font-semibold text-lg text-white">
                                         {userInitial}
                                     </div>
                                 )}

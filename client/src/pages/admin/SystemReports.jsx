@@ -48,8 +48,8 @@ export default function SystemReports() {
     };
 
     const reportTypes = [
-        { id: 'overview', label: 'Tổng quan', icon: BarChart3, color: 'from-violet-500 to-purple-600' },
-        { id: 'appointments', label: 'Lịch hẹn', icon: Calendar, color: 'from-orange-500 to-amber-600' },
+        { id: 'overview', label: 'Tổng quan', icon: BarChart3, color: 'from-purple-600 to-purple-600' },
+        { id: 'appointments', label: 'Lịch hẹn', icon: Calendar, color: 'from-purple-600 to-purple-600' },
     ];
 
     const years = [2024, 2025, 2026];
@@ -78,7 +78,7 @@ export default function SystemReports() {
                     </div>
                     <div className="bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-2xl p-6">
                         <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
+                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-600 flex items-center justify-center">
                                 <Users className="w-7 h-7 text-white" />
                             </div>
                             <div>
@@ -109,8 +109,8 @@ export default function SystemReports() {
                                 <Bar dataKey="count" fill="url(#colorGradient)" radius={[4, 4, 0, 0]} />
                                 <defs>
                                     <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor="#8b5cf6" />
-                                        <stop offset="100%" stopColor="#6366f1" />
+                                        <stop offset="0%" stopColor="#9400feff" />
+                                        <stop offset="100%" stopColor="#9400feff" />
                                     </linearGradient>
                                 </defs>
                             </BarChart>
@@ -134,11 +134,11 @@ export default function SystemReports() {
                                         borderRadius: '8px',
                                         color: '#fff'
                                     }}
-                                />
+                                /> 
                                 <Line
                                     type="monotone"
                                     dataKey="count"
-                                    stroke="#06b6d4"
+                                    stroke="#9400feff"
                                     strokeWidth={3}
                                     dot={{ fill: '#06b6d4', strokeWidth: 2 }}
                                     activeDot={{ r: 8 }}
@@ -235,7 +235,7 @@ export default function SystemReports() {
                                             color: '#fff'
                                         }}
                                     />
-                                    <Bar dataKey="value" fill="#f59e0b" radius={[0, 4, 4, 0]} />
+                                    <Bar dataKey="value" fill="#9400feff" radius={[0, 4, 4, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>

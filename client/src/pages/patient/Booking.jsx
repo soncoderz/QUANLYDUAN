@@ -231,7 +231,7 @@ export default function Booking() {
                     ].map((s) => (
                         <div key={s.num} className="relative z-10 flex flex-col items-center">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all ${step >= s.num
-                                ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-lg shadow-blue-200'
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-200'
                                 : 'bg-gray-200 text-gray-500'
                                 }`}>
                                 {step > s.num ? <Check className="w-5 h-5" /> : s.num}

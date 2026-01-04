@@ -31,10 +31,10 @@ export default function Appointments() {
 
     const filters = [
         { value: 'all', label: 'Tất cả', count: appointments.length },
-        { value: 'scheduled', label: 'Chờ xác nhận', color: 'bg-amber-500' },
+        { value: 'scheduled', label: 'Chờ xác nhận', color: 'bg-blue-500' },
         { value: 'confirmed', label: 'Đã xác nhận', color: 'bg-blue-500' },
-        { value: 'completed', label: 'Hoàn thành', color: 'bg-green-500' },
-        { value: 'cancelled', label: 'Đã hủy', color: 'bg-red-500' },
+        { value: 'completed', label: 'Hoàn thành', color: 'bg-blue-500' },
+        { value: 'cancelled', label: 'Đã hủy', color: 'bg-blue-500' },
     ];
 
     useEffect(() => {
@@ -154,7 +154,7 @@ export default function Appointments() {
                         key={f.value}
                         onClick={() => setFilter(f.value)}
                         className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${filter === f.value
-                            ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-lg shadow-blue-200'
+                            ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-200'
                             : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
                             }`}
                     >

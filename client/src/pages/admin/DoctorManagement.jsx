@@ -138,7 +138,7 @@ export default function DoctorManagement() {
                 </div>
                 <button
                     onClick={openCreateModal}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-teal-500/30 transition-all"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-teal-500/30 transition-all"
                 >
                     <Plus className="w-5 h-5" />
                     Thêm bác sĩ
@@ -213,7 +213,7 @@ export default function DoctorManagement() {
                                                             className="w-10 h-10 rounded-xl object-cover border border-slate-700/70"
                                                         />
                                                     ) : (
-                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white font-semibold">
+                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-purple-600 flex items-center justify-center text-white font-semibold">
                                                             {initial}
                                                         </div>
                                                     )}
@@ -512,7 +512,7 @@ function DoctorModal({ mode, doctor, clinics, onClose, onSuccess }) {
                                         className="w-24 h-24 rounded-full object-cover border-4 border-teal-500/30 mx-auto"
                                     />
                                 ) : (
-                                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold mx-auto">
+                                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-purple-600 flex items-center justify-center text-white text-2xl font-bold mx-auto">
                                         {formData.fullName?.charAt(0) || 'D'}
                                     </div>
                                 )
@@ -678,7 +678,7 @@ function DoctorModal({ mode, doctor, clinics, onClose, onSuccess }) {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-teal-500/30 transition-all disabled:opacity-50"
+                                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-teal-500/30 transition-all disabled:opacity-50"
                             >
                                 {loading ? 'Đang xử lý...' : mode === 'create' ? 'Tạo mới' : 'Cập nhật'}
                             </button>

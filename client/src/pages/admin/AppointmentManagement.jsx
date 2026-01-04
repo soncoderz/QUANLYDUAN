@@ -129,7 +129,7 @@ export default function AppointmentManagement() {
                 </div>
                 <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all ${showFilters ? 'bg-orange-500 text-white' : 'bg-slate-700 text-white hover:bg-slate-600'}`}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all ${showFilters ? 'bg-purple-600 text-white' : 'bg-slate-700 text-white hover:bg-slate-600'}`}
                 >
                     <Filter className="w-5 h-5" />
                     Bộ lọc
@@ -143,7 +143,7 @@ export default function AppointmentManagement() {
                         <select
                             value={filters.status}
                             onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-                            className="px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                         >
                             <option value="">Tất cả trạng thái</option>
                             {Object.entries(statusConfig).map(([key, val]) => (
@@ -153,7 +153,7 @@ export default function AppointmentManagement() {
                         <select
                             value={filters.clinicId}
                             onChange={(e) => setFilters(prev => ({ ...prev, clinicId: e.target.value }))}
-                            className="px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            className="px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                         >
                             <option value="">Tất cả phòng khám</option>
                             {clinics.map(clinic => (
@@ -165,7 +165,7 @@ export default function AppointmentManagement() {
                                 type="date"
                                 value={filters.dateFrom}
                                 onChange={(e) => setFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
-                                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                                 placeholder="Từ ngày"
                             />
                         </div>
@@ -174,7 +174,7 @@ export default function AppointmentManagement() {
                                 type="date"
                                 value={filters.dateTo}
                                 onChange={(e) => setFilters(prev => ({ ...prev, dateTo: e.target.value }))}
-                                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
                                 placeholder="Đến ngày"
                             />
                         </div>
