@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const PatientProfile = require('../models/PatientProfile');
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken, generateResetToken } = require('../utils/tokenUtils');
+const { sendPasswordResetEmail } = require('../utils/emailService');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -208,9 +209,10 @@ const forgotPassword = async (req, res) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: 'Khong tim thay tai khoan voi email nay'
+            // For security, don't reveal if email exists
+            return res.json({
+                success: true,
+                message: 'Neu email ton tai trong he thong, ban se nhan duoc huong dan dat lai mat khau'
             });
         }
 
@@ -220,14 +222,26 @@ const forgotPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
         await user.save();
 
-        // In production, send email with reset link
-        // For now, just log to console
-        console.log(`Password reset token for ${email}: ${resetToken}`);
+        // Send password reset email via SendGrid
+        try {
+            await sendPasswordResetEmail(email, resetToken);
+            console.log(`Password reset email sent to: ${email}`);
+        } catch (emailError) {
+            console.error('Failed to send password reset email:', emailError);
+            // Reset the token if email fails
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+            await user.save();
+
+            return res.status(500).json({
+                success: false,
+                error: 'Khong the gui email, vui long thu lai sau'
+            });
+        }
 
         res.json({
             success: true,
-            message: 'Da gui huong dan reset mat khau (chi hien thong bao trong che do dev)',
-            data: { resetToken } // Remove in production
+            message: 'Da gui email huong dan dat lai mat khau. Vui long kiem tra hop thu cua ban.'
         });
     } catch (error) {
         console.error('Forgot password error:', error);

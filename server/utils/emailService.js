@@ -1,0 +1,113 @@
+const sgMail = require('@sendgrid/mail');
+
+// Initialize SendGrid with API key
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+/**
+ * Send password reset email using SendGrid
+ * @param {string} to - Recipient email address
+ * @param {string} resetToken - Password reset token
+ * @returns {Promise} - SendGrid response
+ */
+const sendPasswordResetEmail = async (to, resetToken) => {
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const resetUrl = `${clientUrl}/reset-password?token=${resetToken}`;
+    const fromEmail = process.env.SENDGRID_FROM_EMAIL || 'noreply@healthcare.com';
+
+    const msg = {
+        to,
+        from: fromEmail,
+        subject: 'Đặt lại mật khẩu - Healthcare Booking',
+        html: `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Đặt lại mật khẩu</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f7fa;">
+                <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td align="center" style="padding: 40px 0;">
+                            <table role="presentation" style="width: 100%; max-width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                <!-- Header -->
+                                <tr>
+                                    <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); border-radius: 16px 16px 0 0;">
+                                        <div style="width: 60px; height: 60px; background-color: rgba(255,255,255,0.2); border-radius: 16px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;">
+                                            <span style="font-size: 32px;">💙</span>
+                                        </div>
+                                        <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700;">Healthcare Booking</h1>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Content -->
+                                <tr>
+                                    <td style="padding: 40px;">
+                                        <h2 style="margin: 0 0 16px; color: #1e293b; font-size: 22px; font-weight: 600;">Đặt lại mật khẩu</h2>
+                                        <p style="margin: 0 0 24px; color: #64748b; font-size: 16px; line-height: 1.6;">
+                                            Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. 
+                                            Click vào nút bên dưới để tiếp tục:
+                                        </p>
+                                        
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                            <tr>
+                                                <td align="center" style="padding: 20px 0;">
+                                                    <a href="${resetUrl}" 
+                                                       style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 12px; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);">
+                                                        Đặt lại mật khẩu
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <p style="margin: 24px 0 16px; color: #64748b; font-size: 14px; line-height: 1.6;">
+                                            Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này. 
+                                            Link sẽ hết hạn sau <strong>1 giờ</strong>.
+                                        </p>
+                                        
+                                        <div style="margin-top: 24px; padding: 16px; background-color: #f8fafc; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                                            <p style="margin: 0; color: #475569; font-size: 13px;">
+                                                <strong>Không thể click vào nút?</strong><br>
+                                                Copy và dán link sau vào trình duyệt:<br>
+                                                <a href="${resetUrl}" style="color: #0ea5e9; word-break: break-all;">${resetUrl}</a>
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Footer -->
+                                <tr>
+                                    <td style="padding: 24px 40px; text-align: center; background-color: #f8fafc; border-radius: 0 0 16px 16px;">
+                                        <p style="margin: 0; color: #94a3b8; font-size: 12px;">
+                                            © 2026 Healthcare Booking. All rights reserved.<br>
+                                            Email này được gửi tự động, vui lòng không trả lời.
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+        `,
+        text: `Đặt lại mật khẩu - Healthcare Booking\n\nChúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn.\n\nVui lòng truy cập link sau để đặt lại mật khẩu:\n${resetUrl}\n\nLink sẽ hết hạn sau 1 giờ.\n\nNếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.`
+    };
+
+    try {
+        const response = await sgMail.send(msg);
+        console.log('Password reset email sent to:', to);
+        return response;
+    } catch (error) {
+        console.error('SendGrid email error:', error);
+        if (error.response) {
+            console.error('SendGrid response body:', error.response.body);
+        }
+        throw error;
+    }
+};
+
+module.exports = {
+    sendPasswordResetEmail
+};
