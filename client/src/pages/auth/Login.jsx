@@ -255,8 +255,8 @@ export default function Login() {
                 type="submit"
                 disabled={loading}
                 className="w-full h-12 rounded-2xl font-semibold text-white
-                           bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-500
-                           hover:from-blue-700 hover:via-sky-700 hover:to-cyan-600
+                           bg-gradient-to-r from-blue-600 via-blue-600 to-blue-500
+                           hover:from-blue-700 hover:via-blue-700 hover:to-blue-600
                            shadow-lg shadow-sky-200/70
                            disabled:opacity-60 disabled:cursor-not-allowed
                            transition flex items-center justify-center gap-2"
@@ -267,7 +267,7 @@ export default function Login() {
                   <>
                     <LogIn className="w-5 h-5" />
                     Đăng nhập
-                    <ArrowRight className="w-5 h-5" />
+                    
                   </>
                 )}
               </button>
