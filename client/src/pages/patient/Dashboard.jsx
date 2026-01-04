@@ -4,23 +4,21 @@ import { useToast } from '../../context/ToastContext';
 import {
     reportService,
     appointmentService,
-    reminderService
+    medicalRecordService
 } from '../../services';
 import {
     Calendar,
     Pill,
     Activity,
     Clock,
-    TrendingUp,
     ArrowRight,
-    CheckCircle,
     Building2,
     Stethoscope,
-    Bell,
     ChevronRight,
     Plus,
     FileText,
-    BarChart3
+    BarChart3,
+    User
 } from 'lucide-react';
 import {
     AreaChart,
@@ -36,7 +34,7 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [dashboardData, setDashboardData] = useState(null);
     const [upcomingAppointments, setUpcomingAppointments] = useState([]);
-    const [todayReminders, setTodayReminders] = useState([]);
+    const [recentRecords, setRecentRecords] = useState([]);
     const { success, error: showError } = useToast();
 
     useEffect(() => {
@@ -45,10 +43,10 @@ export default function Dashboard() {
 
     const fetchDashboardData = async () => {
         try {
-            const [dashboardRes, appointmentsRes, remindersRes] = await Promise.all([
+            const [dashboardRes, appointmentsRes, recordsRes] = await Promise.all([
                 reportService.getDashboardOverview(),
                 appointmentService.getUpcomingAppointments(),
-                reminderService.getTodayReminders(),
+                medicalRecordService.getMedicalRecords({ limit: 3 }),
             ]);
 
             if (dashboardRes.success) {
@@ -57,23 +55,13 @@ export default function Dashboard() {
             if (appointmentsRes.success) {
                 setUpcomingAppointments(appointmentsRes.data.slice(0, 3));
             }
-            if (remindersRes.success) {
-                setTodayReminders(remindersRes.data.slice(0, 4));
+            if (recordsRes.success) {
+                setRecentRecords(recordsRes.data.slice(0, 3));
             }
         } catch (error) {
             console.error('Error fetching dashboard:', error);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleMarkReminder = async (reminderId) => {
-        try {
-            await reminderService.markReminderTaken(reminderId);
-            success('Đã ghi nhận uống thuốc!');
-            fetchDashboardData();
-        } catch (error) {
-            showError('Không thể cập nhật');
         }
     };
 
@@ -137,69 +125,69 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {/* Active Medications */}
-                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-teal-400 before:to-teal-600 before:rounded-t-2xl">
+                {/* Medical Records */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-purple-400 before:to-purple-600 before:rounded-t-2xl">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-500 mb-1">Thuốc đang dùng</p>
+                            <p className="text-sm font-medium text-gray-500 mb-1">Hồ sơ bệnh án</p>
                             <p className="text-3xl sm:text-4xl font-bold text-gray-900">
-                                {stats.activeMedications || 0}
+                                {recentRecords.length}
                             </p>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500/15 to-teal-500/5 flex items-center justify-center text-teal-600">
-                            <Pill className="w-6 h-6" />
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/15 to-purple-500/5 flex items-center justify-center text-purple-600">
+                            <FileText className="w-6 h-6" />
                         </div>
                     </div>
                     <div className="mt-4 pt-4 border-t border-gray-100">
                         <Link
-                            to="/medications"
-                            className="text-sm font-medium text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                            to="/records"
+                            className="text-sm font-medium text-purple-600 hover:text-purple-700 flex items-center gap-1"
                         >
-                            Quản lý thuốc <ChevronRight className="w-4 h-4" />
+                            Xem hồ sơ <ChevronRight className="w-4 h-4" />
                         </Link>
                     </div>
                 </div>
 
-                {/* Adherence Rate */}
+                {/* Total Completed */}
                 <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-emerald-400 before:to-emerald-500 before:rounded-t-2xl">
                     <div className="flex items-start justify-between">
                         <div>
-                            <p className="text-sm font-medium text-gray-500 mb-1">Tuân thủ uống thuốc</p>
+                            <p className="text-sm font-medium text-gray-500 mb-1">Đã khám xong</p>
                             <p className="text-3xl sm:text-4xl font-bold text-gray-900">
-                                {stats.adherenceRate || 0}%
+                                {stats.completedAppointments || 0}
                             </p>
                         </div>
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 flex items-center justify-center text-emerald-500">
-                            <TrendingUp className="w-6 h-6" />
-                        </div>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-gray-100">
-                        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-500"
-                                style={{ width: `${stats.adherenceRate || 0}%` }}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Today Reminders */}
-                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-amber-400 before:to-amber-500 before:rounded-t-2xl">
-                    <div className="flex items-start justify-between">
-                        <div>
-                            <p className="text-sm font-medium text-gray-500 mb-1">Nhắc nhở hôm nay</p>
-                            <p className="text-3xl sm:text-4xl font-bold text-gray-900">
-                                {todayReminders.length}
-                            </p>
-                        </div>
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/15 to-amber-500/5 flex items-center justify-center text-amber-500">
-                            <Bell className="w-6 h-6" />
+                            <Stethoscope className="w-6 h-6" />
                         </div>
                     </div>
                     <div className="mt-4 pt-4 border-t border-gray-100">
                         <p className="text-sm text-gray-500">
-                            {todayReminders.filter(r => r.taken).length} đã hoàn thành
+                            Tổng lượt khám đã hoàn thành
                         </p>
+                    </div>
+                </div>
+
+                {/* Clinics Visited */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-gradient-to-r before:from-amber-400 before:to-amber-500 before:rounded-t-2xl">
+                    <div className="flex items-start justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-500 mb-1">Phòng khám</p>
+                            <p className="text-3xl sm:text-4xl font-bold text-gray-900">
+                                {stats.uniqueClinics || 0}
+                            </p>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/15 to-amber-500/5 flex items-center justify-center text-amber-500">
+                            <Building2 className="w-6 h-6" />
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                        <Link
+                            to="/clinics"
+                            className="text-sm font-medium text-amber-600 hover:text-amber-700 flex items-center gap-1"
+                        >
+                            Tìm phòng khám <ChevronRight className="w-4 h-4" />
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -258,67 +246,55 @@ export default function Dashboard() {
                     )}
                 </div>
 
-                {/* Today's Reminders */}
+                {/* Recent Records */}
                 <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h2 className="text-lg font-semibold text-gray-900">Nhắc uống thuốc</h2>
-                            <p className="text-sm text-gray-500">Hôm nay</p>
+                            <h2 className="text-lg font-semibold text-gray-900">Hồ sơ bệnh án</h2>
+                            <p className="text-sm text-gray-500">Gần đây nhất</p>
                         </div>
-                        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                            <Pill className="w-5 h-5 text-amber-600" />
+                        <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+                            <FileText className="w-5 h-5 text-purple-600" />
                         </div>
                     </div>
 
-                    {todayReminders.length > 0 ? (
+                    {recentRecords.length > 0 ? (
                         <div className="space-y-3">
-                            {todayReminders.map((reminder) => (
-                                <div
-                                    key={reminder._id}
-                                    className={`flex items-center gap-3 p-4 rounded-xl transition-all ${reminder.taken
-                                        ? 'bg-green-50 border border-green-100'
-                                        : 'bg-gray-50 hover:bg-gray-100'
-                                        }`}
+                            {recentRecords.map((record) => (
+                                <Link
+                                    key={record._id}
+                                    to="/records"
+                                    className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-purple-50 transition-all"
                                 >
-                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${reminder.taken ? 'bg-green-500' : 'bg-amber-500'
-                                        }`}>
-                                        {reminder.taken ? (
-                                            <CheckCircle className="w-5 h-5 text-white" />
-                                        ) : (
-                                            <Clock className="w-5 h-5 text-white" />
-                                        )}
+                                    <div className="w-10 h-10 rounded-xl bg-purple-500 flex items-center justify-center">
+                                        <Stethoscope className="w-5 h-5 text-white" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className={`font-medium truncate ${reminder.taken ? 'text-green-700' : 'text-gray-900'}`}>
-                                            {reminder.medicationId?.name}
+                                        <p className="font-medium text-gray-900 truncate">
+                                            {record.diagnosis}
                                         </p>
-                                        <p className="text-sm text-gray-500">{reminder.reminderTime}</p>
+                                        <p className="text-sm text-gray-500">
+                                            {new Date(record.recordDate).toLocaleDateString('vi-VN')}
+                                        </p>
                                     </div>
-                                    {!reminder.taken && (
-                                        <button
-                                            onClick={() => handleMarkReminder(reminder._id)}
-                                            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-emerald-400 to-emerald-500 text-white shadow-md shadow-emerald-500/30 hover:-translate-y-0.5 transition-all"
-                                        >
-                                            Uống
-                                        </button>
-                                    )}
-                                </div>
+                                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                                </Link>
                             ))}
                         </div>
                     ) : (
                         <div className="text-center py-8">
                             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gray-100 flex items-center justify-center">
-                                <CheckCircle className="w-8 h-8 text-gray-400" />
+                                <FileText className="w-8 h-8 text-gray-400" />
                             </div>
-                            <p className="text-gray-500">Không có nhắc nhở hôm nay</p>
+                            <p className="text-gray-500">Chưa có hồ sơ bệnh án</p>
                         </div>
                     )}
 
                     <Link
-                        to="/medications"
-                        className="w-full mt-4 inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl font-semibold text-sm bg-white text-gray-700 border-2 border-gray-200 hover:bg-gray-50 hover:border-blue-300 hover:text-blue-600 transition-all"
+                        to="/records"
+                        className="w-full mt-4 inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl font-semibold text-sm bg-white text-gray-700 border-2 border-gray-200 hover:bg-gray-50 hover:border-purple-300 hover:text-purple-600 transition-all"
                     >
-                        Xem tất cả thuốc
+                        Xem tất cả hồ sơ
                     </Link>
                 </div>
             </div>
@@ -376,14 +352,14 @@ export default function Dashboard() {
                                 </div>
                                 <div className="mt-3">
                                     <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold ${apt.status === 'confirmed'
-                                            ? 'bg-blue-100 text-blue-800'
-                                            : apt.status === 'scheduled'
-                                                ? 'bg-amber-100 text-amber-800'
-                                                : apt.status === 'completed'
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : apt.status === 'cancelled'
-                                                        ? 'bg-red-100 text-red-800'
-                                                        : 'bg-gray-100 text-gray-800'
+                                        ? 'bg-blue-100 text-blue-800'
+                                        : apt.status === 'scheduled'
+                                            ? 'bg-amber-100 text-amber-800'
+                                            : apt.status === 'completed'
+                                                ? 'bg-green-100 text-green-800'
+                                                : apt.status === 'cancelled'
+                                                    ? 'bg-red-100 text-red-800'
+                                                    : 'bg-gray-100 text-gray-800'
                                         }`}>
                                         {apt.status === 'confirmed' ? 'Đã xác nhận' :
                                             apt.status === 'scheduled' ? 'Chờ xác nhận' :

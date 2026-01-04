@@ -61,6 +61,47 @@ export default function MedicalRecords() {
                 <p className="text-gray-500">Xem lịch sử khám và chẩn đoán của bạn</p>
             </div>
 
+            {/* Stats Summary */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-white/80 text-sm">Tổng số hồ sơ</p>
+                            <p className="text-3xl font-bold mt-1">{records.length}</p>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                            <FileText className="w-6 h-6" />
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-white rounded-2xl p-5 shadow-lg border border-gray-100">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-gray-500 text-sm">Đơn thuốc đã kê</p>
+                            <p className="text-3xl font-bold text-gray-900 mt-1">
+                                {records.reduce((sum, r) => sum + (r.prescriptions?.length || 0), 0)}
+                            </p>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+                            <Pill className="w-6 h-6 text-purple-600" />
+                        </div>
+                    </div>
+                </div>
+                <div className="bg-white rounded-2xl p-5 shadow-lg border border-gray-100">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-gray-500 text-sm">Bác sĩ đã khám</p>
+                            <p className="text-3xl font-bold text-gray-900 mt-1">
+                                {new Set(records.map(r => r.doctorId?._id).filter(Boolean)).size}
+                            </p>
+                        </div>
+                        <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center">
+                            <Stethoscope className="w-6 h-6 text-teal-600" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {records.length > 0 ? (
                 <div className="grid gap-4">
                     {records.map((record, index) => (

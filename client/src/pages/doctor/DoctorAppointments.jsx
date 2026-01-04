@@ -78,6 +78,12 @@ export default function DoctorAppointments() {
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [medicationsInput, setMedicationsInput] = useState([{ name: MEDICINE_OPTIONS[0], customName: '', isCustom: false, dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
+    const [recordFormData, setRecordFormData] = useState({
+        diagnosis: '',
+        symptoms: '',
+        treatment: '',
+        doctorNotes: ''
+    });
     const { success, error: showError } = useToast();
 
     const [filters, setFilters] = useState({
@@ -120,23 +126,55 @@ export default function DoctorAppointments() {
             return;
         }
         try {
-            const payload = { status: newStatus };
             if (newStatus === 'completed') {
+                // Validate required fields for medical record
+                if (!recordFormData.diagnosis.trim()) {
+                    showError('Vui long nhap chan doan benh');
+                    return;
+                }
+
                 const meds = medicationsInput
                     .filter(m => m.name.trim())
-                    .map(m => ({ ...m, name: m.name.trim() }));
+                    .map(m => ({
+                        name: m.name.trim(),
+                        dosage: m.dosage,
+                        frequency: m.frequency,
+                        instructions: m.instructions
+                    }));
+
                 if (meds.length === 0) {
                     showError('Vui long them it nhat mot thuoc truoc khi hoan thanh');
                     return;
                 }
-                payload.medications = meds;
-            }
-            const response = await api.patch(`/doctors/appointments/${appointmentId}/status`, payload);
-            if (response.data.success) {
-                success('Cap nhat trang thai thanh cong');
-                fetchAppointments();
-                setShowModal(false);
-                setMedicationsInput([{ name: MEDICINE_OPTIONS[0], customName: '', isCustom: false, dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
+
+                // Create medical record with prescriptions
+                const recordPayload = {
+                    patientId: selectedAppointment.patientId?._id,
+                    appointmentId: appointmentId,
+                    diagnosis: recordFormData.diagnosis,
+                    symptoms: recordFormData.symptoms,
+                    treatment: recordFormData.treatment,
+                    doctorNotes: recordFormData.doctorNotes,
+                    prescriptions: meds
+                };
+
+                const response = await api.post('/doctors/records', recordPayload);
+                if (response.data.success) {
+                    success('Tao ho so benh an va hoan thanh lich kham thanh cong');
+                    fetchAppointments();
+                    setShowModal(false);
+                    setMedicationsInput([{ name: MEDICINE_OPTIONS[0], customName: '', isCustom: false, dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
+                    setRecordFormData({ diagnosis: '', symptoms: '', treatment: '', doctorNotes: '' });
+                }
+            } else {
+                // For other status updates (confirm, cancel)
+                const payload = { status: newStatus };
+                const response = await api.patch(`/doctors/appointments/${appointmentId}/status`, payload);
+                if (response.data.success) {
+                    success('Cap nhat trang thai thanh cong');
+                    fetchAppointments();
+                    setShowModal(false);
+                }
             }
         } catch (error) {
             showError(error.response?.data?.error || 'Khong the cap nhat trang thai');
@@ -424,8 +462,59 @@ export default function DoctorAppointments() {
 
                             {/* Medications Input - Only show when not completed */}
                             {!['completed', 'cancelled'].includes(selectedAppointment.status) && (
-                                <div className="border-t border-slate-700 pt-4">
-                                    <div className="flex items-center justify-between mb-3">
+                                <div className="border-t border-slate-700 pt-4 space-y-4">
+                                    {/* Diagnosis Section */}
+                                    <div>
+                                        <label className="block text-sm font-semibold text-white mb-2">
+                                            Chan doan benh <span className="text-rose-400">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={recordFormData.diagnosis}
+                                            onChange={(e) => setRecordFormData({ ...recordFormData, diagnosis: e.target.value })}
+                                            placeholder="Nhap chan doan benh..."
+                                            className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-teal-500"
+                                        />
+                                    </div>
+
+                                    {/* Symptoms */}
+                                    <div>
+                                        <label className="block text-sm font-semibold text-white mb-2">Trieu chung</label>
+                                        <textarea
+                                            value={recordFormData.symptoms}
+                                            onChange={(e) => setRecordFormData({ ...recordFormData, symptoms: e.target.value })}
+                                            placeholder="Mo ta trieu chung cua benh nhan..."
+                                            rows={2}
+                                            className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-teal-500 resize-none"
+                                        />
+                                    </div>
+
+                                    {/* Treatment */}
+                                    <div>
+                                        <label className="block text-sm font-semibold text-white mb-2">Phuong phap dieu tri</label>
+                                        <textarea
+                                            value={recordFormData.treatment}
+                                            onChange={(e) => setRecordFormData({ ...recordFormData, treatment: e.target.value })}
+                                            placeholder="Mo ta phuong phap dieu tri..."
+                                            rows={2}
+                                            className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-teal-500 resize-none"
+                                        />
+                                    </div>
+
+                                    {/* Doctor Notes */}
+                                    <div>
+                                        <label className="block text-sm font-semibold text-white mb-2">Ghi chu bac si</label>
+                                        <textarea
+                                            value={recordFormData.doctorNotes}
+                                            onChange={(e) => setRecordFormData({ ...recordFormData, doctorNotes: e.target.value })}
+                                            placeholder="Ghi chu them..."
+                                            rows={2}
+                                            className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-teal-500 resize-none"
+                                        />
+                                    </div>
+
+                                    {/* Medications Header */}
+                                    <div className="flex items-center justify-between">
                                         <p className="text-sm font-semibold text-white">Don thuoc (bat buoc khi hoan thanh)</p>
                                         <button
                                             type="button"

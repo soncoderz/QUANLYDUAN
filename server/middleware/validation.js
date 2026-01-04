@@ -98,7 +98,7 @@ const schemas = {
 
     createMedicalRecord: Joi.object({
         patientId: Joi.string().required(),
-        appointmentId: Joi.string(),
+        appointmentId: Joi.string().allow('', null),
         diagnosis: Joi.string().required(),
         treatment: Joi.string().allow(''),
         doctorNotes: Joi.string().allow(''),
@@ -109,7 +109,16 @@ const schemas = {
             temperature: Joi.number(),
             weight: Joi.number(),
             height: Joi.number()
-        })
+        }),
+        prescriptions: Joi.array().items(
+            Joi.object({
+                name: Joi.string().required(),
+                dosage: Joi.string().allow(''),
+                frequency: Joi.string().allow(''),
+                duration: Joi.string().allow(''),
+                instructions: Joi.string().allow('')
+            })
+        )
     }),
 
     createMedication: Joi.object({
