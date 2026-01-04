@@ -88,7 +88,7 @@ export default function Settings() {
             </div>
 
             {/* Profile Card */}
-            <div className="bg-gradient-to-r from-blue-500 to-teal-500 rounded-2xl shadow-lg p-6 text-white">
+            <div className="bg-gradient-to-r from-blue-500 to-blue-500 rounded-2xl shadow-lg p-6 text-white">
                 <div className="flex items-center gap-5">
                     <div className="relative">
                         {profile?.avatar ? (

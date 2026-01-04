@@ -39,7 +39,7 @@ export default function ForgotPassword() {
             <div className="relative w-full max-w-md animate-fadeIn">
                 {/* Logo */}
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 via-sky-600 to-cyan-500 shadow-lg shadow-sky-200 mb-4">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 via-sky-600 to-blue-600 shadow-lg shadow-sky-200 mb-4">
                         <Heart className="w-8 h-8 text-white" />
                     </div>
                     <h1 className="text-2xl font-extrabold text-gray-900">Healthcare Booking</h1>
@@ -83,8 +83,8 @@ export default function ForgotPassword() {
                                     type="submit"
                                     disabled={loading}
                                     className="w-full h-12 rounded-2xl font-semibold text-white
-                                               bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-500
-                                               hover:from-blue-700 hover:via-sky-700 hover:to-cyan-600
+                                               bg-gradient-to-r from-blue-600 via-sky-600 to-blue-600
+                                               hover:from-blue-700 hover:via-sky-700 hover:to-blue-700
                                                shadow-lg shadow-sky-200/70 disabled:opacity-60 disabled:cursor-not-allowed
                                                transition flex items-center justify-center gap-2"
                                 >

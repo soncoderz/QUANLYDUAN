@@ -113,7 +113,7 @@ export default function MedicalRecords() {
                         >
                             <div className="flex items-start gap-4">
                                 {/* Icon */}
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-200 flex-shrink-0">
+                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-500 flex items-center justify-center shadow-lg shadow-indigo-200 flex-shrink-0">
                                     <FileText className="w-7 h-7 text-white" />
                                 </div>
 
@@ -155,7 +155,7 @@ export default function MedicalRecords() {
                 </div>
             ) : (
                 <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-                    <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                    <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-500 flex items-center justify-center">
                         <ClipboardList className="w-10 h-10 text-indigo-400" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -180,7 +180,7 @@ export default function MedicalRecords() {
                         style={{ animation: 'scaleIn 0.3s ease-out' }}
                     >
                         {/* Modal Header */}
-                        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-6 text-white">
+                        <div className="bg-gradient-to-r from-blue-500 to-blue-500 p-6 text-white">
                             <div className="flex items-start justify-between">
                                 <div>
                                     <h2 className="text-xl font-bold mb-1">{selectedRecord.diagnosis}</h2>
@@ -295,7 +295,7 @@ export default function MedicalRecords() {
                                         </h4>
                                         <div className="space-y-3">
                                             {selectedRecord.prescriptions.map((med, idx) => (
-                                                <div key={idx} className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-100">
+                                                <div key={idx} className="p-4 bg-gradient-to-br from-whitegray-500 to-whitegray-500 rounded-xl border border-white-500">
                                                     <div className="flex items-start gap-3">
                                                         <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
                                                             <Pill className="w-5 h-5 text-purple-600" />
