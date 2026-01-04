@@ -366,9 +366,23 @@ export default function Dashboard() {
                                 style={{ animation: `fadeIn 0.4s ease-out ${index * 0.1}s forwards`, opacity: 0 }}
                             >
                                 <div className="flex items-start gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200">
-                                        <Stethoscope className="w-6 h-6 text-white" />
-                                    </div>
+                                    {apt.doctorId?.avatar ? (
+                                        <img
+                                            src={apt.doctorId.avatar}
+                                            alt={apt.doctorId?.fullName || 'B c si'}
+                                            className="w-12 h-12 rounded-xl object-cover shadow-lg shadow-blue-200 flex-shrink-0 border-2 border-white"
+                                        />
+                                    ) : (
+                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-200 flex-shrink-0">
+                                            {apt.doctorId?.fullName ? (
+                                                <span className="text-white text-lg font-bold">
+                                                    {apt.doctorId.fullName.charAt(0).toUpperCase()}
+                                                </span>
+                                            ) : (
+                                                <Stethoscope className="w-6 h-6 text-white" />
+                                            )}
+                                        </div>
+                                    )}
                                     <div className="flex-1 min-w-0">
                                         <p className="font-semibold text-gray-900 truncate">
                                             {apt.doctorId?.fullName || 'Bác sĩ'}
