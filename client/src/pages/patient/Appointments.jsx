@@ -15,8 +15,7 @@ import {
     XCircle,
     AlertCircle,
     Stethoscope,
-    Pill,
-    Activity
+    Pill
 } from 'lucide-react';
 
 export default function Appointments() {
@@ -351,6 +350,7 @@ export default function Appointments() {
                 </div>
             )}
 
+            {/* Detail Modal */}
             {detailModal && selectedAppointment && (
                 <div
                     className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4"
@@ -358,223 +358,142 @@ export default function Appointments() {
                     style={{ animation: 'fadeIn 0.2s ease-out' }}
                 >
                     <div
-                        className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
+                        className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6"
                         onClick={(e) => e.stopPropagation()}
                         style={{ animation: 'scaleIn 0.3s ease-out' }}
                     >
-                        {/* Modal Header */}
-                        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white shrink-0">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <h2 className="text-xl font-bold">Chi tiết lịch hẹn</h2>
-                                        {(() => {
-                                            const statusConfig = getStatusConfig(selectedAppointment.status);
-                                            return (
-                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white border border-white/20`}>
-                                                    {statusConfig.icon && <statusConfig.icon className="w-3 h-3" />}
-                                                    {statusConfig.label}
-                                                </span>
-                                            );
-                                        })()}
-                                    </div>
-                                    <div className="flex items-center gap-4 text-sm text-blue-100">
-                                        <div className="flex items-center gap-1.5">
-                                            <Calendar className="w-4 h-4" />
-                                            {formatDate(selectedAppointment.appointmentDate)}
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <Clock className="w-4 h-4" />
-                                            {selectedAppointment.timeSlot}
-                                        </div>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => setDetailModal(false)}
-                                    className="p-2 hover:bg-white/20 rounded-xl transition-colors text-white"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Modal Content */}
-                        <div className="p-6 overflow-y-auto custom-scrollbar grow">
-                            <div className="space-y-6">
-                                {/* Doctor & Clinic Info Cards */}
-                                <div className="grid sm:grid-cols-2 gap-4">
-                                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
-                                                <User className="w-5 h-5" />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-medium text-slate-500 uppercase">Bác sĩ phụ trách</p>
-                                                <p className="font-semibold text-slate-900">{selectedAppointment.doctorId?.fullName}</p>
-                                            </div>
-                                        </div>
-                                        <p className="text-sm text-slate-600 pl-[52px]">{selectedAppointment.doctorId?.specialty}</p>
-                                    </div>
-                                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600">
-                                                <MapPin className="w-5 h-5" />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-medium text-slate-500 uppercase">Phòng khám</p>
-                                                <p className="font-semibold text-slate-900">{selectedAppointment.clinicId?.name}</p>
-                                            </div>
-                                        </div>
-                                        <p className="text-sm text-slate-600 pl-[52px] line-clamp-1">{selectedAppointment.clinicId?.address}</p>
-                                    </div>
-                                </div>
-
-                                {/* Medical Info */}
-                                <div className="space-y-4">
-                                    {selectedAppointment.reason && (
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                                <AlertCircle className="w-4 h-4" />
-                                                Lý do khám
-                                            </h4>
-                                            <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 text-slate-800">
-                                                {selectedAppointment.reason}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {(record?.symptoms || selectedAppointment.symptoms) && (
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                                <Stethoscope className="w-4 h-4" />
-                                                Triệu chứng
-                                            </h4>
-                                            <div className="p-4 bg-rose-50 rounded-xl border border-rose-100 text-slate-800">
-                                                {record?.symptoms || selectedAppointment.symptoms}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {record?.treatment && (
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                                <CheckCircle className="w-4 h-4" />
-                                                Phương pháp điều trị
-                                            </h4>
-                                            <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100 text-slate-800">
-                                                {record.treatment}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {record?.doctorNotes && (
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                                <Stethoscope className="w-4 h-4" />
-                                                Ghi chú bác sĩ
-                                            </h4>
-                                            <div className="p-4 bg-blue-50 rounded-xl border border-blue-100 text-slate-800 whitespace-pre-line">
-                                                {record.doctorNotes}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Prescriptions */}
-                                {(() => {
-                                    const prescriptions = record?.prescriptions?.length ? record.prescriptions : (selectedAppointment.medications || []);
-                                    return prescriptions.length > 0 ? (
-                                        <div className="pt-4 border-t border-slate-100">
-                                            <p className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                                <Pill className="w-5 h-5 text-purple-500" />
-                                                Đơn thuốc ({prescriptions.length} loại)
-                                            </p>
-                                            <div className="space-y-3">
-                                                {prescriptions.map((med, idx) => (
-                                                    <div
-                                                        key={med._id || idx}
-                                                        className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-100 hover:shadow-md transition-shadow"
-                                                    >
-                                                        <div className="flex items-start gap-3">
-                                                            <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center flex-shrink-0 text-purple-600 border border-purple-100">
-                                                                <Pill className="w-5 h-5" />
-                                                            </div>
-                                                            <div className="flex-1">
-                                                                <p className="font-bold text-slate-900 text-lg">{med.name}</p>
-                                                                <div className="flex flex-wrap gap-2 mt-2">
-                                                                    {med.dosage && (
-                                                                        <span className="px-2.5 py-1 bg-white rounded-lg text-xs font-medium text-slate-600 border border-purple-100 shadow-sm">
-                                                                            💊 {med.dosage}
-                                                                        </span>
-                                                                    )}
-                                                                    {med.frequency && (
-                                                                        <span className="px-2.5 py-1 bg-white rounded-lg text-xs font-medium text-slate-600 border border-purple-100 shadow-sm">
-                                                                            🔄 {med.frequency}
-                                                                        </span>
-                                                                    )}
-                                                                    {med.duration && (
-                                                                        <span className="px-2.5 py-1 bg-white rounded-lg text-xs font-medium text-slate-600 border border-purple-100 shadow-sm">
-                                                                            📅 {med.duration}
-                                                                        </span>
-                                                                    )}
-                                                                    {!med.duration && (med.startDate || med.endDate) && (
-                                                                        <span className="px-2.5 py-1 bg-white rounded-lg text-xs font-medium text-slate-600 border border-purple-100 shadow-sm">
-                                                                            📅 {med.startDate ? new Date(med.startDate).toLocaleDateString('vi-VN') : ''}{med.endDate ? ` - ${new Date(med.endDate).toLocaleDateString('vi-VN')}` : ''}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                                {med.instructions && (
-                                                                    <p className="text-sm text-slate-500 mt-2.5 flex items-start gap-2">
-                                                                        <span className="shrink-0 mt-0.5">📝</span>
-                                                                        <span className="italic">{med.instructions}</span>
-                                                                    </p>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ) : null;
-                                })()}
-
-                                {/* Health Metrics */}
-                                {selectedAppointment.healthMetrics && Object.keys(selectedAppointment.healthMetrics).length > 0 && (
-                                    <div className="pt-4 border-t border-slate-100">
-                                        <p className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                            <Activity className="w-5 h-5 text-rose-500" />
-                                            Chỉ số sức khỏe
-                                        </p>
-                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                            {Object.entries(selectedAppointment.healthMetrics).map(([key, metric]) => (
-                                                <div key={key} className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center hover:bg-white hover:shadow-md transition-all">
-                                                    <p className="text-xs text-slate-500 capitalize mb-1">{key.replace('_', ' ')}</p>
-                                                    <p className="text-slate-900 font-bold text-lg">
-                                                        {metric.value}
-                                                        <span className="text-xs font-normal text-slate-400 ml-1">{metric.unit}</span>
-                                                    </p>
-                                                    {metric.secondaryValue && (
-                                                        <p className="text-sm text-slate-600 border-t border-slate-200 mt-1 pt-1">
-                                                            {metric.secondaryValue}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Modal Footer */}
-                        <div className="p-4 border-t border-slate-100 bg-slate-50 shrink-0">
-                            <button
-                                onClick={() => setDetailModal(false)}
-                                className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl font-semibold text-sm bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
-                            >
-                                Đóng
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xl font-semibold text-gray-900">Chi tiết lịch hẹn</h3>
+                            <button onClick={() => setDetailModal(false)} className="p-2 rounded-lg hover:bg-gray-100">
+                                <X className="w-5 h-5 text-gray-500" />
                             </button>
                         </div>
+
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-sm text-gray-500">Bác sĩ</p>
+                                <p className="font-semibold text-gray-900">{selectedAppointment.doctorId?.fullName}</p>
+                                <p className="text-sm text-gray-500">{selectedAppointment.doctorId?.specialty}</p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Phòng khám</p>
+                                <p className="font-semibold text-gray-900">{selectedAppointment.clinicId?.name}</p>
+                                <p className="text-sm text-gray-500">{selectedAppointment.clinicId?.address}</p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Ngày hẹn</p>
+                                <p className="font-semibold text-gray-900">{formatDate(selectedAppointment.appointmentDate)}</p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Giờ hẹn</p>
+                                <p className="font-semibold text-gray-900">{selectedAppointment.timeSlot}</p>
+                            </div>
+                        </div>
+
+                        {selectedAppointment.reason && (
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-500">Lý do khám</p>
+                                <p className="text-gray-800">{selectedAppointment.reason}</p>
+                            </div>
+                        )}
+
+                        {(record?.symptoms || selectedAppointment.symptoms) && (
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-500">Triệu chứng</p>
+                                <p className="text-gray-800">{record?.symptoms || selectedAppointment.symptoms}</p>
+                            </div>
+                        )}
+
+                        {record?.treatment && (
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-500">Phương pháp điều trị</p>
+                                <p className="text-gray-800">{record.treatment}</p>
+                            </div>
+                        )}
+
+                        {record?.doctorNotes && (
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-500">Ghi chú bác sĩ</p>
+                                <p className="text-gray-800 whitespace-pre-line">{record.doctorNotes}</p>
+                            </div>
+                        )}
+
+
+                        {/* Prescriptions */}
+                        {(() => {
+                            const prescriptions = record?.prescriptions?.length ? record.prescriptions : (selectedAppointment.medications || []);
+                            return prescriptions.length > 0 ? (
+                                <div className="mt-6">
+                                    <p className="text-sm font-semibold text-gray-900 mb-2">
+                                        Đơn thuốc ({prescriptions.length} loại)
+                                    </p>
+                                    <div className="space-y-3">
+                                        {prescriptions.map((med, idx) => (
+                                            <div
+                                                key={med._id || idx}
+                                                className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-100"
+                                            >
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                                        <Pill className="w-5 h-5 text-purple-600" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className="font-semibold text-gray-900">{med.name}</p>
+                                                        <div className="flex flex-wrap gap-2 mt-2">
+                                                            {med.dosage && (
+                                                                <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                    💊 {med.dosage}
+                                                                </span>
+                                                            )}
+                                                            {med.frequency && (
+                                                                <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                    🔄 {med.frequency}
+                                                                </span>
+                                                            )}
+                                                            {med.duration && (
+                                                                <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                    📅 {med.duration}
+                                                                </span>
+                                                            )}
+                                                            {!med.duration && (med.startDate || med.endDate) && (
+                                                                <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                    📅 {med.startDate ? new Date(med.startDate).toLocaleDateString('vi-VN') : ''}{med.endDate ? ` - ${new Date(med.endDate).toLocaleDateString('vi-VN')}` : ''}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        {med.instructions && (
+                                                            <p className="text-sm text-gray-500 mt-2 italic">
+                                                                📝 {med.instructions}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : null;
+                        })()}
+
+                        {/* Health Metrics */}
+                        {selectedAppointment.healthMetrics && Object.keys(selectedAppointment.healthMetrics).length > 0 && (
+                            <div className="mt-6">
+                                <p className="text-sm font-semibold text-gray-900 mb-2">Chỉ số sức khỏe (mới nhất)</p>
+                                <div className="grid sm:grid-cols-2 gap-3">
+                                    {Object.entries(selectedAppointment.healthMetrics).map(([key, metric]) => (
+                                        <div key={key} className="p-3 rounded-xl bg-gray-50 border border-gray-200">
+                                            <p className="text-sm text-gray-600 capitalize">{key.replace('_', ' ')}</p>
+                                            <p className="text-gray-900 font-semibold">
+                                                {metric.value}{metric.unit ? ` ${metric.unit}` : ''}{metric.secondaryValue ? ` / ${metric.secondaryValue}` : ''}
+                                            </p>
+                                            <p className="text-xs text-gray-400">
+                                                {metric.measuredAt ? new Date(metric.measuredAt).toLocaleString('vi-VN') : ''}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
