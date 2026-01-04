@@ -219,7 +219,7 @@ export default function Booking() {
                     {/* Progress Line */}
                     <div className="absolute top-5 left-0 right-0 h-1 bg-gray-200 rounded-full">
                         <div
-                            className="h-full bg-gradient-to-r from-blue-500 to-teal-500 rounded-full transition-all duration-500"
+                            className="h-full bg-gradient-to-r from-blue-500 to-blue-500 rounded-full transition-all duration-500"
                             style={{ width: `${((step - 1) / 2) * 100}%` }}
                         />
                     </div>
@@ -347,7 +347,7 @@ export default function Booking() {
                                     onClick={() => day.date && !day.disabled && handleDateSelect(day.date)}
                                     disabled={!day.date || day.disabled}
                                     className={`aspect-square rounded-xl flex items-center justify-center text-sm font-medium transition-all ${day.isSelected
-                                        ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-lg'
+                                        ? 'bg-gradient-to-r from-blue-500 to-blue-500 text-white shadow-lg'
                                         : day.isToday
                                             ? 'bg-blue-100 text-blue-600'
                                             : day.disabled
@@ -375,7 +375,7 @@ export default function Booking() {
                                             key={slot}
                                             onClick={() => setSelectedSlot(slot)}
                                             className={`py-3 px-2 rounded-xl text-sm font-medium transition-all ${selectedSlot === slot
-                                                ? 'bg-gradient-to-r from-blue-500 to-teal-500 text-white shadow-lg'
+                                                ? 'bg-gradient-to-r from-blue-500 to-blue-500 text-white shadow-lg'
                                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                 }`}
                                         >
@@ -417,7 +417,7 @@ export default function Booking() {
                     <h2 className="text-lg font-semibold text-gray-900">Xác nhận thông tin</h2>
 
                     {/* Appointment Summary */}
-                    <div className="bg-white rounded-2xl shadow-lg p-6 bg-gradient-to-br from-blue-50 to-teal-50 border border-blue-100">
+                    <div className="bg-white rounded-2xl shadow-lg p-6 bg-gradient-to-br from-blue-50 to-blue-50 border border-blue-100">
                         <div className="flex items-center gap-4 mb-6">
                             <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white border border-blue-100 flex items-center justify-center shadow-lg shadow-blue-200">
                                 {selectedDoctor?.avatar ? (
