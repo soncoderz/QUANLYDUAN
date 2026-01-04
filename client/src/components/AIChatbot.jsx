@@ -27,7 +27,7 @@ export default function AIChatbot() {
             if (messages.length === 0) {
                 setMessages([{
                     role: 'assistant',
-                    content: 'Xin chào! 👋 Tôi là trợ lý AI của Healthcare Booking. Tôi có thể giúp bạn:\n\n📅 Xem lịch khám của bạn\n🏥 Tìm phòng khám\n💊 Tư vấn sức khỏe cơ bản\n\nBạn cần hỗ trợ gì?',
+                    content: 'Xin chào!  Tôi là trợ lý AI của Healthcare Booking. Tôi có thể giúp bạn:\n\n Xem lịch khám của bạn\n Tìm phòng khám\n Tư vấn sức khỏe cơ bản\n\nBạn cần hỗ trợ gì?',
                     timestamp: new Date().toISOString()
                 }]);
             }

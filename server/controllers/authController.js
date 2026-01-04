@@ -219,7 +219,7 @@ const forgotPassword = async (req, res) => {
         // Generate reset token
         const resetToken = generateResetToken();
         user.resetPasswordToken = resetToken;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        user.resetPasswordExpires = Date.now() + 300000; // 5 minutes
         await user.save();
 
         // Send password reset email via SendGrid

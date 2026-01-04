@@ -305,17 +305,17 @@ export default function MedicalRecords() {
                                                             <div className="flex flex-wrap gap-2 mt-2">
                                                                 {med.dosage && (
                                                                     <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
-                                                                        💊 {med.dosage}
+                                                                         {med.dosage}
                                                                     </span>
                                                                 )}
                                                                 {med.frequency && (
                                                                     <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
-                                                                        🕐 {med.frequency}
+                                                                         {med.frequency}
                                                                     </span>
                                                                 )}
                                                                 {med.duration && (
                                                                     <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
-                                                                        📅 {med.duration}
+                                                                         {med.duration}
                                                                     </span>
                                                                 )}
                                                             </div>

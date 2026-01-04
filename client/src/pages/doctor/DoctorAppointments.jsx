@@ -511,7 +511,7 @@ export default function DoctorAppointments() {
                                                 <div className="flex flex-wrap gap-2 mt-2">
                                                     {med.dosage && (
                                                         <span className="px-2 py-1 bg-slate-800/70 rounded-lg text-[11px] text-slate-200 border border-slate-600/60">
-                                                            💊 {med.dosage}
+                                                             {med.dosage}
                                                         </span>
                                                     )}
                                                     {med.frequency && (

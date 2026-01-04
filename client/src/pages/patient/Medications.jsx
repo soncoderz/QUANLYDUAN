@@ -98,7 +98,7 @@ export default function Medications() {
     const handleMarkTaken = async (reminderId) => {
         try {
             await reminderService.markReminderTaken(reminderId);
-            success('Đã ghi nhận uống thuốc! 💊');
+            success('Đã ghi nhận uống thuốc! ');
             fetchMedications();
         } catch (error) {
             showError('Không thể cập nhật');
