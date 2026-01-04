@@ -37,8 +37,6 @@ npm run dev     # Chạy tại http://localhost:3000
 |------|-------|----------|
 | Patient | patient1@test.com | 12345678 |
 | Patient | patient2@test.com | 12345678 |
-| Doctor | doctor1@test.com | 12345678 |
-| Admin | admin1@test.com | 12345678 |
 
 ## 📊 Tính năng
 
