@@ -73,4 +73,23 @@ router.patch('/appointments/:id/status', updateAppointmentStatus);
 router.get('/reports/overview', getOverviewReport);
 router.get('/reports/appointments', getAppointmentReport);
 
+// Test Cron Jobs (for development/testing)
+const { sendAppointmentReminders } = require('../cron/appointmentReminder');
+
+router.post('/test/send-reminders', async (req, res) => {
+    try {
+        await sendAppointmentReminders();
+        res.json({
+            success: true,
+            message: 'Đã chạy cron nhắc nhở lịch hẹn thành công'
+        });
+    } catch (error) {
+        console.error('Test reminder error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Có lỗi khi chạy cron nhắc nhở'
+        });
+    }
+});
+
 module.exports = router;

@@ -27,6 +27,9 @@ const {
     uploadRoutes
 } = require('./routes');
 
+// Import cron jobs
+const { initAppointmentReminderCron } = require('./cron/appointmentReminder');
+
 // Initialize app
 const app = express();
 
@@ -35,6 +38,9 @@ app.disable('x-powered-by');
 
 // Connect to database
 connectDB();
+
+// Initialize cron jobs
+initAppointmentReminderCron();
 
 // Middleware
 app.use(cors({
