@@ -162,7 +162,7 @@ export default function Booking() {
         // Current month days
         for (let i = 1; i <= lastDay.getDate(); i++) {
             const date = new Date(year, month, i);
-            const dateStr = date.toISOString().split('T')[0];
+            const dateStr = date.toLocaleDateString('en-CA'); // Keep local date to avoid timezone shifting
             const isPast = date < today;
             const isAllowedDay = allowedDays.includes(date.getDay());
 
