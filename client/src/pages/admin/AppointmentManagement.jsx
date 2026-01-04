@@ -35,6 +35,7 @@ export default function AppointmentManagement() {
     const [showModal, setShowModal] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
     const { success, error: showError } = useToast();
+    const record = selectedAppointment?.medicalRecords?.[0];
 
     useEffect(() => {
         fetchAppointments();
@@ -93,7 +94,8 @@ export default function AppointmentManagement() {
                     ...data.appointment,
                     patientProfile: data.patientProfile,
                     medications: data.medications,
-                    healthMetrics: data.healthMetrics
+                    healthMetrics: data.healthMetrics,
+                    medicalRecords: data.medicalRecords
                 } : data;
                 setSelectedAppointment(detail);
                 setShowModal(true);
@@ -388,38 +390,54 @@ export default function AppointmentManagement() {
                                 <div>
                                     <p className="text-sm text-slate-400">Benh nhan</p>
                                     <p className="text-white font-medium">
-                                        {selectedAppointment.patientProfile?.fullName || 'N/A'}
+                                        {selectedAppointment.patientProfile?.fullName || selectedAppointment.patientId?.email || 'N/A'}
                                     </p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-slate-400">Bac si</p>
                                     <p className="text-white font-medium">
-                                        {selectedAppointment.appointment?.doctorId?.fullName || 'N/A'}
+                                        {selectedAppointment.doctorId?.fullName || 'N/A'}
                                     </p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-slate-400">Ngay hen</p>
                                     <p className="text-white font-medium">
-                                        {formatDate(selectedAppointment.appointment?.date)}
+                                        {formatDate(selectedAppointment.appointmentDate)}
                                     </p>
                                 </div>
                                 <div>
                                     <p className="text-sm text-slate-400">Gio hen</p>
                                     <p className="text-white font-medium">
-                                        {selectedAppointment.appointment?.time}
+                                        {selectedAppointment.timeSlot}
                                     </p>
                                 </div>
                             </div>
-                            {selectedAppointment.appointment?.symptoms && (
+
+                            {(record?.symptoms || selectedAppointment.symptoms) && (
                                 <div>
                                     <p className="text-sm text-slate-400">Trieu chung</p>
-                                    <p className="text-white">{selectedAppointment.appointment.symptoms}</p>
+                                    <p className="text-white">{record?.symptoms || selectedAppointment.symptoms}</p>
                                 </div>
                             )}
-                            {selectedAppointment.appointment?.notes && (
+
+                            {record?.treatment && (
+                                <div>
+                                    <p className="text-sm text-slate-400">Phuong phap dieu tri</p>
+                                    <p className="text-white">{record.treatment}</p>
+                                </div>
+                            )}
+
+                            {record?.doctorNotes && (
+                                <div>
+                                    <p className="text-sm text-slate-400">Ghi chu bac si</p>
+                                    <p className="text-white whitespace-pre-line">{record.doctorNotes}</p>
+                                </div>
+                            )}
+
+                            {selectedAppointment.notes && !record?.doctorNotes && (
                                 <div>
                                     <p className="text-sm text-slate-400">Ghi chu</p>
-                                    <p className="text-white">{selectedAppointment.appointment.notes}</p>
+                                    <p className="text-white">{selectedAppointment.notes}</p>
                                 </div>
                             )}
 

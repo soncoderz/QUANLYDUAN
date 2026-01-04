@@ -85,6 +85,7 @@ export default function DoctorAppointments() {
         doctorNotes: ''
     });
     const { success, error: showError } = useToast();
+    const record = selectedAppointment?.medicalRecords?.[0];
 
     const [filters, setFilters] = useState({
         status: searchParams.get('status') || '',
@@ -117,6 +118,27 @@ export default function DoctorAppointments() {
             showError('Khong the tai danh sach lich hen');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleOpenAppointment = async (apt) => {
+        setSelectedAppointment(apt);
+        setShowModal(true);
+        try {
+            const res = await api.get(`/appointments/${apt._id}`);
+            if (res.data.success) {
+                const data = res.data.data;
+                const detail = data?.appointment ? {
+                    ...data.appointment,
+                    patientProfile: data.patientProfile,
+                    medications: data.medications,
+                    healthMetrics: data.healthMetrics,
+                    medicalRecords: data.medicalRecords
+                } : data;
+                setSelectedAppointment(prev => ({ ...apt, ...detail }));
+            }
+        } catch (error) {
+            showError('Khong the tai chi tiet lich hen');
         }
     };
 
@@ -323,10 +345,7 @@ export default function DoctorAppointments() {
                             <div
                                 key={apt._id}
                                 className="p-4 hover:bg-slate-700/30 transition-colors cursor-pointer"
-                                onClick={() => {
-                                    setSelectedAppointment(apt);
-                                    setShowModal(true);
-                                }}
+                                onClick={() => handleOpenAppointment(apt)}
                             >
                                 <div className="flex items-center gap-4">
                                     {apt.patientProfile?.avatar ? (
@@ -460,7 +479,42 @@ export default function DoctorAppointments() {
                                 </div>
                             )}
 
-                            {/* Medications Input - Only show when not completed */}
+                                                {(record?.symptoms || selectedAppointment.symptoms) && (
+                                <div className="p-3 bg-slate-700/30 rounded-xl">
+                                    <p className="text-xs text-slate-400 mb-1">Trieu chung</p>
+                                    <p className="text-white">{record?.symptoms || selectedAppointment.symptoms}</p>
+                                </div>
+                            )}
+
+                            {record?.treatment && (
+                                <div className="p-3 bg-slate-700/30 rounded-xl">
+                                    <p className="text-xs text-slate-400 mb-1">Phuong phap dieu tri</p>
+                                    <p className="text-white">{record.treatment}</p>
+                                </div>
+                            )}
+
+                            {record?.doctorNotes && (
+                                <div className="p-3 bg-slate-700/30 rounded-xl">
+                                    <p className="text-xs text-slate-400 mb-1">Ghi chu bac si</p>
+                                    <p className="text-white whitespace-pre-line">{record.doctorNotes}</p>
+                                </div>
+                            )}
+
+                            {selectedAppointment.medications?.length > 0 && (
+                                <div className="p-3 bg-slate-700/30 rounded-xl space-y-2">
+                                    <p className="text-xs text-slate-400 mb-1">Thuoc</p>
+                                    {selectedAppointment.medications.map(med => (
+                                        <div key={med._id || med.name} className="p-2 rounded-lg bg-slate-700/40 border border-slate-700/70">
+                                            <p className="text-white font-semibold">{med.name}</p>
+                                            {med.dosage && <p className="text-xs text-slate-300">{med.dosage}</p>}
+                                            {med.frequency && <p className="text-xs text-slate-400">{med.frequency}</p>}
+                                            {med.instructions && <p className="text-[11px] text-slate-500 mt-1">{med.instructions}</p>}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+{/* Medications Input - Only show when not completed */}
                             {!['completed', 'cancelled'].includes(selectedAppointment.status) && (
                                 <div className="border-t border-slate-700 pt-4 space-y-4">
                                     {/* Diagnosis Section */}

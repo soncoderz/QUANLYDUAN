@@ -26,6 +26,7 @@ export default function Appointments() {
     const [detailModal, setDetailModal] = useState(false);
     const [cancelling, setCancelling] = useState(false);
     const { success, error: showError } = useToast();
+    const record = selectedAppointment?.medicalRecords?.[0];
 
     const filters = [
         { value: 'all', label: 'Tất cả', count: appointments.length },
@@ -67,7 +68,8 @@ export default function Appointments() {
                     ...res.data.appointment,
                     patientProfile: res.data.patientProfile,
                     medications: res.data.medications,
-                    healthMetrics: res.data.healthMetrics
+                    healthMetrics: res.data.healthMetrics,
+                    medicalRecords: res.data.medicalRecords
                 } : res.data;
                 setSelectedAppointment(detail || apt);
                 setDetailModal(true);
@@ -394,7 +396,28 @@ export default function Appointments() {
                             </div>
                         )}
 
-                        {/* Medications */}
+                        {(record?.symptoms || selectedAppointment.symptoms) && (
+                        <div className="mt-4">
+                            <p className="text-sm text-gray-500">Trieu chung</p>
+                            <p className="text-gray-800">{record?.symptoms || selectedAppointment.symptoms}</p>
+                        </div>
+                    )}
+
+                    {record?.treatment && (
+                        <div className="mt-4">
+                            <p className="text-sm text-gray-500">Phuong phap dieu tri</p>
+                            <p className="text-gray-800">{record.treatment}</p>
+                        </div>
+                    )}
+
+                    {record?.doctorNotes && (
+                        <div className="mt-4">
+                            <p className="text-sm text-gray-500">Ghi chu bac si</p>
+                            <p className="text-gray-800 whitespace-pre-line">{record.doctorNotes}</p>
+                        </div>
+                    )}
+
+                    {/* Medications */}
                         {selectedAppointment.medications?.length > 0 && (
                             <div className="mt-6">
                                 <p className="text-sm font-semibold text-gray-900 mb-2">Đơn thuốc</p>

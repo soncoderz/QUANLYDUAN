@@ -4,6 +4,7 @@ const Clinic = require('../models/Clinic');
 const Medication = require('../models/Medication');
 const HealthMetric = require('../models/HealthMetric');
 const PatientProfile = require('../models/PatientProfile');
+const MedicalRecord = require('../models/MedicalRecord');
 const { paginate, paginateResponse, generateTimeSlots } = require('../utils/helpers');
 
 // @desc    Get appointments
@@ -103,6 +104,9 @@ const getAppointmentById = async (req, res) => {
         // Medications linked to this appointment
         const medications = await Medication.find({ appointmentId: appointment._id }).sort({ createdAt: -1 });
 
+        // Medical records for this appointment (latest first)
+        const medicalRecords = await MedicalRecord.find({ appointmentId: appointment._id }).sort({ createdAt: -1 });
+
         // Patient profile and latest health metrics
         const profile = await PatientProfile.findOne({ userId: appointment.patientId._id });
         const metricTypes = ['weight', 'blood_pressure', 'glucose', 'heart_rate', 'temperature', 'oxygen_saturation'];
@@ -120,6 +124,7 @@ const getAppointmentById = async (req, res) => {
             data: {
                 appointment,
                 patientProfile: profile,
+                medicalRecords,
                 medications,
                 healthMetrics
             }
