@@ -32,11 +32,11 @@ export default function HealthMetrics() {
     });
 
     const metricTypes = [
-        { value: 'weight', label: 'Cân nặng', unit: 'kg', icon: Scale, color: 'from-blue-500 to-cyan-500', bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
-        { value: 'blood_pressure', label: 'Huyết áp', unit: 'mmHg', icon: Heart, hasSecondary: true, color: 'from-red-500 to-pink-500', bgColor: 'bg-red-100', textColor: 'text-red-600' },
-        { value: 'glucose', label: 'Đường huyết', unit: 'mg/dL', icon: Droplet, color: 'from-purple-500 to-indigo-500', bgColor: 'bg-purple-100', textColor: 'text-purple-600' },
-        { value: 'heart_rate', label: 'Nhịp tim', unit: 'bpm', icon: Heart, color: 'from-rose-500 to-red-500', bgColor: 'bg-rose-100', textColor: 'text-rose-600' },
-        { value: 'temperature', label: 'Nhiệt độ', unit: '°C', icon: Thermometer, color: 'from-orange-500 to-amber-500', bgColor: 'bg-orange-100', textColor: 'text-orange-600' },
+        { value: 'weight', label: 'Cân nặng', unit: 'kg', icon: Scale, color: 'from-blue-600 to-blue-500', bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
+        { value: 'blood_pressure', label: 'Huyết áp', unit: 'mmHg', icon: Heart, hasSecondary: true, color: 'from-blue-600 to-blue-500', bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
+        { value: 'glucose', label: 'Đường huyết', unit: 'mg/dL', icon: Droplet, color: 'from-blue-600 to-blue-500', bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
+        { value: 'heart_rate', label: 'Nhịp tim', unit: 'bpm', icon: Heart, color: 'from-blue-600 to-blue-500', bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
+        { value: 'temperature', label: 'Nhiệt độ', unit: '°C', icon: Thermometer, color: 'from-blue-600 to-blue-500', bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
     ];
 
     useEffect(() => {

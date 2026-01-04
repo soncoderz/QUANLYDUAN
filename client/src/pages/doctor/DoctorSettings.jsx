@@ -110,7 +110,7 @@ export default function DoctorSettings() {
             </div>
 
             {/* Profile Card */}
-            <div className="bg-gradient-to-r from-teal-500 to-emerald-500 rounded-2xl p-6">
+            <div className="bg-gradient-to-r from-emerald-500 to-emerald-500 rounded-2xl p-6">
                 <div className="flex items-center gap-5">
                     <div className="relative">
                         {formData.avatar ? (
@@ -271,7 +271,7 @@ export default function DoctorSettings() {
                 <button
                     type="submit"
                     disabled={saving}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-teal-500/25 transition-all disabled:opacity-60"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-500 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-teal-500/25 transition-all disabled:opacity-60"
                 >
                     {saving ? (
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

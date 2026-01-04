@@ -97,7 +97,7 @@ export default function DoctorDashboard() {
                 </div>
                 <Link
                     to="/doctor/appointments"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-teal-500/25 transition-all"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-500 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-teal-500/25 transition-all"
                 >
                     <Calendar className="w-5 h-5" />
                     Xem tất cả lịch hẹn
@@ -268,7 +268,7 @@ export default function DoctorDashboard() {
             <div className="bg-gradient-to-r from-teal-500/10 to-emerald-500/10 rounded-2xl p-6 border border-teal-500/20">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/25">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/25">
                             <TrendingUp className="w-7 h-7 text-white" />
                         </div>
                         <div>

@@ -124,7 +124,7 @@ export default function ClinicManagement() {
                 </div>
                 <button
                     onClick={openCreateModal}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all"
                 >
                     <Plus className="w-5 h-5" />
                     Thêm phòng khám
@@ -162,7 +162,7 @@ export default function ClinicManagement() {
                             className="bg-slate-800/50 backdrop-blur border border-slate-700/50 rounded-2xl overflow-hidden hover:border-purple-500/50 transition-colors"
                         >
                             {/* Image */}
-                            <div className="h-40 bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center relative">
+                            <div className="h-40 bg-gradient-to-br from-purple-600/20 to-purple-600/20 flex items-center justify-center relative">
                                 {clinic.image ? (
                                     <img src={clinic.image} alt={clinic.name} className="w-full h-full object-cover" />
                                 ) : (
@@ -415,7 +415,7 @@ function ClinicModal({ mode, clinic, onClose, onSuccess }) {
                                     className="w-full h-40 rounded-xl object-cover"
                                 />
                             ) : (
-                                <div className="w-full h-40 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
+                                <div className="w-full h-40 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-600/20 flex items-center justify-center">
                                     <Building2 className="w-12 h-12 text-purple-400" />
                                 </div>
                             )
@@ -537,7 +537,7 @@ function ClinicModal({ mode, clinic, onClose, onSuccess }) {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all disabled:opacity-50"
+                                className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg hover:shadow-purple-500/30 transition-all disabled:opacity-50"
                             >
                                 {loading ? 'Đang xử lý...' : mode === 'create' ? 'Tạo mới' : 'Cập nhật'}
                             </button>

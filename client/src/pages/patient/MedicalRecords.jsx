@@ -63,13 +63,13 @@ export default function MedicalRecords() {
 
             {/* Stats Summary */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-5 text-white shadow-lg">
+                <div className="bg-white rounded-2xl p-5 shadow-lg border border-gray-100">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-white/80 text-sm">Tổng số hồ sơ</p>
+                            <p className="text-gray/80 text-sm">Tổng số hồ sơ</p>
                             <p className="text-3xl font-bold mt-1">{records.length}</p>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
                             <FileText className="w-6 h-6" />
                         </div>
                     </div>
@@ -82,8 +82,8 @@ export default function MedicalRecords() {
                                 {records.reduce((sum, r) => sum + (r.prescriptions?.length || 0), 0)}
                             </p>
                         </div>
-                        <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-                            <Pill className="w-6 h-6 text-purple-600" />
+                        <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center">
+                            <Pill className="w-6 h-6 text-red-600" />
                         </div>
                     </div>
                 </div>

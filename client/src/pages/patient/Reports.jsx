@@ -227,13 +227,13 @@ export default function Reports() {
                         <div className="space-y-6">
                             {/* Summary Cards */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg p-5 text-white">
+                                <div className="bg-white rounded-2xl shadow-lg p-5">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-white/80 text-sm">Tổng hồ sơ</p>
-                                            <p className="text-3xl font-bold mt-1">{recordStats.total}</p>
+                                            <p className="text-gray-500 text-sm">Tổng hồ sơ</p>
+                                            <p className="text-3xl font-bold text-gray-900 mt-1">{recordStats.total}</p>
                                         </div>
-                                        <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                                        <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
                                             <FileText className="w-6 h-6" />
                                         </div>
                                     </div>

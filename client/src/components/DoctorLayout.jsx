@@ -61,7 +61,7 @@ export default function DoctorLayout({ children }) {
                 {/* Logo */}
                 <div className="h-16 flex items-center justify-between px-4 border-b border-slate-700/50">
                     <Link to="/doctor" className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/25">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/25">
                             <Stethoscope className="w-5 h-5 text-white" />
                         </div>
                         <div>
@@ -140,7 +140,7 @@ export default function DoctorLayout({ children }) {
                         <Menu className="w-6 h-6" />
                     </button>
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-500 flex items-center justify-center">
                             <Stethoscope className="w-4 h-4 text-white" />
                         </div>
                         <span className="font-bold text-white">Doctor Panel</span>
