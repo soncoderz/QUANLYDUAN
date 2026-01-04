@@ -62,71 +62,76 @@ export default function ResetPassword() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-blue-50">
-            <div className="w-full max-w-md animate-fadeIn">
-                {/* Logo */}
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-medical mb-4">
-                        <Heart className="w-8 h-8 text-white" />
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+            <div className="w-full max-w-md space-y-6">
+                <div className="flex items-center gap-3 justify-center">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-sky-400 flex items-center justify-center shadow-lg shadow-blue-200">
+                        <Heart className="w-7 h-7 text-white" />
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900">Healthcare Booking</h1>
+                    <div>
+                        <p className="text-xs font-semibold text-blue-600">Healthcare Booking</p>
+                        <p className="text-sm text-slate-500">Chăm sóc sức khỏe an tâm</p>
+                    </div>
                 </div>
 
-                <div className="card-static p-6 sm:p-8">
+                <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-7">
                     {error && !success ? (
-                        <div className="text-center py-6">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <KeyRound className="w-8 h-8 text-red-600" />
+                        <div className="space-y-4 text-center">
+                            <div className="w-14 h-14 bg-rose-100 rounded-2xl flex items-center justify-center mx-auto">
+                                <KeyRound className="w-7 h-7 text-rose-600" />
                             </div>
-                            <h2 className="text-xl font-bold text-gray-900 mb-2">
-                                Link không hợp lệ
-                            </h2>
-                            <p className="text-gray-500 mb-6">{error}</p>
-                            <Link to="/forgot-password" className="btn btn-primary">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-900">Link không hợp lệ</h2>
+                                <p className="text-slate-600 mt-2">{error}</p>
+                            </div>
+                            <Link
+                                to="/forgot-password"
+                                className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-rose-500 to-rose-600 shadow-md hover:shadow-lg transition"
+                            >
                                 Yêu cầu link mới
                             </Link>
                         </div>
                     ) : success ? (
-                        <div className="text-center py-6">
-                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <CheckCircle className="w-8 h-8 text-green-600" />
+                        <div className="space-y-4 text-center">
+                            <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto">
+                                <CheckCircle className="w-8 h-8 text-emerald-600" />
                             </div>
-                            <h2 className="text-xl font-bold text-gray-900 mb-2">
-                                Đặt lại mật khẩu thành công!
-                            </h2>
-                            <p className="text-gray-500 mb-6">
-                                Bạn đã có thể đăng nhập với mật khẩu mới.
-                            </p>
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-900">Đặt lại mật khẩu thành công!</h2>
+                                <p className="text-slate-600 mt-2">
+                                    Bạn đã có thể đăng nhập và tiếp tục sử dụng dịch vụ với mật khẩu mới.
+                                </p>
+                            </div>
                             <button
                                 onClick={() => navigate('/login')}
-                                className="btn btn-primary w-full"
+                                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-md hover:shadow-lg transition"
                             >
                                 Đăng nhập ngay
                             </button>
                         </div>
                     ) : (
                         <>
-                            <div className="text-center mb-6">
-                                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                                    Đặt mật khẩu mới
-                                </h2>
-                                <p className="text-gray-500">
+                            <div className="text-center space-y-2">
+                                <h2 className="text-2xl font-bold text-slate-900">Đặt lại mật khẩu</h2>
+                                <p className="text-slate-600">
                                     Nhập mật khẩu mới cho tài khoản của bạn.
                                 </p>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="space-y-5">
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                                <div className="space-y-2">
+                                    <label className="block text-sm font-semibold text-slate-800">
                                         Mật khẩu mới
                                     </label>
-                                    <div className="input-group">
-                                        <Lock className="input-group-icon w-5 h-5" />
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                            <Lock className="w-5 h-5" />
+                                        </span>
                                         <input
                                             type={showPassword ? 'text' : 'password'}
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
-                                            className="input input-icon pr-12"
+                                            className="w-full rounded-xl border border-slate-200 bg-white pl-11 pr-12 py-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition"
                                             placeholder="Ít nhất 8 ký tự"
                                             required
                                             minLength={8}
@@ -134,31 +139,33 @@ export default function ResetPassword() {
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                                         >
                                             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                         </button>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                <div className="space-y-2">
+                                    <label className="block text-sm font-semibold text-slate-800">
                                         Xác nhận mật khẩu
                                     </label>
-                                    <div className="input-group">
-                                        <Lock className="input-group-icon w-5 h-5" />
+                                    <div className="relative">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                            <Lock className="w-5 h-5" />
+                                        </span>
                                         <input
                                             type={showConfirmPassword ? 'text' : 'password'}
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
-                                            className="input input-icon pr-12"
-                                            placeholder="Nhập lại mật khẩu"
+                                            className="w-full rounded-xl border border-slate-200 bg-white pl-11 pr-12 py-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition"
+                                            placeholder="Nhập lại mật khẩu mới"
                                             required
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                                         >
                                             {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                         </button>
@@ -168,10 +175,10 @@ export default function ResetPassword() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="btn btn-primary w-full"
+                                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-500 to-sky-500 shadow-md hover:shadow-lg transition disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {loading ? (
-                                        <div className="spinner spinner-sm border-white border-t-transparent" />
+                                        <div className="w-5 h-5 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
                                     ) : (
                                         <>
                                             <KeyRound className="w-5 h-5" />
@@ -179,6 +186,15 @@ export default function ResetPassword() {
                                         </>
                                     )}
                                 </button>
+
+                                <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-sm text-slate-600">
+                                    <p className="font-semibold text-slate-800 mb-1">Mẹo tạo mật khẩu mạnh</p>
+                                    <ul className="list-disc list-inside space-y-1">
+                                        <li>Kết hợp chữ hoa, chữ thường, số và ký tự đặc biệt.</li>
+                                        <li>Không dùng lại mật khẩu cũ hoặc thông tin dễ đoán.</li>
+                                        <li>Giữ bí mật, không chia sẻ cho người khác.</li>
+                                    </ul>
+                                </div>
                             </form>
                         </>
                     )}
@@ -187,7 +203,7 @@ export default function ResetPassword() {
                         <div className="mt-6 text-center">
                             <Link
                                 to="/login"
-                                className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                                className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors"
                             >
                                 <ArrowLeft className="w-4 h-4" />
                                 Quay lại đăng nhập

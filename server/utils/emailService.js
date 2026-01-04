@@ -63,7 +63,7 @@ const sendPasswordResetEmail = async (to, resetToken) => {
                                         
                                         <p style="margin: 24px 0 16px; color: #64748b; font-size: 14px; line-height: 1.6;">
                                             Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này. 
-                                            Link sẽ hết hạn sau <strong>1 giờ</strong>.
+                                            Link sẽ hết hạn sau <strong>5 phút</strong>.
                                         </p>
                                         
                                         <div style="margin-top: 24px; padding: 16px; background-color: #f8fafc; border-radius: 8px; border-left: 4px solid #0ea5e9;">
@@ -92,7 +92,7 @@ const sendPasswordResetEmail = async (to, resetToken) => {
             </body>
             </html>
         `,
-        text: `Đặt lại mật khẩu - Healthcare Booking\n\nChúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn.\n\nVui lòng truy cập link sau để đặt lại mật khẩu:\n${resetUrl}\n\nLink sẽ hết hạn sau 1 giờ.\n\nNếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.`
+        text: `Đặt lại mật khẩu - Healthcare Booking\n\nChúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn.\n\nVui lòng truy cập link sau để đặt lại mật khẩu:\n${resetUrl}\n\nLink sẽ hết hạn sau 5 phút.\n\nNếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.`
     };
 
     try {
