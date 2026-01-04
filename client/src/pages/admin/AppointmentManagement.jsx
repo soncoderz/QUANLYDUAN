@@ -19,10 +19,10 @@ import {
 } from 'lucide-react';
 
 const statusConfig = {
-    pending: { label: 'Cho xac nhan', color: 'bg-yellow-500/20 text-yellow-400', icon: Clock },
-    confirmed: { label: 'Da xac nhan', color: 'bg-blue-500/20 text-blue-400', icon: CheckCircle },
-    completed: { label: 'Hoan thanh', color: 'bg-emerald-500/20 text-emerald-400', icon: CheckCircle },
-    cancelled: { label: 'Da huy', color: 'bg-red-500/20 text-red-400', icon: XCircle }
+    pending: { label: 'Chờ xác nhận', color: 'bg-yellow-500/20 text-yellow-400', icon: Clock },
+    confirmed: { label: 'Đã xác nhận', color: 'bg-blue-500/20 text-blue-400', icon: CheckCircle },
+    completed: { label: 'Hoàn thành', color: 'bg-emerald-500/20 text-emerald-400', icon: CheckCircle },
+    cancelled: { label: 'Đã hủy', color: 'bg-red-500/20 text-red-400', icon: XCircle }
 };
 
 export default function AppointmentManagement() {
@@ -56,7 +56,7 @@ export default function AppointmentManagement() {
             }
         } catch (error) {
             console.error('Error fetching appointments:', error);
-            showError('Khong the tai danh sach lich hen');
+            showError('Không thể tải danh sách lịch hẹn');
         } finally {
             setLoading(false);
         }
@@ -77,11 +77,11 @@ export default function AppointmentManagement() {
         try {
             const response = await adminService.updateAppointmentStatus(appointmentId, newStatus);
             if (response.success) {
-                success(`Da cap nhat trang thai thanh ${statusConfig[newStatus].label}`);
+                success(`Đã cập nhật trạng thái thành ${statusConfig[newStatus].label}`);
                 fetchAppointments();
             }
         } catch (error) {
-            showError('Khong the cap nhat trang thai');
+            showError('Không thể cập nhật trạng thái');
         }
     };
 
@@ -101,7 +101,7 @@ export default function AppointmentManagement() {
                 setShowModal(true);
             }
         } catch (error) {
-            showError('Khong the tai thong tin lich hen');
+            showError('Không thể tải thông tin lịch hẹn');
         }
     };
 
@@ -124,15 +124,15 @@ export default function AppointmentManagement() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-white">Quan ly lich hen</h1>
-                    <p className="text-slate-400 mt-1">Theo doi va quan ly tat ca lich hen</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-white">Quản lý lịch hẹn</h1>
+                    <p className="text-slate-400 mt-1">Theo dõi và quản lý tất cả lịch hẹn</p>
                 </div>
                 <button
                     onClick={() => setShowFilters(!showFilters)}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all ${showFilters ? 'bg-orange-500 text-white' : 'bg-slate-700 text-white hover:bg-slate-600'}`}
                 >
                     <Filter className="w-5 h-5" />
-                    Bo loc
+                    Bộ lọc
                 </button>
             </div>
 
@@ -145,7 +145,7 @@ export default function AppointmentManagement() {
                             onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
                             className="px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                         >
-                            <option value="">Tat ca trang thai</option>
+                            <option value="">Tất cả trạng thái</option>
                             {Object.entries(statusConfig).map(([key, val]) => (
                                 <option key={key} value={key}>{val.label}</option>
                             ))}
@@ -155,7 +155,7 @@ export default function AppointmentManagement() {
                             onChange={(e) => setFilters(prev => ({ ...prev, clinicId: e.target.value }))}
                             className="px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                         >
-                            <option value="">Tat ca phong kham</option>
+                            <option value="">Tất cả phòng khám</option>
                             {clinics.map(clinic => (
                                 <option key={clinic._id} value={clinic._id}>{clinic.name}</option>
                             ))}
@@ -166,7 +166,7 @@ export default function AppointmentManagement() {
                                 value={filters.dateFrom}
                                 onChange={(e) => setFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
                                 className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                placeholder="Tu ngay"
+                                placeholder="Từ ngày"
                             />
                         </div>
                         <div>
@@ -175,14 +175,14 @@ export default function AppointmentManagement() {
                                 value={filters.dateTo}
                                 onChange={(e) => setFilters(prev => ({ ...prev, dateTo: e.target.value }))}
                                 className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                placeholder="Den ngay"
+                                placeholder="Đến ngày"
                             />
                         </div>
                         <button
                             onClick={resetFilters}
                             className="px-4 py-2.5 bg-slate-600 text-white rounded-xl font-medium hover:bg-slate-500 transition-colors"
                         >
-                            Dat lai
+                            Đặt lại
                         </button>
                     </div>
                 </div>
@@ -219,12 +219,12 @@ export default function AppointmentManagement() {
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-slate-700/50">
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Benh nhan</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Bac si</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Phong kham</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Ngay hen</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Trang thai</th>
-                                <th className="text-right py-4 px-6 text-sm font-semibold text-slate-300">Hanh dong</th>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Bệnh nhân</th>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Bác sĩ</th>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Phòng khám</th>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Ngày hẹn</th>
+                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-300">Trạng thái</th>
+                                <th className="text-right py-4 px-6 text-sm font-semibold text-slate-300">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -237,7 +237,7 @@ export default function AppointmentManagement() {
                             ) : appointments.length === 0 ? (
                                 <tr>
                                     <td colSpan="6" className="py-12 text-center text-slate-400">
-                                        Khong tim thay lich hen nao
+                                        Không tìm thấy lịch hẹn nào
                                     </td>
                                 </tr>
                             ) : (
@@ -251,7 +251,7 @@ export default function AppointmentManagement() {
                                                     {apt.patientProfile?.avatar ? (
                                                         <img
                                                             src={apt.patientProfile.avatar}
-                                                            alt={apt.patientProfile.fullName || 'Benh nhan'}
+                                                            alt={apt.patientProfile.fullName || 'Bệnh nhân'}
                                                             className="w-10 h-10 rounded-xl object-cover border border-slate-700/70"
                                                         />
                                                     ) : (
@@ -272,7 +272,7 @@ export default function AppointmentManagement() {
                                                     {apt.doctorId?.avatar ? (
                                                         <img
                                                             src={apt.doctorId.avatar}
-                                                            alt={apt.doctorId.fullName || 'Bac si'}
+                                                            alt={apt.doctorId.fullName || 'Bác sĩ'}
                                                             className="w-8 h-8 rounded-xl object-cover border border-slate-700/70"
                                                         />
                                                     ) : (
@@ -307,7 +307,7 @@ export default function AppointmentManagement() {
                                                     <button
                                                         onClick={() => handleViewAppointment(apt)}
                                                         className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
-                                                        title="Xem chi tiet"
+                                                        title="Xem chi tiết"
                                                     >
                                                         <Eye className="w-4 h-4 text-slate-400" />
                                                     </button>
@@ -316,14 +316,14 @@ export default function AppointmentManagement() {
                                                             <button
                                                                 onClick={() => handleStatusChange(apt._id, 'confirmed')}
                                                                 className="p-2 hover:bg-emerald-500/20 rounded-lg transition-colors"
-                                                                title="Xac nhan"
+                                                                title="Xác nhận"
                                                             >
                                                                 <CheckCircle className="w-4 h-4 text-emerald-400" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleStatusChange(apt._id, 'cancelled')}
                                                                 className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
-                                                                title="Huy"
+                                                                title="Hủy"
                                                             >
                                                                 <XCircle className="w-4 h-4 text-red-400" />
                                                             </button>
@@ -333,7 +333,7 @@ export default function AppointmentManagement() {
                                                         <button
                                                             onClick={() => handleStatusChange(apt._id, 'completed')}
                                                             className="p-2 hover:bg-emerald-500/20 rounded-lg transition-colors"
-                                                            title="Hoan thanh"
+                                                            title="Hoàn thành"
                                                         >
                                                             <CheckCircle className="w-4 h-4 text-emerald-400" />
                                                         </button>
@@ -351,7 +351,7 @@ export default function AppointmentManagement() {
                 {/* Pagination */}
                 <div className="flex items-center justify-between px-6 py-4 border-t border-slate-700/50">
                     <p className="text-sm text-slate-400">
-                        Hien thi {((pagination.page - 1) * pagination.limit) + 1} - {Math.min(pagination.page * pagination.limit, pagination.total)} trong {pagination.total} lich hen
+                        Hiển thị {((pagination.page - 1) * pagination.limit) + 1} - {Math.min(pagination.page * pagination.limit, pagination.total)} trong {pagination.total} lịch hẹn
                     </p>
                     <div className="flex items-center gap-2">
                         <button
@@ -380,7 +380,7 @@ export default function AppointmentManagement() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
                     <div className="w-full max-w-lg bg-slate-800 rounded-2xl shadow-xl">
                         <div className="flex items-center justify-between p-6 border-b border-slate-700">
-                            <h3 className="text-xl font-semibold text-white">Chi tiet lich hen</h3>
+                            <h3 className="text-xl font-semibold text-white">Chi tiết lịch hẹn</h3>
                             <button onClick={() => setShowModal(false)} className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
                                 <X className="w-5 h-5 text-slate-400" />
                             </button>
@@ -388,25 +388,25 @@ export default function AppointmentManagement() {
                         <div className="p-6 space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p className="text-sm text-slate-400">Benh nhan</p>
+                                    <p className="text-sm text-slate-400">Bệnh nhân</p>
                                     <p className="text-white font-medium">
                                         {selectedAppointment.patientProfile?.fullName || selectedAppointment.patientId?.email || 'N/A'}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-slate-400">Bac si</p>
+                                    <p className="text-sm text-slate-400">Bác sĩ</p>
                                     <p className="text-white font-medium">
                                         {selectedAppointment.doctorId?.fullName || 'N/A'}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-slate-400">Ngay hen</p>
+                                    <p className="text-sm text-slate-400">Ngày hẹn</p>
                                     <p className="text-white font-medium">
                                         {formatDate(selectedAppointment.appointmentDate)}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-sm text-slate-400">Gio hen</p>
+                                    <p className="text-sm text-slate-400">Giờ hẹn</p>
                                     <p className="text-white font-medium">
                                         {selectedAppointment.timeSlot}
                                     </p>
@@ -415,56 +415,79 @@ export default function AppointmentManagement() {
 
                             {(record?.symptoms || selectedAppointment.symptoms) && (
                                 <div>
-                                    <p className="text-sm text-slate-400">Trieu chung</p>
+                                    <p className="text-sm text-slate-400">Triệu chứng</p>
                                     <p className="text-white">{record?.symptoms || selectedAppointment.symptoms}</p>
                                 </div>
                             )}
 
                             {record?.treatment && (
                                 <div>
-                                    <p className="text-sm text-slate-400">Phuong phap dieu tri</p>
+                                    <p className="text-sm text-slate-400">Phương pháp điều trị</p>
                                     <p className="text-white">{record.treatment}</p>
                                 </div>
                             )}
 
                             {record?.doctorNotes && (
                                 <div>
-                                    <p className="text-sm text-slate-400">Ghi chu bac si</p>
+                                    <p className="text-sm text-slate-400">Ghi chú bác sĩ</p>
                                     <p className="text-white whitespace-pre-line">{record.doctorNotes}</p>
                                 </div>
                             )}
 
                             {selectedAppointment.notes && !record?.doctorNotes && (
                                 <div>
-                                    <p className="text-sm text-slate-400">Ghi chu</p>
+                                    <p className="text-sm text-slate-400">Ghi chú</p>
                                     <p className="text-white">{selectedAppointment.notes}</p>
                                 </div>
                             )}
 
-                            {/* Medications */}
-                            {selectedAppointment.medications?.length > 0 && (
-                                <div className="pt-3 border-t border-slate-700">
-                                    <p className="text-sm font-semibold text-white mb-2">Don thuoc</p>
-                                    <div className="space-y-2">
-                                        {selectedAppointment.medications.map(med => (
-                                            <div key={med._id} className="p-3 rounded-xl bg-slate-700/40 border border-slate-700/70">
-                                                <p className="text-white font-semibold">{med.name}</p>
-                                                {med.dosage && <p className="text-sm text-slate-300">{med.dosage}</p>}
-                                                {med.frequency && <p className="text-sm text-slate-400">{med.frequency}</p>}
-                                                {med.instructions && <p className="text-xs text-slate-400 mt-1">{med.instructions}</p>}
-                                                <p className="text-xs text-slate-500 mt-1">
-                                                    {med.startDate ? new Date(med.startDate).toLocaleDateString('vi-VN') : ''}{med.endDate ? ` - ${new Date(med.endDate).toLocaleDateString('vi-VN')}` : ''}
-                                                </p>
-                                            </div>
-                                        ))}
+
+                            {/* Đơn thuốc */}
+                            {(() => {
+                                const prescriptions = record?.prescriptions?.length ? record.prescriptions : (selectedAppointment.medications || []);
+                                return prescriptions.length > 0 ? (
+                                    <div className="pt-3 border-t border-slate-700">
+                                        <p className="text-sm font-semibold text-white mb-2">Đơn thuốc ({prescriptions.length} loại)</p>
+                                        <div className="space-y-2">
+                                            {prescriptions.map((med, idx) => (
+                                                <div key={med._id || idx} className="p-3 rounded-xl bg-slate-700/40 border border-slate-700/70">
+                                                    <p className="text-white font-semibold">{med.name}</p>
+                                                    <div className="flex flex-wrap gap-2 mt-2">
+                                                        {med.dosage && (
+                                                            <span className="px-2 py-1 bg-slate-800/70 rounded-lg text-[11px] text-slate-200 border border-slate-600/60">
+                                                                💊 {med.dosage}
+                                                            </span>
+                                                        )}
+                                                        {med.frequency && (
+                                                            <span className="px-2 py-1 bg-slate-800/70 rounded-lg text-[11px] text-slate-200 border border-slate-600/60">
+                                                                🔄 {med.frequency}
+                                                            </span>
+                                                        )}
+                                                        {med.duration && (
+                                                            <span className="px-2 py-1 bg-slate-800/70 rounded-lg text-[11px] text-slate-200 border border-slate-600/60">
+                                                                📅 {med.duration}
+                                                            </span>
+                                                        )}
+                                                        {!med.duration && (med.startDate || med.endDate) && (
+                                                            <span className="px-2 py-1 bg-slate-800/70 rounded-lg text-[11px] text-slate-200 border border-slate-600/60">
+                                                                📅 {med.startDate ? new Date(med.startDate).toLocaleDateString('vi-VN') : ''}{med.endDate ? ` - ${new Date(med.endDate).toLocaleDateString('vi-VN')}` : ''}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    {med.instructions && (
+                                                        <p className="text-xs text-slate-400 mt-2 italic">📝 {med.instructions}</p>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                ) : null;
+                            })()}
 
                             {/* Health Metrics */}
                             {selectedAppointment.healthMetrics && Object.keys(selectedAppointment.healthMetrics).length > 0 && (
                                 <div className="pt-3 border-t border-slate-700">
-                                    <p className="text-sm font-semibold text-white mb-2">Chi so suc khoe (moi nhat)</p>
+                                    <p className="text-sm font-semibold text-white mb-2">Chỉ số sức khỏe (mới nhất)</p>
                                     <div className="grid grid-cols-2 gap-3">
                                         {Object.entries(selectedAppointment.healthMetrics).map(([key, metric]) => (
                                             <div key={key} className="p-3 rounded-xl bg-slate-700/40 border border-slate-700/70">

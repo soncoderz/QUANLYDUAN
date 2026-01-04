@@ -14,7 +14,8 @@ import {
     CheckCircle,
     XCircle,
     AlertCircle,
-    Stethoscope
+    Stethoscope,
+    Pill
 } from 'lucide-react';
 
 export default function Appointments() {
@@ -85,12 +86,12 @@ export default function Appointments() {
         setCancelling(true);
         try {
             await appointmentService.cancelAppointment(selectedAppointment._id);
-            success('Huy lich hen thanh cong');
+            success('Hủy lịch hẹn thành công');
             setShowCancelModal(false);
             setSelectedAppointment(null);
             fetchAppointments();
         } catch (error) {
-            showError(error.response?.data?.error || 'Khong the huy lich hen');
+            showError(error.response?.data?.error || 'Không thể hủy lịch hẹn');
         } finally {
             setCancelling(false);
         }
@@ -191,7 +192,7 @@ export default function Appointments() {
                                         {apt.doctorId?.avatar ? (
                                             <img
                                                 src={apt.doctorId.avatar}
-                                                alt={apt.doctorId?.fullName || 'Bac si'}
+                                                alt={apt.doctorId?.fullName || 'Bác sĩ'}
                                                 className="w-14 h-14 rounded-2xl object-cover shadow-lg shadow-blue-200 flex-shrink-0 border-2 border-white"
                                             />
                                         ) : (
@@ -397,45 +398,82 @@ export default function Appointments() {
                         )}
 
                         {(record?.symptoms || selectedAppointment.symptoms) && (
-                        <div className="mt-4">
-                            <p className="text-sm text-gray-500">Trieu chung</p>
-                            <p className="text-gray-800">{record?.symptoms || selectedAppointment.symptoms}</p>
-                        </div>
-                    )}
-
-                    {record?.treatment && (
-                        <div className="mt-4">
-                            <p className="text-sm text-gray-500">Phuong phap dieu tri</p>
-                            <p className="text-gray-800">{record.treatment}</p>
-                        </div>
-                    )}
-
-                    {record?.doctorNotes && (
-                        <div className="mt-4">
-                            <p className="text-sm text-gray-500">Ghi chu bac si</p>
-                            <p className="text-gray-800 whitespace-pre-line">{record.doctorNotes}</p>
-                        </div>
-                    )}
-
-                    {/* Medications */}
-                        {selectedAppointment.medications?.length > 0 && (
-                            <div className="mt-6">
-                                <p className="text-sm font-semibold text-gray-900 mb-2">Đơn thuốc</p>
-                                <div className="space-y-2">
-                                    {selectedAppointment.medications.map(med => (
-                                        <div key={med._id} className="p-3 rounded-xl bg-gray-50 border border-gray-200">
-                                            <p className="text-gray-900 font-semibold">{med.name}</p>
-                                            {med.dosage && <p className="text-sm text-gray-700">{med.dosage}</p>}
-                                            {med.frequency && <p className="text-sm text-gray-500">{med.frequency}</p>}
-                                            {med.instructions && <p className="text-xs text-gray-500 mt-1">{med.instructions}</p>}
-                                            <p className="text-xs text-gray-400 mt-1">
-                                                {med.startDate ? new Date(med.startDate).toLocaleDateString('vi-VN') : ''}{med.endDate ? ` - ${new Date(med.endDate).toLocaleDateString('vi-VN')}` : ''}
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-500">Triệu chứng</p>
+                                <p className="text-gray-800">{record?.symptoms || selectedAppointment.symptoms}</p>
                             </div>
                         )}
+
+                        {record?.treatment && (
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-500">Phương pháp điều trị</p>
+                                <p className="text-gray-800">{record.treatment}</p>
+                            </div>
+                        )}
+
+                        {record?.doctorNotes && (
+                            <div className="mt-4">
+                                <p className="text-sm text-gray-500">Ghi chú bác sĩ</p>
+                                <p className="text-gray-800 whitespace-pre-line">{record.doctorNotes}</p>
+                            </div>
+                        )}
+
+
+                        {/* Prescriptions */}
+                        {(() => {
+                            const prescriptions = record?.prescriptions?.length ? record.prescriptions : (selectedAppointment.medications || []);
+                            return prescriptions.length > 0 ? (
+                                <div className="mt-6">
+                                    <p className="text-sm font-semibold text-gray-900 mb-2">
+                                        Đơn thuốc ({prescriptions.length} loại)
+                                    </p>
+                                    <div className="space-y-3">
+                                        {prescriptions.map((med, idx) => (
+                                            <div
+                                                key={med._id || idx}
+                                                className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl border border-purple-100"
+                                            >
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                                        <Pill className="w-5 h-5 text-purple-600" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className="font-semibold text-gray-900">{med.name}</p>
+                                                        <div className="flex flex-wrap gap-2 mt-2">
+                                                            {med.dosage && (
+                                                                <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                    💊 {med.dosage}
+                                                                </span>
+                                                            )}
+                                                            {med.frequency && (
+                                                                <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                    🔄 {med.frequency}
+                                                                </span>
+                                                            )}
+                                                            {med.duration && (
+                                                                <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                    📅 {med.duration}
+                                                                </span>
+                                                            )}
+                                                            {!med.duration && (med.startDate || med.endDate) && (
+                                                                <span className="px-2 py-1 bg-white rounded-lg text-xs text-gray-600 border border-gray-200">
+                                                                    📅 {med.startDate ? new Date(med.startDate).toLocaleDateString('vi-VN') : ''}{med.endDate ? ` - ${new Date(med.endDate).toLocaleDateString('vi-VN')}` : ''}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        {med.instructions && (
+                                                            <p className="text-sm text-gray-500 mt-2 italic">
+                                                                📝 {med.instructions}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : null;
+                        })()}
 
                         {/* Health Metrics */}
                         {selectedAppointment.healthMetrics && Object.keys(selectedAppointment.healthMetrics).length > 0 && (
@@ -462,4 +500,3 @@ export default function Appointments() {
         </div>
     );
 }
-

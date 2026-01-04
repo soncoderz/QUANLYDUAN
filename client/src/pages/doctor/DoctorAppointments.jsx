@@ -38,36 +38,36 @@ const MEDICINE_OPTIONS = [
 ];
 
 const DOSAGE_OPTIONS = [
-    '1 vien/lan',
-    '2 vien/lan',
-    '1/2 vien/lan',
-    '1 goi/lan',
-    '5ml/lan',
-    '10ml/lan',
-    '15ml/lan',
-    '1 ong/lan'
+    '1 viên/lần',
+    '2 viên/lần',
+    '1/2 viên/lần',
+    '1 gói/lần',
+    '5ml/lần',
+    '10ml/lần',
+    '15ml/lần',
+    '1 ống/lần'
 ];
 
 const FREQUENCY_OPTIONS = [
-    '1 lan/ngay',
-    '2 lan/ngay',
-    '3 lan/ngay',
-    '4 lan/ngay',
-    'Sang - Toi',
-    'Sang - Trua - Toi',
-    'Khi can',
-    'Truoc khi ngu'
+    '1 lần/ngày',
+    '2 lần/ngày',
+    '3 lần/ngày',
+    '4 lần/ngày',
+    'Sáng - Tối',
+    'Sáng - Trưa - Tối',
+    'Khi cần',
+    'Trước khi ngủ'
 ];
 
 const INSTRUCTION_OPTIONS = [
-    'Uong sau an 30 phut',
-    'Uong truoc an 30 phut',
-    'Uong voi nhieu nuoc',
-    'Uong luc doi',
-    'Ngam duoi luoi',
-    'Hoa tan trong nuoc',
-    'Theo chi dinh bac si',
-    'Khong uong chung voi sua'
+    'Uống sau ăn 30 phút',
+    'Uống trước ăn 30 phút',
+    'Uống với nhiều nước',
+    'Uống lúc đói',
+    'Ngậm dưới lưỡi',
+    'Hòa tan trong nước',
+    'Theo chỉ định bác sĩ',
+    'Không uống chung với sữa'
 ];
 
 export default function DoctorAppointments() {
@@ -115,7 +115,7 @@ export default function DoctorAppointments() {
             }
         } catch (error) {
             console.error('Error fetching appointments:', error);
-            showError('Khong the tai danh sach lich hen');
+            showError('Không thể tải danh sách lịch hẹn');
         } finally {
             setLoading(false);
         }
@@ -138,20 +138,20 @@ export default function DoctorAppointments() {
                 setSelectedAppointment(prev => ({ ...apt, ...detail }));
             }
         } catch (error) {
-            showError('Khong the tai chi tiet lich hen');
+            showError('Không thể tải chi tiết lịch hẹn');
         }
     };
 
     const handleStatusUpdate = async (appointmentId, newStatus) => {
         if (!appointmentId) {
-            showError('Khong xac dinh lich hen');
+            showError('Không xác định lịch hẹn');
             return;
         }
         try {
             if (newStatus === 'completed') {
                 // Validate required fields for medical record
                 if (!recordFormData.diagnosis.trim()) {
-                    showError('Vui long nhap chan doan benh');
+                    showError('Vui lòng nhập chẩn đoán bệnh');
                     return;
                 }
 
@@ -165,7 +165,7 @@ export default function DoctorAppointments() {
                     }));
 
                 if (meds.length === 0) {
-                    showError('Vui long them it nhat mot thuoc truoc khi hoan thanh');
+                    showError('Vui lòng thêm ít nhất một thuốc trước khi hoàn thành');
                     return;
                 }
 
@@ -182,7 +182,7 @@ export default function DoctorAppointments() {
 
                 const response = await api.post('/doctors/records', recordPayload);
                 if (response.data.success) {
-                    success('Tao ho so benh an va hoan thanh lich kham thanh cong');
+                    success('Tạo hồ sơ bệnh án và hoàn thành lịch khám thành công');
                     fetchAppointments();
                     setShowModal(false);
                     setMedicationsInput([{ name: MEDICINE_OPTIONS[0], customName: '', isCustom: false, dosage: DOSAGE_OPTIONS[0], frequency: FREQUENCY_OPTIONS[0], instructions: INSTRUCTION_OPTIONS[0] }]);
@@ -193,13 +193,13 @@ export default function DoctorAppointments() {
                 const payload = { status: newStatus };
                 const response = await api.patch(`/doctors/appointments/${appointmentId}/status`, payload);
                 if (response.data.success) {
-                    success('Cap nhat trang thai thanh cong');
+                    success('Cập nhật trạng thái thành công');
                     fetchAppointments();
                     setShowModal(false);
                 }
             }
         } catch (error) {
-            showError(error.response?.data?.error || 'Khong the cap nhat trang thai');
+            showError(error.response?.data?.error || 'Không thể cập nhật trạng thái');
         }
     };
 
@@ -255,23 +255,23 @@ export default function DoctorAppointments() {
 
     const getStatusLabel = (status) => {
         const labels = {
-            scheduled: 'Da len lich',
-            confirmed: 'Da xac nhan',
-            pending: 'Cho xu ly',
-            completed: 'Hoan thanh',
-            cancelled: 'Da huy',
-            no_show: 'Khong den'
+            scheduled: 'Đã lên lịch',
+            confirmed: 'Đã xác nhận',
+            pending: 'Chờ xử lý',
+            completed: 'Hoàn thành',
+            cancelled: 'Đã hủy',
+            no_show: 'Không đến'
         };
         return labels[status] || status;
     };
 
     const statusOptions = [
-        { value: '', label: 'Tat ca' },
-        { value: 'scheduled', label: 'Da len lich' },
-        { value: 'confirmed', label: 'Da xac nhan' },
-        { value: 'pending', label: 'Cho xu ly' },
-        { value: 'completed', label: 'Hoan thanh' },
-        { value: 'cancelled', label: 'Da huy' }
+        { value: '', label: 'Tất cả' },
+        { value: 'scheduled', label: 'Đã lên lịch' },
+        { value: 'confirmed', label: 'Đã xác nhận' },
+        { value: 'pending', label: 'Chờ xử lý' },
+        { value: 'completed', label: 'Hoàn thành' },
+        { value: 'cancelled', label: 'Đã hủy' }
     ];
 
     return (
@@ -279,8 +279,8 @@ export default function DoctorAppointments() {
             {/* Header */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl lg:text-3xl font-bold text-white">Quan ly lich hen</h1>
-                    <p className="text-slate-400 mt-1">Xem va quan ly cac cuoc hen cua ban</p>
+                    <h1 className="text-2xl lg:text-3xl font-bold text-white">Quản lý lịch hẹn</h1>
+                    <p className="text-slate-400 mt-1">Xem và quản lý các cuộc hẹn của bạn</p>
                 </div>
             </div>
 
@@ -288,7 +288,7 @@ export default function DoctorAppointments() {
             <div className="bg-slate-800/50 backdrop-blur-xl rounded-2xl p-4 border border-slate-700/50">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                        <label className="block text-sm text-slate-400 mb-2">Trang thai</label>
+                        <label className="block text-sm text-slate-400 mb-2">Trạng thái</label>
                         <select
                             value={filters.status}
                             onChange={(e) => setFilters({ ...filters, status: e.target.value, page: 1 })}
@@ -300,7 +300,7 @@ export default function DoctorAppointments() {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm text-slate-400 mb-2">Tu ngay</label>
+                        <label className="block text-sm text-slate-400 mb-2">Từ ngày</label>
                         <input
                             type="date"
                             value={filters.startDate}
@@ -309,7 +309,7 @@ export default function DoctorAppointments() {
                         />
                     </div>
                     <div>
-                        <label className="block text-sm text-slate-400 mb-2">Den ngay</label>
+                        <label className="block text-sm text-slate-400 mb-2">Đến ngày</label>
                         <input
                             type="date"
                             value={filters.endDate}
@@ -322,7 +322,7 @@ export default function DoctorAppointments() {
                             onClick={() => setFilters({ status: '', startDate: '', endDate: '', page: 1 })}
                             className="w-full px-4 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-slate-400 hover:text-white hover:border-slate-500 transition-colors"
                         >
-                            Xoa bo loc
+                            Xóa bộ lọc
                         </button>
                     </div>
                 </div>
@@ -337,7 +337,7 @@ export default function DoctorAppointments() {
                 ) : appointments.length === 0 ? (
                     <div className="py-20 text-center">
                         <Calendar className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                        <p className="text-slate-400 text-lg">Khong co lich hen nao</p>
+                        <p className="text-slate-400 text-lg">Không có lịch hẹn nào</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-slate-700/50">
@@ -351,7 +351,7 @@ export default function DoctorAppointments() {
                                     {apt.patientProfile?.avatar ? (
                                         <img
                                             src={apt.patientProfile.avatar}
-                                            alt={apt.patientProfile.fullName || 'Benh nhan'}
+                                            alt={apt.patientProfile.fullName || 'Bệnh nhân'}
                                             className="w-14 h-14 rounded-xl object-cover border border-teal-500/30"
                                         />
                                     ) : (
@@ -361,7 +361,7 @@ export default function DoctorAppointments() {
                                     )}
                                     <div className="flex-1 min-w-0">
                                         <p className="font-semibold text-white">
-                                            {apt.patientProfile?.fullName || apt.patientId?.email || 'Benh nhan'}
+                                            {apt.patientProfile?.fullName || apt.patientId?.email || 'Bệnh nhân'}
                                         </p>
                                         <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-slate-400">
                                             <span className="flex items-center gap-1">
@@ -395,7 +395,7 @@ export default function DoctorAppointments() {
                                 onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
                                 className="px-4 py-2 bg-slate-700/50 rounded-lg text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Truoc
+                                Trước
                             </button>
                             <button
                                 disabled={pagination.page >= pagination.totalPages}
@@ -414,7 +414,7 @@ export default function DoctorAppointments() {
                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
                     <div className="bg-slate-800 rounded-2xl w-full max-w-lg border border-slate-700 max-h-[90vh] overflow-y-auto">
                         <div className="p-5 border-b border-slate-700 flex items-center justify-between">
-                            <h3 className="text-lg font-semibold text-white">Chi tiet lich hen</h3>
+                            <h3 className="text-lg font-semibold text-white">Chi tiết lịch hẹn</h3>
                             <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-white">
                                 <X className="w-5 h-5" />
                             </button>
@@ -425,7 +425,7 @@ export default function DoctorAppointments() {
                                 {selectedAppointment.patientProfile?.avatar ? (
                                     <img
                                         src={selectedAppointment.patientProfile.avatar}
-                                        alt={selectedAppointment.patientProfile.fullName || 'Benh nhan'}
+                                        alt={selectedAppointment.patientProfile.fullName || 'Bệnh nhân'}
                                         className="w-14 h-14 rounded-xl object-cover border border-teal-500/30"
                                     />
                                 ) : (
@@ -435,7 +435,7 @@ export default function DoctorAppointments() {
                                 )}
                                 <div>
                                     <p className="font-semibold text-white">
-                                        {selectedAppointment.patientProfile?.fullName || 'Benh nhan'}
+                                        {selectedAppointment.patientProfile?.fullName || 'Bệnh nhân'}
                                     </p>
                                     <div className="flex items-center gap-3 mt-1 text-sm text-slate-400">
                                         <span className="flex items-center gap-1">
@@ -453,19 +453,19 @@ export default function DoctorAppointments() {
                             {/* Appointment Details */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="p-3 bg-slate-700/30 rounded-xl">
-                                    <p className="text-xs text-slate-400 mb-1">Ngay hen</p>
+                                    <p className="text-xs text-slate-400 mb-1">Ngày hẹn</p>
                                     <p className="text-white font-medium">{formatDate(selectedAppointment.appointmentDate)}</p>
                                 </div>
                                 <div className="p-3 bg-slate-700/30 rounded-xl">
-                                    <p className="text-xs text-slate-400 mb-1">Gio hen</p>
+                                    <p className="text-xs text-slate-400 mb-1">Giờ hẹn</p>
                                     <p className="text-white font-medium">{formatTime(selectedAppointment.timeSlot)}</p>
                                 </div>
                                 <div className="p-3 bg-slate-700/30 rounded-xl">
-                                    <p className="text-xs text-slate-400 mb-1">Phong kham</p>
+                                    <p className="text-xs text-slate-400 mb-1">Phòng khám</p>
                                     <p className="text-white font-medium">{selectedAppointment.clinicId?.name || 'N/A'}</p>
                                 </div>
                                 <div className="p-3 bg-slate-700/30 rounded-xl">
-                                    <p className="text-xs text-slate-400 mb-1">Trang thai</p>
+                                    <p className="text-xs text-slate-400 mb-1">Trạng thái</p>
                                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(selectedAppointment.status)}`}>
                                         {getStatusLabel(selectedAppointment.status)}
                                     </span>
@@ -474,70 +474,95 @@ export default function DoctorAppointments() {
 
                             {selectedAppointment.reason && (
                                 <div className="p-3 bg-slate-700/30 rounded-xl">
-                                    <p className="text-xs text-slate-400 mb-1">Ly do kham</p>
+                                    <p className="text-xs text-slate-400 mb-1">Lý do khám</p>
                                     <p className="text-white">{selectedAppointment.reason}</p>
                                 </div>
                             )}
 
-                                                {(record?.symptoms || selectedAppointment.symptoms) && (
+                            {(record?.symptoms || selectedAppointment.symptoms) && (
                                 <div className="p-3 bg-slate-700/30 rounded-xl">
-                                    <p className="text-xs text-slate-400 mb-1">Trieu chung</p>
+                                    <p className="text-xs text-slate-400 mb-1">Triệu chứng</p>
                                     <p className="text-white">{record?.symptoms || selectedAppointment.symptoms}</p>
                                 </div>
                             )}
 
                             {record?.treatment && (
                                 <div className="p-3 bg-slate-700/30 rounded-xl">
-                                    <p className="text-xs text-slate-400 mb-1">Phuong phap dieu tri</p>
+                                    <p className="text-xs text-slate-400 mb-1">Phương pháp điều trị</p>
                                     <p className="text-white">{record.treatment}</p>
                                 </div>
                             )}
 
                             {record?.doctorNotes && (
                                 <div className="p-3 bg-slate-700/30 rounded-xl">
-                                    <p className="text-xs text-slate-400 mb-1">Ghi chu bac si</p>
+                                    <p className="text-xs text-slate-400 mb-1">Ghi chú bác sĩ</p>
                                     <p className="text-white whitespace-pre-line">{record.doctorNotes}</p>
                                 </div>
                             )}
 
-                            {selectedAppointment.medications?.length > 0 && (
-                                <div className="p-3 bg-slate-700/30 rounded-xl space-y-2">
-                                    <p className="text-xs text-slate-400 mb-1">Thuoc</p>
-                                    {selectedAppointment.medications.map(med => (
-                                        <div key={med._id || med.name} className="p-2 rounded-lg bg-slate-700/40 border border-slate-700/70">
-                                            <p className="text-white font-semibold">{med.name}</p>
-                                            {med.dosage && <p className="text-xs text-slate-300">{med.dosage}</p>}
-                                            {med.frequency && <p className="text-xs text-slate-400">{med.frequency}</p>}
-                                            {med.instructions && <p className="text-[11px] text-slate-500 mt-1">{med.instructions}</p>}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                            {(() => {
+                                const prescriptions = record?.prescriptions?.length ? record.prescriptions : (selectedAppointment.medications || []);
+                                return prescriptions.length > 0 ? (
+                                    <div className="p-3 bg-slate-700/30 rounded-xl space-y-2">
+                                        <p className="text-xs text-slate-400 mb-1">Đơn thuốc ({prescriptions.length} loại)</p>
+                                        {prescriptions.map((med, idx) => (
+                                            <div key={med._id || idx} className="p-3 rounded-xl bg-slate-700/40 border border-slate-700/70">
+                                                <p className="text-white font-semibold">{med.name}</p>
+                                                <div className="flex flex-wrap gap-2 mt-2">
+                                                    {med.dosage && (
+                                                        <span className="px-2 py-1 bg-slate-800/70 rounded-lg text-[11px] text-slate-200 border border-slate-600/60">
+                                                            💊 {med.dosage}
+                                                        </span>
+                                                    )}
+                                                    {med.frequency && (
+                                                        <span className="px-2 py-1 bg-slate-800/70 rounded-lg text-[11px] text-slate-200 border border-slate-600/60">
+                                                            🔄 {med.frequency}
+                                                        </span>
+                                                    )}
+                                                    {med.duration && (
+                                                        <span className="px-2 py-1 bg-slate-800/70 rounded-lg text-[11px] text-slate-200 border border-slate-600/60">
+                                                            📅 {med.duration}
+                                                        </span>
+                                                    )}
+                                                    {!med.duration && (med.startDate || med.endDate) && (
+                                                        <span className="px-2 py-1 bg-slate-800/70 rounded-lg text-[11px] text-slate-200 border border-slate-600/60">
+                                                            📅 {med.startDate ? new Date(med.startDate).toLocaleDateString('vi-VN') : ''}{med.endDate ? ` - ${new Date(med.endDate).toLocaleDateString('vi-VN')}` : ''}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {med.instructions && (
+                                                    <p className="text-xs text-slate-400 mt-2 italic">📝 {med.instructions}</p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : null;
+                            })()}
 
-{/* Medications Input - Only show when not completed */}
+                            {/* Medications Input - Only show when not completed */}
                             {!['completed', 'cancelled'].includes(selectedAppointment.status) && (
                                 <div className="border-t border-slate-700 pt-4 space-y-4">
                                     {/* Diagnosis Section */}
                                     <div>
                                         <label className="block text-sm font-semibold text-white mb-2">
-                                            Chan doan benh <span className="text-rose-400">*</span>
+                                            Chẩn đoán bệnh <span className="text-rose-400">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={recordFormData.diagnosis}
                                             onChange={(e) => setRecordFormData({ ...recordFormData, diagnosis: e.target.value })}
-                                            placeholder="Nhap chan doan benh..."
+                                            placeholder="Nhập chẩn đoán bệnh..."
                                             className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-teal-500"
                                         />
                                     </div>
 
                                     {/* Symptoms */}
                                     <div>
-                                        <label className="block text-sm font-semibold text-white mb-2">Trieu chung</label>
+                                        <label className="block text-sm font-semibold text-white mb-2">Triệu chứng</label>
                                         <textarea
                                             value={recordFormData.symptoms}
                                             onChange={(e) => setRecordFormData({ ...recordFormData, symptoms: e.target.value })}
-                                            placeholder="Mo ta trieu chung cua benh nhan..."
+                                            placeholder="Mô tả triệu chứng của bệnh nhân..."
                                             rows={2}
                                             className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-teal-500 resize-none"
                                         />
@@ -545,11 +570,11 @@ export default function DoctorAppointments() {
 
                                     {/* Treatment */}
                                     <div>
-                                        <label className="block text-sm font-semibold text-white mb-2">Phuong phap dieu tri</label>
+                                        <label className="block text-sm font-semibold text-white mb-2">Phương pháp điều trị</label>
                                         <textarea
                                             value={recordFormData.treatment}
                                             onChange={(e) => setRecordFormData({ ...recordFormData, treatment: e.target.value })}
-                                            placeholder="Mo ta phuong phap dieu tri..."
+                                            placeholder="Mô tả phương pháp điều trị..."
                                             rows={2}
                                             className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-teal-500 resize-none"
                                         />
@@ -557,11 +582,11 @@ export default function DoctorAppointments() {
 
                                     {/* Doctor Notes */}
                                     <div>
-                                        <label className="block text-sm font-semibold text-white mb-2">Ghi chu bac si</label>
+                                        <label className="block text-sm font-semibold text-white mb-2">Ghi chú bác sĩ</label>
                                         <textarea
                                             value={recordFormData.doctorNotes}
                                             onChange={(e) => setRecordFormData({ ...recordFormData, doctorNotes: e.target.value })}
-                                            placeholder="Ghi chu them..."
+                                            placeholder="Ghi chú thêm..."
                                             rows={2}
                                             className="w-full px-3 py-2.5 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-teal-500 resize-none"
                                         />
@@ -569,21 +594,21 @@ export default function DoctorAppointments() {
 
                                     {/* Medications Header */}
                                     <div className="flex items-center justify-between">
-                                        <p className="text-sm font-semibold text-white">Don thuoc (bat buoc khi hoan thanh)</p>
+                                        <p className="text-sm font-semibold text-white">Đơn thuốc (bắt buộc khi hoàn thành)</p>
                                         <button
                                             type="button"
                                             onClick={addMedication}
                                             className="flex items-center gap-1 px-3 py-1.5 bg-teal-500/20 text-teal-400 rounded-lg text-sm hover:bg-teal-500/30"
                                         >
                                             <Plus className="w-4 h-4" />
-                                            Them thuoc
+                                            Thêm thuốc
                                         </button>
                                     </div>
                                     <div className="space-y-3">
                                         {medicationsInput.map((med, idx) => (
                                             <div key={idx} className="p-3 bg-slate-700/30 rounded-xl space-y-2">
                                                 <div className="flex items-center justify-between">
-                                                    <span className="text-xs text-slate-400">Thuoc {idx + 1}</span>
+                                                    <span className="text-xs text-slate-400">Thuốc {idx + 1}</span>
                                                     {medicationsInput.length > 1 && (
                                                         <button
                                                             type="button"
@@ -595,7 +620,7 @@ export default function DoctorAppointments() {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs text-slate-400 mb-1">Ten thuoc *</label>
+                                                    <label className="block text-xs text-slate-400 mb-1">Tên thuốc *</label>
                                                     <select
                                                         value={med.isCustom ? '__custom__' : med.name}
                                                         onChange={(e) => updateMedication(idx, 'name', e.target.value)}
@@ -604,12 +629,12 @@ export default function DoctorAppointments() {
                                                         {MEDICINE_OPTIONS.map(opt => (
                                                             <option key={opt} value={opt}>{opt}</option>
                                                         ))}
-                                                        <option value="__custom__">-- Khac (nhap tay) --</option>
+                                                        <option value="__custom__">-- Khác (nhập tay) --</option>
                                                     </select>
                                                     {med.isCustom && (
                                                         <input
                                                             type="text"
-                                                            placeholder="Nhap ten thuoc..."
+                                                            placeholder="Nhập tên thuốc..."
                                                             value={med.customName}
                                                             onChange={(e) => updateMedication(idx, 'customName', e.target.value)}
                                                             className="w-full mt-2 px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:border-teal-500"
@@ -618,7 +643,7 @@ export default function DoctorAppointments() {
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-2">
                                                     <div>
-                                                        <label className="block text-xs text-slate-400 mb-1">Lieu luong</label>
+                                                        <label className="block text-xs text-slate-400 mb-1">Liều lượng</label>
                                                         <select
                                                             value={med.dosage}
                                                             onChange={(e) => updateMedication(idx, 'dosage', e.target.value)}
@@ -630,7 +655,7 @@ export default function DoctorAppointments() {
                                                         </select>
                                                     </div>
                                                     <div>
-                                                        <label className="block text-xs text-slate-400 mb-1">Tan suat</label>
+                                                        <label className="block text-xs text-slate-400 mb-1">Tần suất</label>
                                                         <select
                                                             value={med.frequency}
                                                             onChange={(e) => updateMedication(idx, 'frequency', e.target.value)}
@@ -643,7 +668,7 @@ export default function DoctorAppointments() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs text-slate-400 mb-1">Huong dan su dung</label>
+                                                    <label className="block text-xs text-slate-400 mb-1">Hướng dẫn sử dụng</label>
                                                     <select
                                                         value={med.instructions}
                                                         onChange={(e) => updateMedication(idx, 'instructions', e.target.value)}
@@ -669,7 +694,7 @@ export default function DoctorAppointments() {
                                             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl hover:bg-emerald-500/30 transition-colors"
                                         >
                                             <CheckCircle className="w-4 h-4" />
-                                            Xac nhan
+                                            Xác nhận
                                         </button>
                                     )}
                                     <button
@@ -677,14 +702,14 @@ export default function DoctorAppointments() {
                                         className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-teal-500/20 text-teal-400 border border-teal-500/30 rounded-xl hover:bg-teal-500/30 transition-colors"
                                     >
                                         <CheckCircle className="w-4 h-4" />
-                                        Hoan thanh
+                                        Hoàn thành
                                     </button>
                                     <button
                                         onClick={() => handleStatusUpdate(selectedAppointment._id, 'cancelled')}
                                         className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl hover:bg-rose-500/30 transition-colors"
                                     >
                                         <XCircle className="w-4 h-4" />
-                                        Huy
+                                        Hủy
                                     </button>
                                 </div>
                             )}
