@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../../context/ToastContext';
 import {
     reportService,
     appointmentService,
-    medicalRecordService
+    medicalRecordService,
+    clinicService,
 } from '../../services';
 import {
     Calendar,
-    Pill,
     Activity,
     Clock,
     ArrowRight,
@@ -18,7 +18,6 @@ import {
     Plus,
     FileText,
     BarChart3,
-    User
 } from 'lucide-react';
 import {
     AreaChart,
@@ -32,10 +31,16 @@ import {
 
 export default function Dashboard() {
     const [loading, setLoading] = useState(true);
-    const [dashboardData, setDashboardData] = useState(null);
+    const [stats, setStats] = useState({
+        upcoming: 0,
+        completed: 0,
+        clinics: 0,
+        records: 0
+    });
+    const [chartData, setChartData] = useState([]);
     const [upcomingAppointments, setUpcomingAppointments] = useState([]);
     const [recentRecords, setRecentRecords] = useState([]);
-    const { success, error: showError } = useToast();
+    const { error: showError } = useToast();
 
     useEffect(() => {
         fetchDashboardData();
@@ -43,30 +48,68 @@ export default function Dashboard() {
 
     const fetchDashboardData = async () => {
         try {
-            const [dashboardRes, appointmentsRes, recordsRes] = await Promise.all([
-                reportService.getDashboardOverview(),
+            const todayIso = new Date().toISOString();
+            const [
+                upcomingRes,
+                scheduledRes,
+                confirmedRes,
+                completedRes,
+                clinicsRes,
+                recordsRes,
+                appointmentsReportRes
+            ] = await Promise.all([
                 appointmentService.getUpcomingAppointments(),
-                medicalRecordService.getMedicalRecords({ limit: 3 }),
+                appointmentService.getAppointments({ status: 'scheduled', startDate: todayIso, limit: 1 }),
+                appointmentService.getAppointments({ status: 'confirmed', startDate: todayIso, limit: 1 }),
+                appointmentService.getAppointments({ status: 'completed', limit: 1 }),
+                clinicService.getClinics({ page: 1, limit: 1 }),
+                medicalRecordService.getMedicalRecords({ page: 1, limit: 3 }),
+                reportService.getAppointmentsReport()
             ]);
 
-            if (dashboardRes.success) {
-                setDashboardData(dashboardRes.data);
-            }
-            if (appointmentsRes.success) {
-                setUpcomingAppointments(appointmentsRes.data.slice(0, 3));
-            }
+            const upcomingList = upcomingRes.success ? (upcomingRes.data || []) : [];
+            setUpcomingAppointments(upcomingList.slice(0, 3));
+
+            const scheduledTotal = scheduledRes.success ? (scheduledRes.pagination?.total || scheduledRes.data?.length || 0) : 0;
+            const confirmedTotal = confirmedRes.success ? (confirmedRes.pagination?.total || confirmedRes.data?.length || 0) : 0;
+            const completedTotal = completedRes.success ? (completedRes.pagination?.total || completedRes.data?.length || 0) : 0;
+            const clinicsTotal = clinicsRes.success ? (clinicsRes.pagination?.total || clinicsRes.data?.length || 0) : 0;
+
             if (recordsRes.success) {
-                setRecentRecords(recordsRes.data.slice(0, 3));
+                const recordsList = recordsRes.data || [];
+                setRecentRecords(recordsList.slice(0, 3));
+
+                setStats({
+                    upcoming: scheduledTotal + confirmedTotal,
+                    completed: completedTotal,
+                    clinics: clinicsTotal,
+                    records: recordsRes.pagination?.total ?? recordsList.length
+                });
+            } else {
+                setStats({
+                    upcoming: scheduledTotal + confirmedTotal,
+                    completed: completedTotal,
+                    clinics: clinicsTotal,
+                    records: 0
+                });
+            }
+
+            if (appointmentsReportRes.success) {
+                const chart = (appointmentsReportRes.data?.monthlyChart || []).map(item => ({
+                    month: item.month
+                        ? new Date(`${item.month}-01`).toLocaleDateString('vi-VN', { month: 'short', year: '2-digit' })
+                        : '',
+                    count: item.count || 0
+                }));
+                setChartData(chart);
             }
         } catch (error) {
             console.error('Error fetching dashboard:', error);
+            showError('Không thể tải dữ liệu tổng quan');
         } finally {
             setLoading(false);
         }
     };
-
-    const stats = dashboardData?.stats || {};
-    const chartData = dashboardData?.appointmentsByMonth || [];
 
     if (loading) {
         return (
@@ -108,7 +151,7 @@ export default function Dashboard() {
                         <div>
                             <p className="text-sm font-medium text-gray-500 mb-1">Lịch khám sắp tới</p>
                             <p className="text-3xl sm:text-4xl font-bold text-gray-900">
-                                {stats.upcomingAppointments || 0}
+                                {stats.upcoming || 0}
                             </p>
                         </div>
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/15 to-blue-500/5 flex items-center justify-center text-blue-600">
@@ -131,7 +174,7 @@ export default function Dashboard() {
                         <div>
                             <p className="text-sm font-medium text-gray-500 mb-1">Hồ sơ bệnh án</p>
                             <p className="text-3xl sm:text-4xl font-bold text-gray-900">
-                                {recentRecords.length}
+                                {stats.records || 0}
                             </p>
                         </div>
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/15 to-purple-500/5 flex items-center justify-center text-purple-600">
@@ -154,7 +197,7 @@ export default function Dashboard() {
                         <div>
                             <p className="text-sm font-medium text-gray-500 mb-1">Đã khám xong</p>
                             <p className="text-3xl sm:text-4xl font-bold text-gray-900">
-                                {stats.completedAppointments || 0}
+                                {stats.completed || 0}
                             </p>
                         </div>
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 flex items-center justify-center text-emerald-500">
@@ -174,7 +217,7 @@ export default function Dashboard() {
                         <div>
                             <p className="text-sm font-medium text-gray-500 mb-1">Phòng khám</p>
                             <p className="text-3xl sm:text-4xl font-bold text-gray-900">
-                                {stats.uniqueClinics || 0}
+                                {stats.clinics || 0}
                             </p>
                         </div>
                         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/15 to-amber-500/5 flex items-center justify-center text-amber-500">
@@ -415,3 +458,6 @@ export default function Dashboard() {
         </div>
     );
 }
+
+
+
